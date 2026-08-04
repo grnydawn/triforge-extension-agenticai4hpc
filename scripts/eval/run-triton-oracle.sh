@@ -5,13 +5,13 @@
 set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CORPUS="$(cd "$HERE/../../eval/diagnose-corpus" && pwd)"
-TRITON_EXE="$CORPUS/build/triton.exe"
 FIX="${1:?fixture dir required}"; TIMEOUT="${2:-120}"
 FIXDIR="$(cd "$FIX" && pwd)"; NAME="$(basename "$FIXDIR")"
-# build/ is gitignored, so a fresh clone has no solver. Without this check mpirun fails,
-# the log never reaches 'Simulation starts', and the classifier below reads that as a
-# load-time reject: every fixture comes back "startup-reject" in a couple of seconds.
-[ -x "$TRITON_EXE" ] || { echo "missing solver: $TRITON_EXE" >&2; exit 1; }
+# Sets $TRITON_EXE, asking for the path if the solver is not where the appendix says.
+# Without it a missing solver makes mpirun fail, the log never reaches 'Simulation
+# starts', and the classifier below reads that as a load-time reject: every fixture
+# comes back "startup-reject" in a couple of seconds.
+. "$HERE/resolve-triton.sh" || exit 1
 
 RUN="$(mktemp -d)" || { echo "mktemp failed" >&2; exit 1; }
 case "$RUN" in /*) ;; *) echo "bad rundir: $RUN" >&2; exit 1;; esac

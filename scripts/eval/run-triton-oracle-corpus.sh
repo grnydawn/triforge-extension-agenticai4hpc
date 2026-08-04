@@ -5,9 +5,10 @@ set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CORPUS="$(cd "$HERE/../../eval/diagnose-corpus" && pwd)"
 TIMEOUT="${1:-120}"
-# Checked here as well as in run-triton-oracle.sh: this script overwrites the committed
+# Resolved here as well as in run-triton-oracle.sh: this script overwrites the committed
 # oracle-report.json, so it must not get as far as writing anything without a solver.
-[ -x "$CORPUS/build/triton.exe" ] || { echo "missing solver: $CORPUS/build/triton.exe" >&2; exit 1; }
+# Asking once here also spares the 32 children the question — they inherit $TRITON_EXE.
+. "$HERE/resolve-triton.sh" || exit 1
 mapfile -t DIRS < <(node -e "JSON.parse(require('fs').readFileSync('$CORPUS/manifest.json')).fixtures.forEach(f=>console.log(f.dir))")
 START=$(date +%s); ROWS=()
 for d in "${DIRS[@]}"; do

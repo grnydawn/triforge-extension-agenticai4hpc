@@ -15,8 +15,9 @@ WRAP="$HERE/scan-fixture-output.sh"
 TIMEOUT="${1:-60}"
 REPORT="$CORPUS/three-tier-report.json"
 command -v jq >/dev/null || { echo "jq required" >&2; exit 1; }
-# Fail here rather than 32 rows later: without a solver every fixture grounds as ERROR.
-[ -x "$CORPUS/build/triton.exe" ] || { echo "missing solver: $CORPUS/build/triton.exe" >&2; exit 1; }
+# Ask here rather than 32 rows later: without a solver every fixture grounds as ERROR.
+# The wrapper inherits the resolved $TRITON_EXE, so the question is asked once.
+. "$HERE/resolve-triton.sh" || exit 1
 
 tmp="$(mktemp)"; echo '[]' > "$tmp"
 echo "grounding $(jq '.fixtures|length' "$CORPUS/manifest.json") fixtures (timeout ${TIMEOUT}s each)..."

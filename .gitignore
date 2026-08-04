@@ -97,6 +97,9 @@ eval/diagnose-corpus/fixtures/*/oracle.json
 # reviewers build it themselves per the Artifact Description appendix)
 eval/diagnose-corpus/build/
 
+# Where scripts/eval/resolve-triton.sh remembers a solver built outside this tree
+eval/diagnose-corpus/.triton-exe
+
 # Transient run backups (raw run outputs are already ignored)
 eval/diagnose-corpus/runs/.backup-*/
 

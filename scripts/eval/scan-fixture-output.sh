@@ -12,10 +12,9 @@ set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CORPUS="$(cd "$HERE/../../eval/diagnose-corpus" && pwd)"
 REPO="$(cd "$HERE/../.." && pwd)"
-TRITON_EXE="$CORPUS/build/triton.exe"
 FIX="${1:?fixture dir required}"; TIMEOUT="${2:-120}"
 FIXDIR="$(cd "$FIX" && pwd)"; NAME="$(basename "$FIXDIR")"
-[ -x "$TRITON_EXE" ] || { echo "missing solver: $TRITON_EXE" >&2; exit 1; }
+. "$HERE/resolve-triton.sh" || exit 1
 
 KEEP="$(mktemp -d)" || { echo "mktemp failed" >&2; exit 1; }
 case "$KEEP" in /*) ;; *) echo "bad rundir: $KEEP" >&2; exit 1;; esac
@@ -64,7 +63,11 @@ if [ "$TIER1" = "ran-to-completion" ]; then
   TIER2_RAW="$(cd "$REPO" && npx ts-node scripts/eval/output-sanity.ts "$KEEP" 2>/dev/null)"
   case $? in 0) TIER2="sane";; 1) TIER2="review";; 2) TIER2="insane";; *) TIER2="error";; esac
   # compact to one line so the combined verdict below stays single-line (parseable by callers)
-  TIER2_JSON="$(echo "$TIER2_RAW" | jq -c . 2>/dev/null || echo 'null')"
+  # jq exits 0 on empty input and prints nothing, so the `||` never fires and the printf
+  # below would emit `"tier2Detail":` with no value — a malformed line that the caller
+  # can only read as "no verdict". Check the result is non-empty, not just that jq passed.
+  TIER2_JSON="$(echo "$TIER2_RAW" | jq -c . 2>/dev/null)"
+  [ -n "$TIER2_JSON" ] || TIER2_JSON='null'
 fi
 
 # --- combine into the three-tier ground-truth label ---
