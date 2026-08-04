@@ -61,7 +61,7 @@ echo "    $(find "$BUNDLE/fixtures" -type f | wc -l) fixture files"
 # the bwrap isolation -- site tokens, and every claim they support is already
 # published in tracked form. The per-cell agent answers, arms, trials, and gold
 # labels for all 248 ablation runs are embedded in
-# artifacts/human-judge-evaluation.html; the aggregates are in reports/.
+# artifacts/level4-human-judge-evaluation.html; the aggregates are in reports/.
 #
 # Driving the copy from `git ls-files` means the deposit is reproducible from a
 # fresh clone rather than only on the machine that ran the study -- and it still
@@ -300,7 +300,7 @@ binary. See \`triton-build/\` and the paper's Artifact Description appendix.
 
 The raw agent transcripts are **not** shipped. They are verbatim terminal capture
 — 2,225 files, 21 MB — and everything they support is already here in tracked
-form: \`artifacts/human-judge-evaluation.html\` carries the answer, arm, trial,
+form: \`artifacts/level4-human-judge-evaluation.html\` carries the answer, arm, trial,
 and gold label for each of the 248 ablation runs, and \`reports/\` carries the
 aggregates. Excluding them is also what lets this bundle be built from the
 repository's tracked content alone, so it rebuilds byte-for-byte from a fresh

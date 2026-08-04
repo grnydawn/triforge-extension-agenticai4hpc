@@ -138,7 +138,7 @@ without cloning:
   — every fixture crossed against the real solver's outcome
 - [`level3-ablation.html`](https://grnydawn.github.io/triforge-extension-agenticai4hpc/level3-ablation.html)
   — the ±tool agent-level ablation
-- [`human-judge-evaluation.html`](https://grnydawn.github.io/triforge-extension-agenticai4hpc/human-judge-evaluation.html)
+- [`level4-human-judge-evaluation.html`](https://grnydawn.github.io/triforge-extension-agenticai4hpc/level4-human-judge-evaluation.html)
   — asks whether to show the expert's judgment on all 248 runs or start blank, then lets you
   re-grade them by hand
 
