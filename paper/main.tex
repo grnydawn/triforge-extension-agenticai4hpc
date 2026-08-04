@@ -939,7 +939,9 @@ tallies the $245/248$ agreement quoted in Section~\ref{sec:threats}. Two further
 \texttt{clean-cell-human-audit.csv} and its phase-2 companion ($32$ and $48$ rows), audit the
 clean-project cells that carry the don't-cry-wolf claim. The human pass is a record rather than a
 script, so re-running it means re-grading: the browsable artifact~\cite{artifact-human} presents
-all 248 answers with their gold labels for exactly that. The multi-judge check \emph{is}
+all 248 answers with their gold labels for exactly that. It opens by asking whether to show the
+recorded verdicts or to start blank, so a reviewer can repeat the pass unanchored and compare
+only afterwards. The multi-judge check \emph{is}
 re-runnable---\texttt{scripts/eval/judge-multi.sh} re-grades the same 248 saved answers under Opus
 and \texttt{gpt-5.6-sol}; \texttt{runs/robustness/README.md} carries the resulting per-judge
 tables, and the per-cell verdicts regenerate beneath it.
