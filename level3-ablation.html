@@ -1,0 +1,430 @@
+<!doctype html><html><head><meta charset=utf8>
+<title>Reviewer Artifact — Level 3: ±Tool Agent-Level Ablation</title>
+<!--
+  ARCHIVAL COPY. Retrieved 2026-08-03 from
+  https://claude.ai/code/artifact/54b07372-071c-43b2-aaeb-565e354957f3
+  (published 2026-07-23). The platform-injected frame-runtime script has
+  been removed; the authored page content is unmodified.
+-->
+<meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<style>
+:root{
+  --bg:#f6f8fb; --surface:#ffffff; --surface-2:#eef1f6; --border:#dde3ec;
+  --text:#1b2430; --muted:#5c6879; --accent:#4a63d8; --accent-soft:#e7ebfb;
+  --good:#1f9d63; --good-soft:#e2f4ea; --good-bd:#a9dcc2;
+  --info:#2b74c9; --info-soft:#e2eefb; --info-bd:#a9cdee;
+  --warn:#c07d16; --warn-soft:#faf0dc; --warn-bd:#e8cd93;
+  --bad:#d13b30; --bad-soft:#fbe6e4; --bad-bd:#eeb0aa;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0e1218; --surface:#161c26; --surface-2:#1d2531; --border:#2a3340;
+    --text:#e5ebf3; --muted:#94a2b6; --accent:#8098f6; --accent-soft:#20293c;
+    --good:#4cc78a; --good-soft:#152a20; --good-bd:#2c5540;
+    --info:#5fa0e8; --info-soft:#122436; --info-bd:#294f70;
+    --warn:#e0a94a; --warn-soft:#2e2612; --warn-bd:#5c491f;
+    --bad:#f0857c; --bad-soft:#301715; --bad-bd:#63302b;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f6f8fb; --surface:#ffffff; --surface-2:#eef1f6; --border:#dde3ec;
+  --text:#1b2430; --muted:#5c6879; --accent:#4a63d8; --accent-soft:#e7ebfb;
+  --good:#1f9d63; --good-soft:#e2f4ea; --good-bd:#a9dcc2;
+  --info:#2b74c9; --info-soft:#e2eefb; --info-bd:#a9cdee;
+  --warn:#c07d16; --warn-soft:#faf0dc; --warn-bd:#e8cd93;
+  --bad:#d13b30; --bad-soft:#fbe6e4; --bad-bd:#eeb0aa;
+}
+:root[data-theme="dark"]{
+  --bg:#0e1218; --surface:#161c26; --surface-2:#1d2531; --border:#2a3340;
+  --text:#e5ebf3; --muted:#94a2b6; --accent:#8098f6; --accent-soft:#20293c;
+  --good:#4cc78a; --good-soft:#152a20; --good-bd:#2c5540;
+  --info:#5fa0e8; --info-soft:#122436; --info-bd:#294f70;
+  --warn:#e0a94a; --warn-soft:#2e2612; --warn-bd:#5c491f;
+  --bad:#f0857c; --bad-soft:#301715; --bad-bd:#63302b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--ui);
+  line-height:1.5;-webkit-font-smoothing:antialiased;font-size:15px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px 72px}
+header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border);margin-bottom:28px}
+header.top .inner{max-width:1120px;margin:0 auto;padding:16px 20px;display:flex;
+  align-items:baseline;gap:14px;flex-wrap:wrap}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700}
+h1{font-size:21px;margin:2px 0 0;font-weight:680;letter-spacing:-.01em;flex:1 1 auto;text-wrap:balance}
+.badge{font-family:var(--mono);font-size:12.5px;background:var(--surface-2);color:var(--muted);
+  border:1px solid var(--border);border-radius:999px;padding:4px 11px;white-space:nowrap}
+.lede{color:var(--muted);max-width:70ch;margin:0 0 26px;font-size:14.5px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 30px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.card .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.card .v{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin-top:5px}
+.card .sub{font-size:12.5px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.card.hero{background:linear-gradient(180deg,var(--good-soft),var(--surface));border-color:var(--good-bd)}
+.card.hero .v{color:var(--good)}
+.tally{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 30px}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;padding:5px 12px;border-radius:999px;
+  border:1px solid var(--border);background:var(--surface);font-weight:560}
+.chip .n{font-variant-numeric:tabular-nums;font-weight:730}
+.chip.good{background:var(--good-soft);border-color:var(--good-bd);color:var(--good)}
+.chip.info{background:var(--info-soft);border-color:var(--info-bd);color:var(--info)}
+.chip.bad{background:var(--bad-soft);border-color:var(--bad-bd);color:var(--bad)}
+.tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:650;
+  position:sticky;top:0;background:var(--surface-2)}
+tr:last-child td{border-bottom:none}
+td.mono,.mono{font-family:var(--mono);font-size:12.5px}
+.pill{display:inline-block;font-size:11.5px;font-weight:650;padding:2px 9px;border-radius:6px;
+  border:1px solid transparent;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill.good{background:var(--good-soft);color:var(--good);border-color:var(--good-bd)}
+.pill.info{background:var(--info-soft);color:var(--info);border-color:var(--info-bd)}
+.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:var(--warn-bd)}
+.pill.bad{background:var(--bad-soft);color:var(--bad);border-color:var(--bad-bd)}
+.pill.mute{background:var(--surface-2);color:var(--muted);border-color:var(--border)}
+.dim{color:var(--muted)}
+h2.sec{font-size:15px;margin:34px 0 12px;font-weight:660}
+/* Layer-2 fixture cards */
+.fx{border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:10px;overflow:hidden}
+.fx>summary{list-style:none;cursor:pointer;padding:13px 16px;display:grid;
+  grid-template-columns:1.4fr .5fr .8fr .9fr auto;gap:12px;align-items:center}
+.fx>summary::-webkit-details-marker{display:none}
+.fx>summary:hover{background:var(--surface-2)}
+.fx .name{font-family:var(--mono);font-size:13px;font-weight:600}
+.fx .fault{font-size:12.5px;color:var(--muted)}
+.fx .chev{color:var(--muted);font-size:12px;transition:transform .15s}
+.fx[open] .chev{transform:rotate(90deg)}
+.fx .body{padding:4px 16px 16px;border-top:1px solid var(--border);background:var(--surface-2)}
+.finding{border:1px solid var(--border);border-left-width:3px;border-radius:8px;background:var(--surface);
+  padding:10px 13px;margin:12px 0}
+.finding.error{border-left-color:var(--bad)}
+.finding.advisory{border-left-color:var(--warn)}
+.finding .ft{font-weight:650;font-size:13.5px}
+.finding .fd{font-size:13px;color:var(--muted);margin-top:3px}
+.finding .fe{font-family:var(--mono);font-size:12px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:6px;padding:6px 9px;margin-top:8px;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+.file{margin-top:12px}
+.file .fn{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px}
+pre.deck{font-family:var(--mono);font-size:12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:11px 13px;overflow-x:auto;margin:0;white-space:pre;color:var(--text)}
+.nofault{color:var(--good);font-size:13px;padding:12px 2px 4px;font-weight:560}
+footer.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);
+  font-size:12.5px;max-width:74ch}
+footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:4px;font-size:11.5px}
+@media (max-width:640px){
+  .fx>summary{grid-template-columns:1fr auto;gap:6px}
+  .fx>summary .col-hide{display:none}
+}
+
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.mdl{font-family:var(--mono);font-size:10.5px;font-weight:400;color:var(--muted)}
+td.ok{color:var(--good);font-weight:650}td.no{color:var(--bad);font-weight:650}
+.fx>summary{cursor:pointer;list-style:none;padding:11px 15px;display:flex;gap:10px;align-items:center}
+.fx>summary::-webkit-details-marker{display:none}
+.fx>summary:hover{background:var(--surface-2)}
+.fx .name{font-family:var(--mono);font-weight:640;font-size:13px}
+.fx .chev{margin-left:auto;color:var(--muted);font-size:11px}.fx[open] .chev{transform:rotate(90deg)}
+table.drill{min-width:560px}table.drill th{font-size:10.5px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px}@media(max-width:720px){.two{grid-template-columns:1fr}}
+.two table{min-width:0}
+
+h2.sec{font-size:15px;margin:30px 0 10px;font-weight:660}
+.valid{background:var(--good-soft);border:1px solid var(--good-bd);border-radius:12px;padding:16px 18px;margin:8px 0}
+.valid .v{font-size:26px;font-weight:730;color:var(--good);font-variant-numeric:tabular-nums}
+</style>
+<header class="top"><div class="inner">
+  <div style="flex:1 1 auto">
+    <div class="eyebrow">Reviewer Artifact · Level 3</div>
+    <h1>The &plusmn;Tool Agent-Level Ablation</h1>
+  </div>
+  <span class="badge">Claude claude-sonnet-5 · Codex gpt-5.6-sol · judge claude-sonnet-5</span>
+</div></header>
+<div class="wrap">
+  <p class="lede">The same agent — <b>+tool</b> (with <span class="mono">diagnose_project</span>) vs.
+  <b>bare</b> (tool removed) — across two headless clients, <b>Claude</b>
+  (<span class="mono">claude -p</span>, model <span class="mono">claude-sonnet-5</span>) and <b>Codex</b>
+  (<span class="mono">codex exec</span>, model <span class="mono">gpt-5.6-sol</span>), under filesystem
+  isolation, blind-judged by a second model (<span class="mono">claude-sonnet-5</span>).
+  A bare agent already identifies most faults; the tool's gains are in <b>localization</b>,
+  <b>not crying wolf</b>, and <b>cost</b>. Faults are scored over 3 trials, clean/expectation over 1.</p>
+
+  <div class="cards">
+    <div class="card"><div class="k">Detection (+tool)</div><div class="v">100%</div><div class="sub">bare 91–96%</div></div>
+    <div class="card hero"><div class="k">Localization (+tool)</div><div class="v">98%</div><div class="sub">bare 78–80%</div></div>
+    <div class="card"><div class="k">Turns saved</div><div class="v">1.3–1.6×</div><div class="sub">fewer than bare</div></div>
+    <div class="card"><div class="k">Output tokens</div><div class="v">2–4×</div><div class="sub">less than bare</div></div>
+  </div>
+
+  <div class="two">
+    <div>
+      <h2 class="sec">Effectiveness</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Client</th><th>Arm</th><th class="num">found</th><th class="num">stage</th>
+          <th class="num">exp.</th><th class="num">clean&nbsp;prec.</th><th class="num">overall</th></tr></thead>
+        <tbody>
+        <tr><td>Claude<br><span class="mdl">claude-sonnet-5</span></td><td><span class="pill info">+tool</span></td><td class="num"><b>100%</b></td><td class="num">98%</td><td class="num">100%</td><td class="num"><b>92%</b></td><td class="num"><b>98%</b></td></tr><tr><td>Claude<br><span class="mdl">claude-sonnet-5</span></td><td><span class="pill mute">bare</span></td><td class="num">91%</td><td class="num">80%</td><td class="num">60%</td><td class="num">75%</td><td class="num">85%</td></tr><tr><td>Codex<br><span class="mdl">gpt-5.6-sol</span></td><td><span class="pill info">+tool</span></td><td class="num"><b>100%</b></td><td class="num">98%</td><td class="num">100%</td><td class="num"><b>100%</b></td><td class="num"><b>100%</b></td></tr><tr><td>Codex<br><span class="mdl">gpt-5.6-sol</span></td><td><span class="pill mute">bare</span></td><td class="num">96%</td><td class="num">78%</td><td class="num">100%</td><td class="num">100%</td><td class="num">97%</td></tr>
+        </tbody></table></div>
+      <p class="lede" style="font-size:12.5px;margin-top:8px">found % = blind-judged identification;
+      stage % = correct localization on faulted decks; clean&nbsp;prec. = fraction of the 12 clean
+      controls correctly reported fault-free.</p>
+    </div>
+    <div>
+      <h2 class="sec">Efficiency (per-cell means)</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Client</th><th>Arm</th><th class="num">turns</th><th class="num">wall&thinsp;s</th>
+          <th class="num">tok&thinsp;in</th><th class="num">tok&thinsp;out</th><th class="num">MCP&thinsp;ovh</th></tr></thead>
+        <tbody>
+        <tr><td>Claude<br><span class="mdl">claude-sonnet-5</span></td><td><span class="pill info">+tool</span></td><td class="num">6.3</td><td class="num">23</td><td class="num">10,990</td><td class="num">1,358</td><td class="num">94</td></tr><tr><td>Claude<br><span class="mdl">claude-sonnet-5</span></td><td><span class="pill mute">bare</span></td><td class="num">10.2</td><td class="num">88</td><td class="num">18,227</td><td class="num">5,964</td><td class="num">0</td></tr><tr><td>Codex<br><span class="mdl">gpt-5.6-sol</span></td><td><span class="pill info">+tool</span></td><td class="num">5.3</td><td class="num">19</td><td class="num">6,757</td><td class="num">485</td><td class="num">107</td></tr><tr><td>Codex<br><span class="mdl">gpt-5.6-sol</span></td><td><span class="pill mute">bare</span></td><td class="num">6.7</td><td class="num">30</td><td class="num">12,483</td><td class="num">1,137</td><td class="num">0</td></tr>
+        </tbody></table></div>
+      <p class="lede" style="font-size:12.5px;margin-top:8px">The tool is called in 100% of +tool cells;
+      MCP&thinsp;ovh is the per-call round-trip cost — under 1.5% of the agent's token spend.</p>
+    </div>
+  </div>
+
+  <h2 class="sec">Judge validation (human audit)</h2>
+  <div class="valid">
+    <span class="v">98.8%</span> agreement between a human audit and the automated blind judge
+    (<span class="mono">claude-sonnet-5</span>) over all 248 cells (245/248), and
+    <b>100% (48/48)</b> on the clean controls. All three disagreements are bare-arm cells the human
+    credited but the automated judge marked a miss — the judge <em>under</em>-states the bare arm, so
+    it does not inflate the tool's measured advantage.
+  </div>
+
+  <h2 class="sec">Per-cell metrics &nbsp;<span class="dim" style="font-weight:400;font-size:12.5px">(click a fixture)</span></h2>
+  <details class="fx"><summary>
+      <span class="name">diverge-runoff-oob</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">17.5</td><td class="num">888</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">27.4</td><td class="num">1,598</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">15.6</td><td class="num">1,012</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">34.0</td><td class="num">2,590</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">11</td><td class="num">60.7</td><td class="num">3,760</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">26.0</td><td class="num">2,139</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">22.0</td><td class="num">785</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">16.4</td><td class="num">520</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">19.8</td><td class="num">514</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">22.4</td><td class="num">757</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">22.2</td><td class="num">834</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">17.0</td><td class="num">600</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-bin-noheader</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">12.8</td><td class="num">729</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">18.6</td><td class="num">1,380</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">14.1</td><td class="num">863</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">54.2</td><td class="num">4,279</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">57.3</td><td class="num">4,543</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">61.8</td><td class="num">5,067</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">21.4</td><td class="num">514</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">20.5</td><td class="num">571</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">21.5</td><td class="num">559</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">9</td><td class="num">47.0</td><td class="num">2,542</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">10</td><td class="num">51.5</td><td class="num">2,135</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">15.3</td><td class="num">728</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-coverage</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">14.7</td><td class="num">783</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">15.4</td><td class="num">789</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">15.5</td><td class="num">793</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">11</td><td class="num">111.2</td><td class="num">9,072</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">23</td><td class="num">328.5</td><td class="num">25,039</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">18</td><td class="num">176.9</td><td class="num">13,462</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">18.0</td><td class="num">473</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">20.6</td><td class="num">501</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">16.8</td><td class="num">450</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">10</td><td class="num">41.1</td><td class="num">1,833</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">12</td><td class="num">64.3</td><td class="num">2,509</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">17</td><td class="num">114.0</td><td class="num">3,823</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-degenerate</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">19.9</td><td class="num">1,402</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="dim">N</td><td class="num">7</td><td class="num">27.0</td><td class="num">1,538</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">27.0</td><td class="num">1,366</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">16</td><td class="num">117.4</td><td class="num">8,239</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">7</td><td class="num">69.2</td><td class="num">6,136</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">10</td><td class="num">61.9</td><td class="num">4,894</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">18.6</td><td class="num">541</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">21.9</td><td class="num">500</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">17.4</td><td class="num">543</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">26.1</td><td class="num">1,202</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">8</td><td class="num">34.5</td><td class="num">1,452</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">8</td><td class="num">31.8</td><td class="num">1,498</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-extbc-count</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">15.3</td><td class="num">779</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">13.6</td><td class="num">706</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">18.8</td><td class="num">821</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">21.8</td><td class="num">1,489</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">24.8</td><td class="num">1,476</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">24.2</td><td class="num">1,324</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">17.7</td><td class="num">419</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">17.5</td><td class="num">548</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">18.8</td><td class="num">479</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">17.3</td><td class="num">609</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">15.8</td><td class="num">509</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">17.6</td><td class="num">516</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-grid-asc</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">13.8</td><td class="num">748</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">14.7</td><td class="num">760</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">13.9</td><td class="num">810</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">26.7</td><td class="num">2,197</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">26.6</td><td class="num">2,004</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">25.5</td><td class="num">1,811</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">3</td><td class="num">13.6</td><td class="num">269</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">19.3</td><td class="num">541</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">20.5</td><td class="num">524</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">5</td><td class="num">18.2</td><td class="num">687</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">24.4</td><td class="num">992</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">23.1</td><td class="num">785</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-grid-bin</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">9</td><td class="num">48.4</td><td class="num">3,402</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">23.2</td><td class="num">1,672</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">36.6</td><td class="num">2,638</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">51.1</td><td class="num">3,869</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">8</td><td class="num">53.6</td><td class="num">3,938</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">48.7</td><td class="num">3,796</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">16.1</td><td class="num">444</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">20.7</td><td class="num">683</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">20.3</td><td class="num">610</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">27.6</td><td class="num">1,237</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">7</td><td class="num">27.2</td><td class="num">1,065</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">31.5</td><td class="num">1,328</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-grid-sidecar</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">15.9</td><td class="num">997</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">17.6</td><td class="num">974</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">3</td><td class="num">10.2</td><td class="num">449</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">10</td><td class="num">94.5</td><td class="num">7,691</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">9</td><td class="num">78.9</td><td class="num">6,059</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">12</td><td class="num">104.5</td><td class="num">8,324</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">19.4</td><td class="num">479</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">19.1</td><td class="num">553</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">20.1</td><td class="num">531</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">27.0</td><td class="num">1,113</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">8</td><td class="num">36.2</td><td class="num">1,360</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">28.8</td><td class="num">1,204</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-missing-input</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">18.8</td><td class="num">763</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">14.1</td><td class="num">666</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">18.5</td><td class="num">661</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">16.0</td><td class="num">865</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">15.1</td><td class="num">776</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">20.0</td><td class="num">941</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">14.1</td><td class="num">422</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="dim">N</td><td class="num">5</td><td class="num">18.5</td><td class="num">409</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">14.9</td><td class="num">325</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">6</td><td class="num">24.3</td><td class="num">683</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">17.7</td><td class="num">609</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">15.9</td><td class="num">600</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-placeholder</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">13.5</td><td class="num">780</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">14.1</td><td class="num">641</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">3</td><td class="num">11.0</td><td class="num">424</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">5</td><td class="num">16.5</td><td class="num">900</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">24.9</td><td class="num">1,437</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">5</td><td class="num">15.4</td><td class="num">948</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">17.4</td><td class="num">324</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">15.9</td><td class="num">339</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">19.8</td><td class="num">334</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">7</td><td class="num">33.2</td><td class="num">1,141</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">6</td><td class="num">25.8</td><td class="num">1,025</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">7</td><td class="num">26.6</td><td class="num">1,140</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-runoff-count</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">14.2</td><td class="num">959</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">14.7</td><td class="num">692</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">14.2</td><td class="num">595</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">32.2</td><td class="num">2,487</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">41.1</td><td class="num">2,818</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">44.8</td><td class="num">3,745</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">19.5</td><td class="num">430</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">19.5</td><td class="num">617</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">19.7</td><td class="num">493</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">23.2</td><td class="num">940</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">21.0</td><td class="num">829</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">22.7</td><td class="num">955</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-runoff-zone-oob</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">15.8</td><td class="num">885</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">12.8</td><td class="num">663</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">13.1</td><td class="num">616</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">11</td><td class="num">115.1</td><td class="num">9,260</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="no">—</td><td class="dim">—</td><td class="num">8</td><td class="num">71.9</td><td class="num">5,528</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">52.9</td><td class="num">4,520</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">30.3</td><td class="num">905</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">17.8</td><td class="num">476</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">17.1</td><td class="num">395</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">29.3</td><td class="num">1,342</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">27.3</td><td class="num">1,026</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">21.7</td><td class="num">1,088</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-source-count</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">14.8</td><td class="num">629</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">15.5</td><td class="num">975</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">15.2</td><td class="num">794</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">29.6</td><td class="num">1,977</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">32.1</td><td class="num">2,097</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">26.9</td><td class="num">1,993</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">24.8</td><td class="num">491</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">22.7</td><td class="num">506</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">18.0</td><td class="num">344</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">20.7</td><td class="num">742</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">20.5</td><td class="num">778</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">20.1</td><td class="num">653</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-value-range</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">12.4</td><td class="num">573</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">16.3</td><td class="num">742</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">8</td><td class="num">17.4</td><td class="num">1,002</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">9</td><td class="num">62.0</td><td class="num">4,752</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">53.1</td><td class="num">3,799</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">8</td><td class="num">69.3</td><td class="num">5,530</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">17.0</td><td class="num">383</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">16.2</td><td class="num">277</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">15.6</td><td class="num">335</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">28.3</td><td class="num">904</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">8</td><td class="num">23.5</td><td class="num">826</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">29.9</td><td class="num">778</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">fault-whitespace-hyg</span> <span class="pill warn">deck-fault</span>
+      <span class="dim" style="font-size:12px">12 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">15.1</td><td class="num">640</td></tr><tr><td class="mono">claude · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">15.8</td><td class="num">964</td></tr><tr><td class="mono">claude · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">13.2</td><td class="num">665</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">18</td><td class="num">106.5</td><td class="num">6,664</td></tr><tr><td class="mono">claude · bare · t2</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">21</td><td class="num">157.3</td><td class="num">11,010</td></tr><tr><td class="mono">claude · bare · t3</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">15</td><td class="num">219.7</td><td class="num">17,713</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">19.8</td><td class="num">507</td></tr><tr><td class="mono">codex · +tool · t2</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">22.6</td><td class="num">613</td></tr><tr><td class="mono">codex · +tool · t3</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">16.0</td><td class="num">440</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">15</td><td class="num">68.5</td><td class="num">2,027</td></tr><tr><td class="mono">codex · bare · t2</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">6</td><td class="num">27.5</td><td class="num">1,171</td></tr><tr><td class="mono">codex · bare · t3</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">9</td><td class="num">41.1</td><td class="num">1,301</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">exp-forcing-range</span> <span class="pill info">expectation</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">15.3</td><td class="num">762</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">23</td><td class="num">244.2</td><td class="num">16,215</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">17.9</td><td class="num">543</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">N</td><td class="num">5</td><td class="num">21.6</td><td class="num">1,015</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">exp-inputs</span> <span class="pill info">expectation</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">22.5</td><td class="num">895</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">25</td><td class="num">165.2</td><td class="num">11,838</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">21.1</td><td class="num">355</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">4</td><td class="num">20.8</td><td class="num">541</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">exp-runoff-count</span> <span class="pill info">expectation</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">19.0</td><td class="num">727</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">42.3</td><td class="num">3,320</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">29.6</td><td class="num">726</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">27.2</td><td class="num">1,038</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">exp-sim-duration</span> <span class="pill info">expectation</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">14.6</td><td class="num">725</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">34.7</td><td class="num">2,698</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">23.8</td><td class="num">636</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">20.3</td><td class="num">611</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">exp-source-count</span> <span class="pill info">expectation</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">5</td><td class="num">14.1</td><td class="num">703</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">7</td><td class="num">40.6</td><td class="num">3,075</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">16.2</td><td class="num">511</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="ok">Y</td><td class="num">6</td><td class="num">19.6</td><td class="num">883</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-asc</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">10</td><td class="num">56.6</td><td class="num">4,386</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">8</td><td class="num">117.6</td><td class="num">10,520</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">6</td><td class="num">24.6</td><td class="num">720</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">36.7</td><td class="num">1,192</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-asc-coarse</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">8</td><td class="num">22.9</td><td class="num">1,294</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">23</td><td class="num">173.1</td><td class="num">10,255</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">6</td><td class="num">20.6</td><td class="num">694</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">5</td><td class="num">21.9</td><td class="num">849</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-asc-single</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="no">N</td><td class="dim">na</td><td class="num">10</td><td class="num">31.3</td><td class="num">1,996</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">8</td><td class="num">43.6</td><td class="num">3,277</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">6</td><td class="num">18.2</td><td class="num">630</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">8</td><td class="num">37.6</td><td class="num">1,234</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-asc-wide</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">12</td><td class="num">61.8</td><td class="num">4,605</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">7</td><td class="num">50.9</td><td class="num">3,612</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">6</td><td class="num">21.5</td><td class="num">595</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">31.4</td><td class="num">1,304</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-bin</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">8</td><td class="num">24.7</td><td class="num">1,508</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">22</td><td class="num">205.1</td><td class="num">15,170</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">4</td><td class="num">13.1</td><td class="num">357</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">5</td><td class="num">21.7</td><td class="num">915</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-bin-sidecar</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">17</td><td class="num">106.8</td><td class="num">8,236</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">12</td><td class="num">82.1</td><td class="num">6,367</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">3</td><td class="num">9.4</td><td class="num">238</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">6</td><td class="num">26.5</td><td class="num">1,069</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-frictionless</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">5</td><td class="num">15.7</td><td class="num">962</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">1</td><td class="num">456.1</td><td class="num">451</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">5</td><td class="num">16.2</td><td class="num">515</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">38.7</td><td class="num">1,569</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-initcond-bin</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">4</td><td class="num">16.6</td><td class="num">740</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">26</td><td class="num">275.9</td><td class="num">19,539</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">3</td><td class="num">11.3</td><td class="num">273</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">33.2</td><td class="num">1,585</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-manning-raster-asc</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">40.3</td><td class="num">3,170</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="no">N</td><td class="dim">na</td><td class="num">8</td><td class="num">81.6</td><td class="num">6,916</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">3</td><td class="num">13.6</td><td class="num">264</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">34.7</td><td class="num">1,314</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-runoff-zone</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">19</td><td class="num">127.7</td><td class="num">7,423</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">30</td><td class="num">226.8</td><td class="num">15,766</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">3</td><td class="num">11.6</td><td class="num">245</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">36.8</td><td class="num">1,239</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-sources-asc</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">21.3</td><td class="num">1,370</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">13</td><td class="num">124.2</td><td class="num">9,305</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">6</td><td class="num">22.2</td><td class="num">562</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">29.0</td><td class="num">1,130</td></tr></tbody></table></div>
+    </details>
+  <details class="fx"><summary>
+      <span class="name">clean-sources-bin</span> <span class="pill good">clean</span>
+      <span class="dim" style="font-size:12px">4 cells</span> <span class="chev">▶</span>
+    </summary>
+    <div class="tablewrap"><table class="drill"><thead><tr><th>cell</th><th>tool</th><th>found</th>
+      <th>stage</th><th>turns</th><th>wall s</th><th>tok out</th></tr></thead><tbody><tr><td class="mono">claude · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">8</td><td class="num">23.1</td><td class="num">1,450</td></tr><tr><td class="mono">claude · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">21</td><td class="num">139.9</td><td class="num">8,509</td></tr><tr><td class="mono">codex · +tool · t1</td><td>✓</td><td class="ok">Y</td><td class="dim">na</td><td class="num">3</td><td class="num">10.1</td><td class="num">269</td></tr><tr><td class="mono">codex · bare · t1</td><td>·</td><td class="ok">Y</td><td class="dim">na</td><td class="num">7</td><td class="num">31.7</td><td class="num">1,111</td></tr></tbody></table></div>
+    </details>
+
+  <footer class="foot">Aggregated from the blind-judged ablation CSVs
+  (<code>results-&lt;client&gt;-judged.csv</code>) over the 32-fixture corpus; overhead from
+  <code>mcp-overhead</code>. Clients run inside a <code>bwrap</code> sandbox (blanked $HOME). Agent
+  answers, gold labels, and the real TRITON run outcomes are in the companion human-judge artifact.
+  <b>AI models:</b> Claude client = <code>claude-sonnet-5</code> (<code>claude -p</code>),
+  Codex client = <code>gpt-5.6-sol</code> (<code>codex exec</code>), blind judge = <code>claude-sonnet-5</code>.</footer>
+</div>
+</body></html>

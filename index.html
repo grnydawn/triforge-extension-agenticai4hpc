@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reviewer artifacts — Works but Wrong (AgenticAI4HPC'26)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 46rem; margin: 3rem auto; padding: 0 1.25rem;
+         font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  h1 { font-size: 1.5rem; line-height: 1.3; margin-bottom: .25rem; }
+  .sub { opacity: .75; margin-top: 0; }
+  ul { list-style: none; padding: 0; }
+  li { border: 1px solid rgba(128,128,128,.35); border-radius: 8px;
+       padding: .85rem 1rem; margin: .6rem 0; }
+  a.t { font-weight: 600; text-decoration: none; }
+  a.t:hover { text-decoration: underline; }
+  .d { display: block; opacity: .8; font-size: .92rem; margin-top: .2rem; }
+  footer { margin-top: 2.5rem; font-size: .88rem; opacity: .75; }
+  code { font-size: .9em; }
+</style>
+</head>
+<body>
+<h1>Reviewer artifacts</h1>
+<p class="sub"><em>Works but Wrong: Static Diagnosis of HPC Simulation Setup Errors for AI
+Agents</em> — AgenticAI4HPC'26 (SC26 workshop).</p>
+
+<p>Each page below is self-contained: open it in any browser, no server required. Together they
+cover every per-fixture verdict, transcript, and ground-truth label behind the paper's claims.</p>
+
+<ul>
+  <li><a class="t" href="level1-tool-accuracy.html">Level 1 — Tool-level accuracy</a>
+      <span class="d">Per-fixture detection, isolation, and clean-precision over the 32-project
+      corpus. Reproduces with no AI service.</span></li>
+  <li><a class="t" href="level2-solver-oracle.html">Level 2 — Solver oracle and ground truth</a>
+      <span class="d">Every fixture crossed against the real TRITON solver's outcome, with the
+      tool's finding and the decoded setup.</span></li>
+  <li><a class="t" href="level3-ablation.html">Level 3 — The &plusmn;tool ablation</a>
+      <span class="d">Per-cell judged transcripts, cost metrics, and MCP-overhead measurements
+      across both AI clients.</span></li>
+  <li><a class="t" href="human-judge-evaluation.html">Human re-grading of the automatic judge</a>
+      <span class="d">Interactive tool for re-grading all 248 ablation runs by hand, the check
+      behind the judge-agreement figure in Threats to Validity.</span></li>
+</ul>
+
+<footer>
+Source and reproduction harness:
+<a href="https://github.com/grnydawn/triforge-extension-agenticai4hpc">github.com/grnydawn/triforge-extension-agenticai4hpc</a>.
+Code under MIT; corpus, run records, and reports under CC BY 4.0.
+</footer>
+</body>
+</html>
