@@ -213,7 +213,19 @@ export function buildScoringCsv(entries: ManifestEntry[], clients: string[], arm
   return rows.join('\n') + '\n';
 }
 
+/** Strip the repo root from a path the tool resolved, leaving a repo-relative one.
+ *
+ *  `diagnoseTritonDeck` is handed an absolute deck directory here, so findings that name a
+ *  file that does not exist (`missing-input-file`, `expectation-inputs-present`) carry an
+ *  absolute path in their evidence. That is right in an editor and wrong in a tracked file:
+ *  answer-key.md and prompts.json are committed, so regenerating them on another machine
+ *  would rewrite two of the 32 fixtures with that machine's home directory. */
+export function repoRelative(s: string, repoRoot: string): string {
+  return s.split(`${repoRoot}${path.sep}`).join('');
+}
+
 export function runMain(): void {
+  const repoRoot = path.resolve(__dirname, '../..');
   const corpus = path.join(__dirname, '../..', 'eval', 'diagnose-corpus');
   const manifest = JSON.parse(fs.readFileSync(path.join(corpus, 'manifest.json'), 'utf8'));
   const entries: ManifestEntry[] = manifest.fixtures;
@@ -228,7 +240,12 @@ export function runMain(): void {
     const findings = typeof cfgAbs === 'string'
       ? diagnoseTritonDeck(parseTritonCfg(fs.readFileSync(cfgAbs, 'utf8')), path.dirname(cfgAbs), fsProbe(), entry.expectations).findings
       : [];
-    return { dir: entry.dir, category: categoryOf(entry), prompt: promptFor(relDir, entry), expectationText: nlExpectation(entry.expectations), ...goldFor(findings, entry) };
+    const gold = goldFor(findings, entry);
+    return {
+      dir: entry.dir, category: categoryOf(entry), prompt: promptFor(relDir, entry),
+      expectationText: nlExpectation(entry.expectations),
+      ...gold, goldEvidence: repoRelative(gold.goldEvidence, repoRoot),
+    };
   });
 
   const runsDir = path.join(corpus, 'runs');
