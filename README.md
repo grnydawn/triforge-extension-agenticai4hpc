@@ -28,6 +28,18 @@ itself, see the [documentation](https://triforge-ornl.readthedocs.io/).
 The evidence is layered so a reviewer can stop at any depth. The paper's Artifact
 Description appendix carries the full check-list.
 
+**Prerequisites.** Layer 1 needs only Node (`>=20`; the paper's runs used 22.22.2) and
+`npm`, on any commodity x86-64 machine — no root, no GPU. Each deeper layer adds to that:
+
+| Layer | Also needs |
+|---|---|
+| 2 | a TRITON build (see below), `mpirun`, `jq` |
+| 3 | the `claude` and `codex` CLIs signed in, `bwrap` with unprivileged user namespaces, `jq`, network access to both AI services |
+| 4 | the same as Layer 3, plus `python3` for `mcp-overhead.py` |
+
+The recorded environment is Ubuntu 24.04.4 LTS, Node 22.22.2, Python 3.12.3, `jq` 1.7,
+bubblewrap 0.9.0. Layers 1 and 2 ran on a 4-core Intel Core i5-4250U with 7 GB RAM.
+
 **Layer 1 — no AI service, finishes in seconds.**
 
 ```bash
@@ -102,9 +114,9 @@ harness *inputs* (`prompts.json`, `answer-key.md`, `scoring-sheet.csv`) but not 
 CSVs or transcripts, so this layer produces its own. The graded run records behind the
 paper's numbers are published in the Level 3 reviewer artifact page linked below.
 
-**Layer 4 — the judge itself, audited.** Validates the grader rather than reproducing the
-result. `scripts/eval/judge-multi.sh <client> <judge>` re-grades the same saved answers
-under a stronger judge (`opus`) and one from another family (`codex`), writing to
+**Layer 4 — the judge itself, audited by a human.** Validates the grader rather than
+reproducing the result. `scripts/eval/judge-multi.sh <client> <judge>` re-grades the same
+saved answers under a stronger judge (`opus`) and one from another family (`codex`), writing to
 `runs/robustness/<judge>/` so the originals are untouched; recompute the ablation rows with
 `node scripts/eval/tabulate-ablation.mjs eval/diagnose-corpus/runs/robustness/<judge>` (the
 path is read relative to the working directory, so give it in full from the repo root), and
