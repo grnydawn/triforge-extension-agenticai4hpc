@@ -22,9 +22,25 @@ trap 'rm -rf "$STAGE"' EXIT
 echo "==> staging in $BUNDLE"
 mkdir -p "$BUNDLE"
 
+# Copy a tree from git's INDEX rather than from disk, so nothing untracked can ride
+# along. `cp -r` here would ship editor swap files, .DS_Store, and stale build output;
+# a vim swap file is the worst of those, because it holds buffer text and the operator's
+# home path in `~user/...` form, which the account-redaction pass below does not match.
+# Tracked content is also what makes the bundle reproducible from a fresh clone.
+#   copy_tracked <repo-relative-src-dir> <dest-dir>
+copy_tracked() {
+  local src="$1" dest="$2" rel
+  mkdir -p "$dest"
+  git -C "$REPO_ROOT" ls-files -z "$src" | while IFS= read -r -d '' rel; do
+    local out="$dest/${rel#"$src"/}"
+    mkdir -p "$(dirname "$out")"
+    cp "$REPO_ROOT/$rel" "$out"
+  done
+}
+
 # --- evidence -------------------------------------------------------------
 echo "--> corpus fixtures, run records, reports, reviewer artifacts"
-cp -r "$CORPUS/artifacts"                "$BUNDLE/artifacts"
+copy_tracked "eval/diagnose-corpus/artifacts" "$BUNDLE/artifacts"
 
 # Same rule as runs/ below: copy from git's index, not from disk. The corpus
 # carries per-fixture oracle.json records that the Layer-2 harness regenerates;
@@ -68,18 +84,14 @@ rm -rf "$BUNDLE"/runs/.backup-* 2>/dev/null || true
 
 # --- apparatus ------------------------------------------------------------
 echo "--> eval scripts"
-mkdir -p "$BUNDLE/scripts"
-cp -r "$REPO_ROOT/scripts/eval/." "$BUNDLE/scripts/"
+copy_tracked "scripts/eval" "$BUNDLE/scripts"
 
 # Build provenance, so a reviewer can rebuild the solver rather than trust a binary.
 # Read from the tracked triton-build/ directory, NOT from the compiled build/ tree:
 # build/ is git-ignored and absent from a clone, which silently shipped an empty
 # triton-build/ while the appendix claimed the recorded environment was included.
 echo "--> TRITON build provenance (not the binary)"
-mkdir -p "$BUNDLE/triton-build"
-if [ -d "$CORPUS/triton-build" ]; then
-  cp "$CORPUS/triton-build/." "$BUNDLE/triton-build/" -r
-fi
+copy_tracked "eval/diagnose-corpus/triton-build" "$BUNDLE/triton-build"
 N_PROV=$(find "$BUNDLE/triton-build" -type f | wc -l)
 if [ "$N_PROV" -eq 0 ]; then
   echo "!! no build provenance under eval/diagnose-corpus/triton-build/ — the bundle" >&2
@@ -94,7 +106,7 @@ echo "    $N_PROV provenance files ($(head -1 "$BUNDLE/triton-build/git-state.tx
 echo "--> paper sources"
 mkdir -p "$BUNDLE/paper"
 cp "$REPO_ROOT/paper/main.tex" "$REPO_ROOT/paper/references.bib" "$BUNDLE/paper/"
-cp -r "$REPO_ROOT/paper/figures" "$BUNDLE/paper/figures"
+copy_tracked "paper/figures" "$BUNDLE/paper/figures"
 cp "$REPO_ROOT/LICENSE.txt" "$BUNDLE/LICENSE.txt"
 cp "$REPO_ROOT/LICENSE-data.txt" "$BUNDLE/LICENSE-data.txt"
 
@@ -112,15 +124,32 @@ cp "$REPO_ROOT/LICENSE-data.txt" "$BUNDLE/LICENSE-data.txt"
 #                 matched case-SENSITIVELY, because their lowercase forms are
 #                 ordinary upstream TRITON names (triton_run.sh, triton_run.rst)
 #                 that carry no site information.
+#
+# The list itself lives OUTSIDE the repository. This script is copied into the bundle,
+# so a list embedded here — even base64-encoded, which stops grep and code search but
+# not a reader with `base64 -d` — would ship the very identifiers the redaction exists
+# to remove, into a deposit that cannot be amended. Keeping it external means the
+# deposit carries no copy at all.
+#
+# Format, one per line: `site=a|b|c` and `id=A|B`. Comments and blank lines ignored.
 echo "==> OPSEC redaction and scan"
-SITE_WORDS="$(node -e '
-  process.stdout.write(Buffer.from("b3NhbnxvdGFifGx1c3RyZXx0eXBob29u","base64").toString("utf8"));
-' 2>/dev/null || echo "")"
-ID_TOKENS="$(node -e '
-  process.stdout.write(Buffer.from("TElTX1VuaXF1ZUlkfFRSSVRPTl9SdW4=","base64").toString("utf8"));
-' 2>/dev/null || echo "")"
+TOKENS_FILE="${OPSEC_TOKENS_FILE:-$HOME/.config/triforge/opsec-tokens}"
+if [ ! -r "$TOKENS_FILE" ]; then
+  {
+    echo "!! no OPSEC token list at: $TOKENS_FILE"
+    echo "   Redaction cannot run, so this refuses to build rather than ship unredacted."
+    echo "   Create it (chmod 600) with two lines, or point OPSEC_TOKENS_FILE at it:"
+    echo "     site=<lowercase|alternation|of|site|words>"
+    echo "     id=<MixedCase|Identifiers>"
+    echo "   test/helpers/bannedTokens.ts carries the same tokens for the unit guards;"
+    echo "   keep the two in agreement."
+  } >&2
+  exit 1
+fi
+SITE_WORDS="$(sed -n 's/^site=//p' "$TOKENS_FILE" | head -1)"
+ID_TOKENS="$(sed -n 's/^id=//p' "$TOKENS_FILE" | head -1)"
 if [ -z "$SITE_WORDS" ] || [ -z "$ID_TOKENS" ]; then
-  echo "!! could not derive the token list (node missing?) — refusing to build" >&2
+  echo "!! $TOKENS_FILE is missing a site= or id= line — refusing to build" >&2
   exit 1
 fi
 
