@@ -15,6 +15,8 @@ WRAP="$HERE/scan-fixture-output.sh"
 TIMEOUT="${1:-60}"
 REPORT="$CORPUS/three-tier-report.json"
 command -v jq >/dev/null || { echo "jq required" >&2; exit 1; }
+# Fail here rather than 32 rows later: without a solver every fixture grounds as ERROR.
+[ -x "$CORPUS/build/triton.exe" ] || { echo "missing solver: $CORPUS/build/triton.exe" >&2; exit 1; }
 
 tmp="$(mktemp)"; echo '[]' > "$tmp"
 echo "grounding $(jq '.fixtures|length' "$CORPUS/manifest.json") fixtures (timeout ${TIMEOUT}s each)..."
@@ -44,11 +46,17 @@ const man=JSON.parse(fs.readFileSync(corpus+"/manifest.json","utf8")).fixtures;
 const rep=JSON.parse(fs.readFileSync(corpus+"/three-tier-report.json","utf8"));
 const groundOf=Object.fromEntries(rep.map(r=>[r.fixture,r.ground]));
 const catOf=e=> e.expect==="clean"?"clean": e.expect.startsWith("expectation-")?"expectation":"fault";
-let mislabels=0, toolOnly=0;
+let mislabels=0, toolOnly=0, ungrounded=0;
 for(const e of man){
   const cat=catOf(e), g=groundOf[e.dir]||"?";
   let verdict;
-  if(cat==="clean"){
+  // No ground truth at all. Every branch below tests g==="FAULT", so an ungrounded
+  // fixture would otherwise fall through to "ok" and a run that grounded nothing
+  // would report clean.
+  if(g==="ERROR"||g==="?"){
+    verdict = "ERROR: not grounded (the solver did not produce a verdict)";
+    ungrounded++;
+  } else if(cat==="clean"){
     verdict = (g==="FAULT") ? "MISLABEL: clean deck the solver REJECTS" : "ok (solver-consistent clean)";
     if(g==="FAULT") mislabels++;
   } else if(cat==="expectation"){
@@ -58,9 +66,10 @@ for(const e of man){
     if(g==="FAULT"){ verdict="ok (solver catches it)"; }
     else { verdict="tool-only fault (solver tolerates; static tool catches)"; toolOnly++; }
   }
-  const bad = verdict.startsWith("MISLABEL")||verdict.startsWith("FLAG");
+  const bad = verdict.startsWith("MISLABEL")||verdict.startsWith("FLAG")||verdict.startsWith("ERROR");
   console.log(`${bad?"XX":"  "} ${e.dir.padEnd(24)} cat=${cat.padEnd(11)} ground=${String(g).padEnd(16)} ${verdict}`);
 }
-console.log(`\nmislabels/flags: ${mislabels}   tool-only faults (solver-tolerant, tool-caught): ${toolOnly}`);
-process.exit(mislabels>0?1:0);
+console.log(`\nmislabels/flags: ${mislabels}   tool-only faults (solver-tolerant, tool-caught): ${toolOnly}   ungrounded: ${ungrounded}`);
+if(ungrounded) console.log(`${ungrounded} of ${man.length} fixtures were never grounded — this run proves nothing.`);
+process.exit(mislabels>0||ungrounded>0?1:0);
 ' "$CORPUS"
