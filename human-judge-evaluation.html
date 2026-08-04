@@ -86,6 +86,15 @@ pre.deck{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);bo
 .reveal .jv{margin-top:5px;font-size:12.5px;color:var(--muted)}
 .done-dot{width:8px;height:8px;border-radius:999px;background:var(--border);display:inline-block}
 .cell.judged .done-dot{background:var(--good)}
+.gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px)}
+.gate .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;max-width:560px;padding:22px 24px;box-shadow:0 18px 50px rgba(0,0,0,.18)}
+.gate h2{margin:0 0 7px;font-size:17px;font-weight:680;letter-spacing:-.01em}
+.gate>.card>p{margin:0 0 16px;color:var(--muted);font-size:13.5px}
+.gate .opt{display:block;width:100%;text-align:left;border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:11px 14px;margin-bottom:9px;cursor:pointer;font-family:var(--ui);color:var(--text)}
+.gate .opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.gate .opt b{display:block;font-size:14px;font-weight:640}
+.gate .opt span{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.gate .fine{margin:14px 0 0;font-size:12px;color:var(--muted)}
 .recbanner{margin:18px 0 0;padding:11px 14px;border:1px solid var(--info-bd);background:var(--info-soft);border-radius:10px;font-size:13px;max-width:78ch}
 .recbanner code{font-family:var(--mono);font-size:11.5px;background:var(--surface);border:1px solid var(--border);padding:1px 5px;border-radius:4px}
 .jbtn:disabled{cursor:default}
@@ -101,7 +110,7 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
     <div class="progbar"><i id="progfill"></i></div>
     <span class="progtxt" id="progtxt">0 / 248 judged</span>
     <button class="btn primary" id="exportbtn">Export CSV</button>
-    <button class="btn" id="recordedbtn" aria-pressed="true">Back to my grading</button>
+    <button class="btn" id="recordedbtn" aria-pressed="false">Show recorded expert pass</button>
     <button class="btn" id="resetbtn">Reset</button>
   </div>
   <div class="toolbar">
@@ -112,6 +121,20 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
     <span class="seg" data-dim="mode"><button data-val="all" aria-pressed="true">All</button><button data-val="unjudged" aria-pressed="false">Unjudged</button><button data-val="judged" aria-pressed="false">Judged</button></span>
   </div>
 </div></header>
+<div class="gate" id="gate"><div class="card">
+  <h2>How do you want to read this page?</h2>
+  <p>It carries 248 agent answers, each with its fixture's gold fault and how the real TRITON
+  solver behaved. A domain expert has already graded every one — that pass is what the paper's
+  245/248 judge-agreement figure is computed from. Seeing it first will anchor your own reading,
+  so the choice is yours.</p>
+  <button class="opt" data-choice="recorded"><b>Show me the recorded judgment</b>
+    <span>Opens with all 248 verdicts filled in, read-only.</span></button>
+  <button class="opt" data-choice="mine"><b>Let me grade them myself first</b>
+    <span>Opens blank. Your verdicts stay in this browser, and the recorded pass is one click
+    away whenever you want to compare.</span></button>
+  <p class="fine">Either way, the button in the header switches between the two at any time.</p>
+</div></div>
+
 <div class="wrap">
   <p class="lede">For each cell, read the <b>agent's answer</b> and decide whether it is <b>correct</b>
   given the fixture's gold fault and how the <b>real TRITON solver</b> actually behaved
@@ -124,7 +147,7 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
   (<code>claude-sonnet-5</code>) and <b>Codex</b> (<code>gpt-5.6-sol</code>);
   the LLM judge is <code>claude-sonnet-5</code>.</p>
 
-  <div id="recbanner" class="recbanner">
+  <div id="recbanner" class="recbanner hidden">
     <b>Showing the recorded expert pass</b> — the 248 judgments in
     <code>runs/human-judge-evaluation.csv</code>, the pass the paper's 245/248 human&ndash;judge
     agreement is computed from. They are read-only here, and your own grading is untouched;
@@ -137,8 +160,10 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
   (client &times; arm &times; trial). Simulation outcomes from <code>oracle-report.json</code> (real TRITON
   build, double precision); gold labels and tool findings from the diagnose-corpus manifest. Judgments
   are stored only in your browser (<code>localStorage</code>); nothing is uploaded, and a copy
-  opened from a different address starts blank. <b>Show recorded expert pass</b> displays the 248
-  judgments in <code>runs/human-judge-evaluation.csv</code> read-only, without touching your own.
+  opened from a different address starts blank. The page opens by asking whether to show the 248
+  judgments in <code>runs/human-judge-evaluation.csv</code> or to leave the grid blank for an
+  independent re-grade; that answer is remembered until you press <b>Reset</b>. The recorded pass
+  is always read-only and never touches your own.
   <b>AI models:</b> Claude client = <code>claude-sonnet-5</code>, Codex client = <code>gpt-5.6-sol</code>,
   LLM judge = <code>claude-sonnet-5</code>.</footer>
 </div>
@@ -153,8 +178,8 @@ const KEY = 'triforge-humanjudge-v1';
 const RECORDED = JSON.parse(document.getElementById('recordeddata').textContent);
 let mine = {};
 try { mine = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ mine = {}; }
-let viewRecorded = true;
-let store = RECORDED;
+let viewRecorded = false;
+let store = mine;
 const save = () => { if(viewRecorded) return; try { localStorage.setItem(KEY, JSON.stringify(mine)); } catch(e){} };
 const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const filt = { category:'all', client:'all', arm:'all', trial:'all', mode:'all' };
@@ -282,19 +307,40 @@ document.querySelectorAll('.seg').forEach(seg=>{
   }));
 });
 document.getElementById('exportbtn').addEventListener('click',exportCSV);
-document.getElementById('resetbtn').addEventListener('click',()=>{
-  if(viewRecorded){ alert('The recorded expert pass is read-only. Press "Back to my grading" first.'); return; }
-  if(confirm('Clear all your judgments? This cannot be undone.')){ mine={}; store=mine; save(); render(); }
-});
 const recbtn = document.getElementById('recordedbtn');
-recbtn.addEventListener('click',()=>{
-  viewRecorded = !viewRecorded;
+const gate = document.getElementById('gate');
+
+// 'recorded' shows the pass on record; 'mine' opens blank for an independent
+// re-grade. Remembered per browser so the question is asked once, and cleared
+// by Reset, which is the way back to it.
+const LKEY = KEY + '-landing';
+function applyChoice(c, persist){
+  viewRecorded = (c === 'recorded');
   store = viewRecorded ? RECORDED : mine;
   recbtn.setAttribute('aria-pressed', String(viewRecorded));
   recbtn.textContent = viewRecorded ? 'Back to my grading' : 'Show recorded expert pass';
   document.getElementById('recbanner').classList.toggle('hidden', !viewRecorded);
+  gate.classList.add('hidden');
+  if(persist){ try { localStorage.setItem(LKEY, c); } catch(e){} }
   render();
+}
+
+document.getElementById('resetbtn').addEventListener('click',()=>{
+  if(viewRecorded){ alert('The recorded expert pass is read-only. Press "Back to my grading" first.'); return; }
+  if(confirm('Clear your judgments and return to the opening choice? This cannot be undone.')){
+    mine={}; store=mine; save();
+    try { localStorage.removeItem(LKEY); } catch(e){}
+    gate.classList.remove('hidden');
+    render();
+  }
 });
-render();
+gate.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>applyChoice(b.dataset.choice, true)));
+recbtn.addEventListener('click',()=>applyChoice(viewRecorded ? 'mine' : 'recorded', true));
+
+let landing = null;
+try { landing = localStorage.getItem(LKEY); } catch(e){}
+// Someone who has already graded in this browser has answered the question.
+if(landing !== 'recorded' && landing !== 'mine') landing = Object.keys(mine).length ? 'mine' : null;
+if(landing) applyChoice(landing, false); else render();
 </script>
 </body></html>
