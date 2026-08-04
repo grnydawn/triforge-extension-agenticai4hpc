@@ -2,7 +2,9 @@
 # Multi-judge robustness re-grade. Same BLIND rubrics as scripts/eval/judge-results.sh;
 # the ONLY thing that changes is the judge model. Writes judged CSVs + .judge sidecars into
 # a per-judge output dir (runs/robustness/<judge>/) so the sonnet originals are never touched.
-# Then recompute the ablation rows with:  node scripts/eval/tabulate-ablation.mjs runs/robustness/<judge>
+# Then recompute the ablation rows with, from the repo root (tabulate-ablation.mjs reads the
+# path relative to the working directory, so it needs the full one):
+#   node scripts/eval/tabulate-ablation.mjs eval/diagnose-corpus/runs/robustness/<judge>
 #
 # Answers the reviewer question "would a stronger judge change the result?": re-grade with Opus
 # (stronger, same family as the primary judge) and with codex/gpt-5.6-sol (a different family, so

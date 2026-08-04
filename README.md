@@ -63,8 +63,55 @@ A real run of `three-tier-corpus.sh` prints `mislabels/flags: 0` and `ungrounded
 exits 0, and reproduces the committed `three-tier-report.json` exactly.
 
 **Layer 3 — the with-versus-without comparison.** Needs both AI clients and network
-access to their services, and is the only layer that costs money:
-`scripts/eval/run-study.sh`.
+access to their services, and is the only layer that costs money — 248 agent runs.
+
+Prerequisites: the `claude` and `codex` CLIs installed and signed in, plus `jq`, `bwrap`,
+`node`, and `npx`. Each cell runs headless inside a bubblewrap mount namespace that blanks
+`$HOME` except the agent toolchain and its auth, so the agent cannot reach the diagnosis
+source, the manifest, or sibling fixtures — that needs unprivileged user namespaces, and
+the preflight prints the `sysctl` line if they are turned off.
+
+Smoke the whole pipeline on one fixture before committing to the full run:
+
+```bash
+scripts/eval/run-study.sh fault-value-range
+scripts/eval/run-study.sh                    # all 32 fixtures, both clients, both arms
+```
+
+It builds the MCP server, regenerates `runs/prompts.json`, runs each client × arm, grades
+every transcript with the blind judge, and prints the Arm A vs Arm C summary per client.
+It is resumable: a cell whose transcript already exists is skipped, so re-invoking
+continues rather than restarting, and interrupting it is safe.
+
+| Variable | Default | |
+|---|---|---|
+| `CLIENTS` | `claude codex` | space-separated clients to run |
+| `MODEL_CLAUDE` | `sonnet` | |
+| `MODEL_CODEX` | `gpt-5.6-sol` | |
+| `JUDGE_MODEL` | `sonnet` | the blind judge |
+| `DECK_TRIALS` | `3` | deck-fault trials per cell |
+| `SKIP_BUILD` | unset | set to `1` to skip `npm run mcp:build` |
+
+Results land in `eval/diagnose-corpus/runs/results-<client>-judged.csv`, with the
+transcripts under `runs/transcripts/`. The judge writes a one-line reason per run, so
+disagreements can be spot-checked against the transcript and overridden in the CSV.
+`scripts/eval/mcp-overhead.py` measures the tool's communication cost separately.
+
+Those outputs are deliberately untracked (see `runs/.gitignore`) — a clone carries the
+harness *inputs* (`prompts.json`, `answer-key.md`, `scoring-sheet.csv`) but not the graded
+CSVs or transcripts, so this layer produces its own. The graded run records behind the
+paper's numbers are published in the Level 3 reviewer artifact page linked below.
+
+**Layer 4 — the judge itself, audited.** Validates the grader rather than reproducing the
+result. `scripts/eval/judge-multi.sh <client> <judge>` re-grades the same saved answers
+under a stronger judge (`opus`) and one from another family (`codex`), writing to
+`runs/robustness/<judge>/` so the originals are untouched; recompute the ablation rows with
+`node scripts/eval/tabulate-ablation.mjs eval/diagnose-corpus/runs/robustness/<judge>` (the
+path is read relative to the working directory, so give it in full from the repo root), and
+see `runs/robustness/README.md` for the finding, which is committed — the per-judge CSVs it
+tabulates are not, so re-deriving the table means re-running the re-grade. The human pass is a record rather than a
+script — `runs/human-judge-evaluation.csv`, and the browsable page above to re-grade by
+hand.
 
 ## Reviewer artifacts
 
