@@ -39,13 +39,28 @@ npx tsx scripts/eval/diagnose-report.ts
 Prints *detection 100% · isolation 100% · clean precision 100%* and rewrites
 `eval/diagnose-corpus/report.json`; compare it against the committed copy.
 
-**Layer 2 — adds the real solver, still no AI service.** Build TRITON from the upstream
-commit recorded in the artifact check-list, then:
+**Layer 2 — adds the real solver, still no AI service.** Build TRITON as the artifact
+check-list describes (`eval/diagnose-corpus/triton-build/` carries the CMake settings and
+the recorded submodule pins), then:
 
 ```bash
+export TRITON_EXE=/path/to/your/triton.exe
 scripts/eval/run-triton-oracle-corpus.sh
 scripts/eval/three-tier-corpus.sh
 ```
+
+The solver is not shipped — a machine-specific binary is not evidence, and
+`eval/diagnose-corpus/build/` is git-ignored. Both scripts find it in this order:
+`$TRITON_EXE`, a path remembered from a previous run, then
+`eval/diagnose-corpus/build/triton.exe`. If none of those hold an executable and you are
+at a terminal, they ask where TRITON is and remember the answer in
+`eval/diagnose-corpus/.triton-exe`; with no terminal (CI) they fail and name these
+options. They never run without a solver: a failed launch is indistinguishable from a
+deck the solver rejects at load time, so an unguarded run would report all 32 fixtures
+as `startup-reject` in about two seconds and overwrite `oracle-report.json` with it.
+
+A real run of `three-tier-corpus.sh` prints `mislabels/flags: 0` and `ungrounded: 0` and
+exits 0, and reproduces the committed `three-tier-report.json` exactly.
 
 **Layer 3 — the with-versus-without comparison.** Needs both AI clients and network
 access to their services, and is the only layer that costs money:

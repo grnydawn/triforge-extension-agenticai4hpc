@@ -876,8 +876,9 @@ Government purposes.
 \emph{Program:} \texttt{diagnose\_project}, a static setup-file checker for the TRITON flood
 solver, delivered as an MCP server and a VS~Code language-model tool.
 \emph{Build:} TypeScript via \texttt{npm ci}; the solver from TRITON upstream commit
-\texttt{267ebc25f} (clean tree) with CMake~3.28 and \texttt{mpic++}~13.3 (GCC), Kokkos
-\emph{Serial} backend, CUDA disabled---the recorded environment ships with the bundle.
+\texttt{d18ed5b7a} (tag \texttt{2.1.1}, clean tree) with CMake~3.28 and
+\texttt{mpic++}~13.3 (GCC), Kokkos \emph{Serial} backend (submodule pinned at
+\texttt{5.1.1}), CUDA disabled---the recorded environment ships with the bundle.
 \emph{Data set:} 32 TRITON projects (20 faulted, 12 clean), 828\,KB, plus the graded run
 records and the four reviewer artifact pages, which carry the answer, gold label, and
 verdict for every one of the 248 ablation runs.

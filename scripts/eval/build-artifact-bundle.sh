@@ -86,7 +86,9 @@ if [ "$N_PROV" -eq 0 ]; then
   echo "!! would claim a recorded environment it does not carry. Refusing to build." >&2
   exit 1
 fi
-echo "    $N_PROV provenance files (upstream commit $(cat "$BUNDLE/triton-build/git-state.txt" 2>/dev/null || echo '?'))"
+# head -1: git-state.txt records the submodule pins and the verification note below the
+# first line, and this is a one-line summary.
+echo "    $N_PROV provenance files ($(head -1 "$BUNDLE/triton-build/git-state.txt" 2>/dev/null || echo 'upstream commit ?'))"
 
 # --- paper ----------------------------------------------------------------
 echo "--> paper sources"
