@@ -130,8 +130,8 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
   <button class="opt" data-choice="recorded"><b>Show me the recorded judgment</b>
     <span>Opens with all 248 verdicts filled in, read-only.</span></button>
   <button class="opt" data-choice="mine"><b>Let me grade them myself first</b>
-    <span>Opens blank. Your verdicts stay in this browser, and the recorded pass is one click
-    away whenever you want to compare.</span></button>
+    <span>Opens blank on a first visit, or with whatever you have already graded in this
+    browser. The recorded pass is one click away whenever you want to compare.</span></button>
   <p class="fine">Either way, the button in the header switches between the two at any time.</p>
 </div></div>
 
@@ -162,8 +162,9 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
   are stored only in your browser (<code>localStorage</code>); nothing is uploaded, and a copy
   opened from a different address starts blank. The page opens by asking whether to show the 248
   judgments in <code>runs/human-judge-evaluation.csv</code> or to leave the grid blank for an
-  independent re-grade; that answer is remembered until you press <b>Reset</b>. The recorded pass
-  is always read-only and never touches your own.
+  independent re-grade, and it asks every time rather than remembering the answer, so no reader
+  inherits an earlier one's choice. The recorded pass is always read-only and never touches your
+  own; your judgments survive the question and are cleared only by <b>Reset</b>.
   <b>AI models:</b> Claude client = <code>claude-sonnet-5</code>, Codex client = <code>gpt-5.6-sol</code>,
   LLM judge = <code>claude-sonnet-5</code>.</footer>
 </div>
@@ -311,17 +312,17 @@ const recbtn = document.getElementById('recordedbtn');
 const gate = document.getElementById('gate');
 
 // 'recorded' shows the pass on record; 'mine' opens blank for an independent
-// re-grade. Remembered per browser so the question is asked once, and cleared
-// by Reset, which is the way back to it.
-const LKEY = KEY + '-landing';
-function applyChoice(c, persist){
+// re-grade. Asked on every load and deliberately not remembered: a stored answer
+// is scoped to the origin rather than the page, so one reader's choice would
+// silently decide the question for the next one -- and being asked is the point.
+// Only the choice is re-asked; the judgments themselves still persist.
+function applyChoice(c){
   viewRecorded = (c === 'recorded');
   store = viewRecorded ? RECORDED : mine;
   recbtn.setAttribute('aria-pressed', String(viewRecorded));
   recbtn.textContent = viewRecorded ? 'Back to my grading' : 'Show recorded expert pass';
   document.getElementById('recbanner').classList.toggle('hidden', !viewRecorded);
   gate.classList.add('hidden');
-  if(persist){ try { localStorage.setItem(LKEY, c); } catch(e){} }
   render();
 }
 
@@ -329,18 +330,15 @@ document.getElementById('resetbtn').addEventListener('click',()=>{
   if(viewRecorded){ alert('The recorded expert pass is read-only. Press "Back to my grading" first.'); return; }
   if(confirm('Clear your judgments and return to the opening choice? This cannot be undone.')){
     mine={}; store=mine; save();
-    try { localStorage.removeItem(LKEY); } catch(e){}
     gate.classList.remove('hidden');
     render();
   }
 });
-gate.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>applyChoice(b.dataset.choice, true)));
-recbtn.addEventListener('click',()=>applyChoice(viewRecorded ? 'mine' : 'recorded', true));
+gate.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>applyChoice(b.dataset.choice)));
+recbtn.addEventListener('click',()=>applyChoice(viewRecorded ? 'mine' : 'recorded'));
 
-let landing = null;
-try { landing = localStorage.getItem(LKEY); } catch(e){}
-// Someone who has already graded in this browser has answered the question.
-if(landing !== 'recorded' && landing !== 'mine') landing = Object.keys(mine).length ? 'mine' : null;
-if(landing) applyChoice(landing, false); else render();
+// The gate carries no `hidden` class in the markup, so it is up before first
+// paint and nothing below decides otherwise. render() fills the grid behind it.
+render();
 </script>
 </body></html>
