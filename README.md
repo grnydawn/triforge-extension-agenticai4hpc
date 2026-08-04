@@ -65,7 +65,8 @@ without cloning:
 - [`level3-ablation.html`](https://grnydawn.github.io/triforge-extension-agenticai4hpc/level3-ablation.html)
   — the ±tool agent-level ablation
 - [`human-judge-evaluation.html`](https://grnydawn.github.io/triforge-extension-agenticai4hpc/human-judge-evaluation.html)
-  — the expert's judgment on all 248 runs, and a tool for re-grading them by hand
+  — asks whether to show the expert's judgment on all 248 runs or start blank, then lets you
+  re-grade them by hand
 
 ## Artifact bundle
 
