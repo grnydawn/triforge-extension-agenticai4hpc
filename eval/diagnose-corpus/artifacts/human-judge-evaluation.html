@@ -101,7 +101,7 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
     <div class="progbar"><i id="progfill"></i></div>
     <span class="progtxt" id="progtxt">0 / 248 judged</span>
     <button class="btn primary" id="exportbtn">Export CSV</button>
-    <button class="btn" id="recordedbtn" aria-pressed="false">Show recorded expert pass</button>
+    <button class="btn" id="recordedbtn" aria-pressed="true">Back to my grading</button>
     <button class="btn" id="resetbtn">Reset</button>
   </div>
   <div class="toolbar">
@@ -124,11 +124,11 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
   (<code>claude-sonnet-5</code>) and <b>Codex</b> (<code>gpt-5.6-sol</code>);
   the LLM judge is <code>claude-sonnet-5</code>.</p>
 
-  <div id="recbanner" class="recbanner hidden">
+  <div id="recbanner" class="recbanner">
     <b>Showing the recorded expert pass</b> — the 248 judgments in
     <code>runs/human-judge-evaluation.csv</code>, the pass the paper's 245/248 human&ndash;judge
     agreement is computed from. They are read-only here, and your own grading is untouched;
-    press <b>Back to my grading</b> to return to it.
+    press <b>Back to my grading</b> to grade the 248 runs yourself instead.
   </div>
 
   <div id="app"></div>
@@ -153,8 +153,8 @@ const KEY = 'triforge-humanjudge-v1';
 const RECORDED = JSON.parse(document.getElementById('recordeddata').textContent);
 let mine = {};
 try { mine = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ mine = {}; }
-let viewRecorded = false;
-let store = mine;
+let viewRecorded = true;
+let store = RECORDED;
 const save = () => { if(viewRecorded) return; try { localStorage.setItem(KEY, JSON.stringify(mine)); } catch(e){} };
 const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const filt = { category:'all', client:'all', arm:'all', trial:'all', mode:'all' };
