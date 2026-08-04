@@ -56,19 +56,37 @@ else                                                   TIER1="startup-reject"
 fi
 
 # --- Tier-2: output-sanity scan (only meaningful when it completed) ---
-TIER2="n/a"; TIER2_JSON='null'
+TIER2="n/a"; TIER2_JSON='null'; TIER2_ERR=''
 if [ "$TIER1" = "ran-to-completion" ]; then
   # scan the whole run dir: TRITON writes output/{asc,bin}/<var>_<id>.out with an
   # outfile_pattern, or a bare .out at the run root without one.
-  TIER2_RAW="$(cd "$REPO" && npx ts-node scripts/eval/output-sanity.ts "$KEEP" 2>/dev/null)"
-  case $? in 0) TIER2="sane";; 1) TIER2="review";; 2) TIER2="insane";; *) TIER2="error";; esac
+  TIER2_RAW="$(cd "$REPO" && npx ts-node scripts/eval/output-sanity.ts "$KEEP" 2>"$KEEP/tier2.stderr")"
+  TIER2_CODE=$?
   # compact to one line so the combined verdict below stays single-line (parseable by callers)
-  # jq exits 0 on empty input and prints nothing, so the `||` never fires and the printf
-  # below would emit `"tier2Detail":` with no value — a malformed line that the caller
+  # jq exits 0 on empty input and prints nothing, so a bare `||` fallback never fires and the
+  # printf below would emit `"tier2Detail":` with no value — a malformed line that the caller
   # can only read as "no verdict". Check the result is non-empty, not just that jq passed.
-  TIER2_JSON="$(echo "$TIER2_RAW" | jq -c . 2>/dev/null)"
+  TIER2_JSON="$(printf '%s' "$TIER2_RAW" | jq -c . 2>/dev/null)"
   [ -n "$TIER2_JSON" ] || TIER2_JSON='null'
+  # Take the verdict from the scan's own JSON, not from its exit code. output-sanity.ts
+  # exits 1 for "review", and npx/ts-node exit 1 for their own reasons (dependency not
+  # installed, compile error) — reading the code alone files a scan that never ran as a
+  # scan that asked for a human. A verdict here means it ran; no verdict means it did not.
+  TIER2="$(printf '%s' "$TIER2_JSON" | jq -r '.verdict // empty' 2>/dev/null)"
+  case "$TIER2" in
+    sane|review|insane) ;;
+    *) TIER2="error"
+       # Node leads with a source excerpt and trails with a stack, so neither the head nor
+       # the tail of stderr is the message. Take the first Error: line, which is.
+       TIER2_ERR="$(grep -m1 -E '^[A-Za-z.]*Error' "$KEEP/tier2.stderr" 2>/dev/null)"
+       [ -n "$TIER2_ERR" ] || TIER2_ERR="$(tr '\n' ' ' <"$KEEP/tier2.stderr" 2>/dev/null)"
+       [ -n "$TIER2_ERR" ] || TIER2_ERR="output-sanity.ts exited $TIER2_CODE without a verdict"
+       TIER2_ERR="$(printf '%s' "$TIER2_ERR" | head -c 200)"
+       ;;
+  esac
 fi
+if [ -n "$TIER2_ERR" ]; then TIER2_ERR_JSON="$(printf '%s' "$TIER2_ERR" | jq -Rs . 2>/dev/null || echo '""')"
+else TIER2_ERR_JSON='null'; fi
 
 # --- combine into the three-tier ground-truth label ---
 case "$TIER1" in
@@ -78,9 +96,13 @@ case "$TIER1" in
       insane)  GROUND="FAULT" ;;                          # silent corruption
       review)  GROUND="REVIEW" ;;                         # -> Tier-3 human
       sane)    GROUND="CANDIDATE-CLEAN" ;;                # -> Tier-3 sign-off
-      *)       GROUND="REVIEW" ;;
+      # The scan never ran, so this fixture has no Tier-2 evidence either way. That is
+      # not a question for Tier-3, it is a broken run: ground it as ERROR so the caller
+      # counts it ungrounded rather than filing it behind a human review that would
+      # never arrive.
+      *)       GROUND="ERROR" ;;
     esac ;;
 esac
 
-printf '{"fixture":"%s","tier1":"%s","tier2":"%s","exitCode":%d,"ground":"%s","runDir":"%s","tier2Detail":%s}\n' \
-  "$NAME" "$TIER1" "$TIER2" "$CODE" "$GROUND" "$KEEP" "$TIER2_JSON"
+printf '{"fixture":"%s","tier1":"%s","tier2":"%s","exitCode":%d,"ground":"%s","runDir":"%s","tier2Error":%s,"tier2Detail":%s}\n' \
+  "$NAME" "$TIER1" "$TIER2" "$CODE" "$GROUND" "$KEEP" "$TIER2_ERR_JSON" "$TIER2_JSON"

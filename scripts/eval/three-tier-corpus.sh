@@ -33,6 +33,9 @@ for dir in $(jq -r '.fixtures[].dir' "$CORPUS/manifest.json"); do
   [ -n "$run" ] && case "$run" in /tmp/*) rm -rf "$run";; esac   # clean the preserved run dir
   t1="$(echo "$line" | jq -r '.tier1')"; t2="$(echo "$line" | jq -r '.tier2')"; g="$(echo "$line" | jq -r '.ground')"
   printf '  %-24s tier1=%-16s tier2=%-6s -> %s\n' "$dir" "$t1" "$t2" "$g"
+  # A Tier-2 that never ran is a broken run, not a verdict — say why, since the wrapper's
+  # stderr is suppressed above and the reason would otherwise be lost with the run dir.
+  [ "$t2" = "error" ] && echo "      tier-2 scan did not run: $(echo "$line" | jq -r '.tier2Error // "reason unavailable"')"
   jq --argjson e "$(echo "$line" | jq -c '{fixture,tier1,tier2,ground}')" '. + [$e]' "$tmp" > "$tmp.2" && mv "$tmp.2" "$tmp"
 done
 
@@ -55,7 +58,7 @@ for(const e of man){
   // fixture would otherwise fall through to "ok" and a run that grounded nothing
   // would report clean.
   if(g==="ERROR"||g==="?"){
-    verdict = "ERROR: not grounded (the solver did not produce a verdict)";
+    verdict = "ERROR: not grounded (no Tier-1 or Tier-2 verdict)";
     ungrounded++;
   } else if(cat==="clean"){
     verdict = (g==="FAULT") ? "MISLABEL: clean deck the solver REJECTS" : "ok (solver-consistent clean)";
