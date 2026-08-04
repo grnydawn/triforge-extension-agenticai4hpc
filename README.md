@@ -54,12 +54,18 @@ access to their services, and is the only layer that costs money:
 ## Reviewer artifacts
 
 `eval/diagnose-corpus/artifacts/` holds four self-contained pages — open any of them in a
-browser, no server required:
+browser, no server required. The same four are published at
+<https://grnydawn.github.io/triforge-extension-agenticai4hpc/>, so a reviewer can read them
+without cloning:
 
-- `level1-tool-accuracy.html` — per-fixture tool accuracy over the 32-project corpus
-- `level2-solver-oracle.html` — every fixture crossed against the real solver's outcome
-- `level3-ablation.html` — the ±tool agent-level ablation
-- `human-judge-evaluation.html` — an interactive tool for re-grading all 248 runs by hand
+- [`level1-tool-accuracy.html`](https://grnydawn.github.io/triforge-extension-agenticai4hpc/level1-tool-accuracy.html)
+  — per-fixture tool accuracy over the 32-project corpus
+- [`level2-solver-oracle.html`](https://grnydawn.github.io/triforge-extension-agenticai4hpc/level2-solver-oracle.html)
+  — every fixture crossed against the real solver's outcome
+- [`level3-ablation.html`](https://grnydawn.github.io/triforge-extension-agenticai4hpc/level3-ablation.html)
+  — the ±tool agent-level ablation
+- [`human-judge-evaluation.html`](https://grnydawn.github.io/triforge-extension-agenticai4hpc/human-judge-evaluation.html)
+  — an interactive tool for re-grading all 248 runs by hand
 
 ## Artifact bundle
 
