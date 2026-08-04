@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2480" height="860" viewBox="0 0 1240 430" font-family="Arial, 'Liberation Sans', Helvetica, sans-serif">
+  <defs>
+    <marker id="fArrDark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#404040"/>
+    </marker>
+    <marker id="fArrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2E75B6"/>
+    </marker>
+    <marker id="fArrGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#548235"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1240" height="430" fill="#ffffff"/>
+
+  <!-- title -->
+  <text x="620" y="34" text-anchor="middle" font-size="30" font-weight="700" fill="#3A6489">What the blind judge grades&#8212;and what it ignores</text>
+
+  <!-- ============ LEFT: one run ============ -->
+  <rect x="40" y="96" width="250" height="86" rx="10" fill="#2E75B6"/>
+  <text x="165" y="132" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">AI agent</text>
+  <text x="165" y="162" text-anchor="middle" font-size="21" fill="#dCe6f4">Claude / Codex</text>
+
+  <rect x="55" y="252" width="220" height="76" rx="10" fill="#DCE6F4"/>
+  <text x="165" y="285" text-anchor="middle" font-size="21" font-weight="700" fill="#1F4E79">diagnose_project</text>
+  <text x="165" y="311" text-anchor="middle" font-size="19" font-style="italic" fill="#1F4E79">+tool arm only</text>
+
+  <!-- dashed: tool -> agent (reply, NOT graded) = badge (i) -->
+  <line x1="165" y1="252" x2="165" y2="188" stroke="#404040" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#fArrDark)"/>
+  <text x="180" y="216" text-anchor="start" font-size="19" font-style="italic" fill="#404040">reply</text>
+  <circle cx="122" cy="216" r="17" fill="#1F4E79"/>
+  <text x="122" y="223" text-anchor="middle" font-size="19" font-weight="700" fill="#ffffff">i</text>
+
+  <!-- agent -> judge : the graded object -->
+  <line x1="290" y1="139" x2="432" y2="178" stroke="#2E75B6" stroke-width="3.5" marker-end="url(#fArrBlue)"/>
+  <text x="368" y="108" text-anchor="middle" font-size="20" font-weight="700" fill="#2E75B6">final answer</text>
+  <text x="368" y="130" text-anchor="middle" font-size="19" font-style="italic" fill="#2E75B6">(the graded object)</text>
+
+  <!-- ============ TOP CENTER: question set = badge (iii) ============ -->
+  <rect x="455" y="58" width="300" height="76" rx="10" fill="#DCE6F4"/>
+  <text x="605" y="86" text-anchor="middle" font-size="21" font-weight="700" fill="#1F4E79">Question set</text>
+  <text x="605" y="110" text-anchor="middle" font-size="19" fill="#1F4E79">clean set  |  faulty set</text>
+  <text x="605" y="128" text-anchor="middle" font-size="17" font-style="italic" fill="#1F4E79">each in its natural direction</text>
+  <line x1="605" y1="134" x2="605" y2="180" stroke="#404040" stroke-width="2.5" marker-end="url(#fArrDark)"/>
+  <circle cx="775" cy="96" r="17" fill="#1F4E79"/>
+  <text x="775" y="103" text-anchor="middle" font-size="17" font-weight="700" fill="#ffffff">iii</text>
+
+  <!-- ============ CENTER: blind judge ============ -->
+  <rect x="455" y="180" width="300" height="150" rx="12" fill="#1F4E79"/>
+  <text x="605" y="216" text-anchor="middle" font-size="26" font-weight="700" fill="#ffffff">Blind judge</text>
+  <text x="605" y="242" text-anchor="middle" font-size="19" fill="#cfe0f0">claude-sonnet-5</text>
+  <line x1="483" y1="258" x2="727" y2="258" stroke="#3a6fa5" stroke-width="1.5"/>
+  <text x="605" y="284" text-anchor="middle" font-size="19" fill="#ffffff">cannot see:  arm &#183; client &#183; tool?</text>
+  <text x="605" y="308" text-anchor="middle" font-size="19" font-style="italic" fill="#cfe0f0">bias cancels in</text>
+  <text x="605" y="326" text-anchor="middle" font-size="20" font-weight="700" fill="#ffffff">(+tool) &#8722; (bare)</text>
+
+  <!-- ============ BOTTOM CENTER: solver -> gold label = badge (ii) ============ -->
+  <rect x="455" y="358" width="300" height="60" rx="10" fill="#548235"/>
+  <text x="605" y="382" text-anchor="middle" font-size="21" font-weight="700" fill="#ffffff">Real TRITON solver</text>
+  <text x="605" y="406" text-anchor="middle" font-size="19" fill="#ffffff">confirms the fixed gold label</text>
+  <line x1="605" y1="358" x2="605" y2="334" stroke="#548235" stroke-width="2.5" marker-end="url(#fArrGreen)"/>
+  <circle cx="775" cy="388" r="17" fill="#548235"/>
+  <text x="775" y="395" text-anchor="middle" font-size="19" font-weight="700" fill="#ffffff">ii</text>
+
+  <!-- ============ RIGHT: verdict card ============ -->
+  <line x1="755" y1="255" x2="838" y2="255" stroke="#2E75B6" stroke-width="3.5" marker-end="url(#fArrBlue)"/>
+  <rect x="842" y="180" width="330" height="150" rx="12" fill="#ffffff" stroke="#1F4E79" stroke-width="2.5"/>
+  <text x="1007" y="216" text-anchor="middle" font-size="23" font-weight="700" fill="#1F4E79">Binary verdict</text>
+  <text x="1007" y="250" text-anchor="middle" font-size="20" fill="#1F4E79">found_fault:  yes / no</text>
+  <text x="1007" y="278" text-anchor="middle" font-size="20" fill="#1F4E79">right_stage:  yes / no</text>
+  <text x="1007" y="298" text-anchor="middle" font-size="16" font-style="italic" fill="#666">(faulty projects only)</text>
+  <text x="1007" y="322" text-anchor="middle" font-size="17" font-style="italic" fill="#666">matched on meaning, not wording</text>
+</svg>

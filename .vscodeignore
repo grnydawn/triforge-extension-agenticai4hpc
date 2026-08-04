@@ -1,0 +1,62 @@
+.vscode/**
+.vscode-test/**
+src/**
+.gitignore
+.git/**
+.gitmodules
+
+webpack.webview.config.js
+webpack.config.js
+tsconfig.json
+**/*.map
+out/**
+*.ts
+*.vsix
+node_modules/**
+doc/**
+.DS_Store
+media/triforge.png
+
+.claude/**
+debug_inputgen.*
+Makefile
+docs/**
+test/**
+tsconfig.test.json
+eslint.config.js
+.mocharc.json
+.github/**
+CODE_REVIEW.md
+
+# Upstream Triton simulator source, vendored as a git submodule for golden-run
+# reference / fixture harvesting. Dev-only — the extension shells out to the
+# user's own triton binary and never ships this ~2k-file C++ tree.
+externals/**
+TESTING.md
+PUBLISHING.md
+scripts/**
+
+# Docs toolchain + build venv (the docs build creates a ~140 MB virtualenv here).
+.venv-docs/**
+.venv/**
+.readthedocs.yaml
+
+# Agentic MCP server: dev tooling, not part of the shipped extension. The MCP
+# bundle + its call transcripts must never ride along in the VSIX.
+dist/mcp/**
+tsconfig.mcp.json
+*.jsonl
+**/*.jsonl
+triforge-mcp-transcript.jsonl
+
+# Paper evaluation corpus + study run outputs (fixtures, scorer, transcripts) — dev/paper
+# material, never part of the shipped extension.
+eval/**
+scripts/eval/**
+
+# gstack skill workspace (browse/QA tooling) — dev-only, never packaged.
+.gstack/**
+
+# Project-scoped MCP client config (for Claude Code / Codex) — repo config, not
+# extension runtime.
+.mcp.json

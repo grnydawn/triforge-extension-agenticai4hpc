@@ -1,0 +1,268 @@
+{
+  "rows": [
+    {
+      "dir": "fault-placeholder",
+      "format": "BIN",
+      "fault": "unsubstituted placeholder in runoff_filename",
+      "expect": "unsubstituted-placeholder",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-missing-input",
+      "format": "BIN",
+      "fault": "referenced DEM absent",
+      "expect": "missing-input-file",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-runoff-count",
+      "format": "BIN",
+      "fault": "num_runoffs != runoff hydrograph columns",
+      "expect": "runoff-column-mismatch",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-source-count",
+      "format": "BIN",
+      "fault": "num_sources != src rows / point columns",
+      "expect": "source-count-mismatch",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-runoff-zone-oob",
+      "format": "BIN",
+      "fault": "1-based runoff map, max zone id == num_runoffs (index OOB)",
+      "expect": "runoff-map-zone-range",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-extbc-count",
+      "format": "BIN",
+      "fault": "num_extbc != extbc file entry count",
+      "expect": "extbc-count-mismatch",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-grid-bin",
+      "format": "BIN",
+      "fault": "runoff_map byte-size != DEM",
+      "expect": "grid-size-mismatch",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-bin-noheader",
+      "format": "BIN",
+      "fault": "BIN runoff map written headerless (TRITON needs a 2-value [nrows,ncols] header)",
+      "expect": "bin-raster-header",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-grid-asc",
+      "format": "ASC",
+      "fault": "runoff_map token count != DEM cells",
+      "expect": "grid-size-mismatch",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-grid-sidecar",
+      "format": "BIN",
+      "fault": "runoff .asc sidecar grid differs from DEM",
+      "expect": "grid-size-mismatch",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-degenerate",
+      "format": "BIN",
+      "fault": "runoff hydrograph all zeros",
+      "expect": "degenerate-forcing",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-coverage",
+      "format": "BIN",
+      "fault": "hydrograph ends before sim_duration",
+      "expect": "hydrograph-coverage",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "fault-value-range",
+      "format": "BIN",
+      "fault": "courant out of range",
+      "expect": "value-range-sanity",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "exp-inputs",
+      "format": "BIN",
+      "fault": "a user-expected input is absent",
+      "expect": "expectation-inputs-present",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "exp-runoff-count",
+      "format": "BIN",
+      "fault": "num_runoffs != expected",
+      "expect": "expectation-runoff-count",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "exp-source-count",
+      "format": "BIN",
+      "fault": "num_sources != expected",
+      "expect": "expectation-source-count",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "exp-sim-duration",
+      "format": "BIN",
+      "fault": "sim_duration != expected",
+      "expect": "expectation-sim-duration",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "exp-forcing-range",
+      "format": "BIN",
+      "fault": "forcing outside expected range",
+      "expect": "expectation-forcing-range",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "clean-bin",
+      "format": "BIN",
+      "fault": "none",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "clean-runoff-zone",
+      "format": "BIN",
+      "fault": "none (valid 0-based 3-zone runoff map)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "clean-asc",
+      "format": "ASC",
+      "fault": "none",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "clean-frictionless",
+      "format": "BIN",
+      "fault": "none (frictionless const_mann=0)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "fault-whitespace-hyg",
+      "format": "BIN",
+      "fault": "runoff hydrograph is whitespace-delimited (TRITON parses commas only)",
+      "expect": "hydrograph-delimiter",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "clean-bin-sidecar",
+      "format": "BIN",
+      "fault": "none (dtype-mixed f64 DEM / int32 runoff, same 32x32 grid; .asc sidecars mirror the .bin)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "clean-asc-single",
+      "format": "ASC",
+      "fault": "none (single runoff zone; num_runoffs=1)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "clean-asc-coarse",
+      "format": "ASC",
+      "fault": "none (coarse 30 m cells, 2 zones, 2 h sim)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "clean-asc-wide",
+      "format": "ASC",
+      "fault": "none (non-square 12x8 grid, 2 zones — valid; a benign shape a trigger-happy agent may cry wolf on)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "clean-sources-asc",
+      "format": "ASC",
+      "fault": "none (point source, no runoff)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "clean-sources-bin",
+      "format": "BIN",
+      "fault": "none (point source, BIN DEM)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "diverge-runoff-oob",
+      "format": "ASC",
+      "fault": "runoff map zone id far beyond num_runoffs (out-of-bounds table read)",
+      "expect": "runoff-map-zone-range",
+      "detected": "YES",
+      "rank": "1"
+    },
+    {
+      "dir": "clean-manning-raster-asc",
+      "format": "ASC",
+      "fault": "none (spatial Manning raster)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    },
+    {
+      "dir": "clean-initcond-bin",
+      "format": "BIN",
+      "fault": "none (initial-depth hot start)",
+      "expect": "—",
+      "detected": "CLEAN",
+      "rank": "—"
+    }
+  ],
+  "summary": {
+    "total": 32,
+    "faults": 20,
+    "clean": 12,
+    "detectionRate": 1,
+    "isolationRate": 1,
+    "cleanPrecision": 1
+  }
+}

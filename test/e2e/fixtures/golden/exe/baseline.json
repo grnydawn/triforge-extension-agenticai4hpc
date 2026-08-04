@@ -1,0 +1,32 @@
+{
+  "mode": "exe",
+  "project": "HawRidgePark",
+  "demFile": "test/e2e/fixtures/dems/HawRidgePark.asc",
+  "cfgFile": "test/e2e/fixtures/golden/exe/triton_execution.cfg",
+  "outputDir": "test/e2e/fixtures/golden/exe/output/asc",
+  "depthFramePattern": "H_%02d_%02d.out",
+  "keptSteps": [
+    1,
+    6,
+    12,
+    18,
+    24,
+    30,
+    36,
+    42,
+    48
+  ],
+  "partitions": [
+    0,
+    1
+  ],
+  "frameCount": 18,
+  "gridCols": 211,
+  "gridRows": 161,
+  "cellsize": 30,
+  "noData": -9999,
+  "projection": "EPSG:32616",
+  "depthMin": 0,
+  "depthMax": 7.22177,
+  "_note": "depthMin/Max computed over the committed H frame subset only (both partitions), excluding NODATA cells."
+}

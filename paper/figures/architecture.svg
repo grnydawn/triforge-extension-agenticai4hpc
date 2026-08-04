@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2800" height="920" viewBox="0 0 1400 460" font-family="Arial, 'Liberation Sans', Helvetica, sans-serif">
+  <defs>
+    <marker id="arrDark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#404040"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2E75B6"/>
+    </marker>
+    <marker id="arrGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#548235"/>
+    </marker>
+    <marker id="arrNavy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F4E79"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1400" height="460" fill="#ffffff"/>
+
+  <!-- title -->
+  <text x="700" y="36" text-anchor="middle" font-size="32" font-weight="700" fill="#3A6489">One pure core, reached three ways</text>
+
+  <!-- top row: client / caller boxes -->
+  <g fill="#DCE6F4">
+    <rect x="55"  y="58" width="200" height="66" rx="10"/>
+    <rect x="272" y="58" width="200" height="66" rx="10"/>
+    <rect x="530" y="58" width="340" height="66" rx="10"/>
+    <rect x="1125" y="58" width="220" height="66" rx="10"/>
+  </g>
+  <g fill="#1F4E79" font-weight="700" text-anchor="middle">
+    <text x="155" y="99" font-size="25">Claude Code</text>
+    <text x="372" y="99" font-size="25">Codex</text>
+    <text x="700" y="99" font-size="24">Automated test / CI job</text>
+    <text x="1235" y="88" font-size="24">Copilot</text>
+    <text x="1235" y="114" font-size="24">(agent mode)</text>
+  </g>
+
+  <!-- middle row: adapters + core -->
+  <rect x="55"  y="178" width="320" height="112" rx="10" fill="#2E75B6"/>
+  <rect x="1025" y="178" width="320" height="112" rx="10" fill="#2E75B6"/>
+  <rect x="500" y="170" width="400" height="128" rx="10" fill="#1F4E79"/>
+  <g fill="#ffffff" font-weight="700" text-anchor="middle">
+    <text x="215" y="222" font-size="25">MCP adapter</text>
+    <text x="215" y="252" font-size="25">(stdio server)</text>
+    <text x="1185" y="222" font-size="25">VS Code</text>
+    <text x="1185" y="252" font-size="24">Language-Model tool</text>
+    <text x="700" y="212" font-size="27">Pure diagnosis core</text>
+    <text x="700" y="272" font-size="24">never spawns a process</text>
+  </g>
+  <text x="700" y="244" font-size="22" font-style="italic" text-anchor="middle" fill="#cfe0f0">parse .cfg + input rasters</text>
+
+  <!-- bottom row: injected probe + output -->
+  <rect x="150" y="352" width="420" height="84" rx="10" fill="#548235"/>
+  <g fill="#ffffff" font-weight="700" text-anchor="middle">
+    <text x="360" y="386" font-size="23">Filesystem probe  (injected)</text>
+    <text x="360" y="414" font-size="23">exists &#183; size &#183; text &#183; DEM header</text>
+  </g>
+  <rect x="730" y="352" width="520" height="84" rx="10" fill="#ffffff" stroke="#1F4E79" stroke-width="2.5"/>
+  <g fill="#1F4E79" font-weight="700" text-anchor="middle">
+    <text x="990" y="386" font-size="23">Ranked, evidence-backed findings</text>
+    <text x="990" y="414" font-size="23">+ append-only call transcript</text>
+  </g>
+
+  <!-- arrows: clients -> adapters -->
+  <line x1="155" y1="126" x2="180" y2="175" stroke="#2E75B6" stroke-width="3" marker-end="url(#arrBlue)"/>
+  <line x1="372" y1="126" x2="250" y2="175" stroke="#2E75B6" stroke-width="3" marker-end="url(#arrBlue)"/>
+  <line x1="1235" y1="126" x2="1205" y2="175" stroke="#2E75B6" stroke-width="3" marker-end="url(#arrBlue)"/>
+
+  <!-- arrow: test job -> core (direct, no adapter) -->
+  <line x1="700" y1="126" x2="700" y2="167" stroke="#1F4E79" stroke-width="3" marker-end="url(#arrNavy)"/>
+  <text x="715" y="152" font-size="22" font-style="italic" fill="#1F4E79" text-anchor="start">direct call</text>
+
+  <!-- arrows: adapters -> core (same code) -->
+  <line x1="375" y1="234" x2="496" y2="234" stroke="#404040" stroke-width="3" marker-end="url(#arrDark)"/>
+  <text x="435" y="222" font-size="22" font-style="italic" fill="#404040" text-anchor="middle">same</text>
+  <line x1="1025" y1="234" x2="904" y2="234" stroke="#404040" stroke-width="3" marker-end="url(#arrDark)"/>
+  <text x="965" y="222" font-size="22" font-style="italic" fill="#404040" text-anchor="middle">same</text>
+
+  <!-- arrow: probe -> core (inject) -->
+  <line x1="500" y1="352" x2="580" y2="302" stroke="#548235" stroke-width="3" marker-end="url(#arrGreen)"/>
+  <text x="497" y="330" font-size="22" font-style="italic" fill="#548235" text-anchor="middle">inject</text>
+
+  <!-- arrow: core -> output (out) -->
+  <line x1="820" y1="302" x2="900" y2="350" stroke="#2E75B6" stroke-width="3" marker-end="url(#arrBlue)"/>
+  <text x="905" y="330" font-size="22" font-style="italic" fill="#2E75B6" text-anchor="middle">out</text>
+</svg>
