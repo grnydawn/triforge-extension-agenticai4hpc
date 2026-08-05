@@ -33,8 +33,9 @@ export interface DiagnosisProbe {
    * (`load_header_from_dem_file_binary`: the first 6 elements are ncols,nrows,xll,yll,
    * cellsize,nodata of the matrix's element type). Returns the grid + bytes-per-cell only
    * when the file size is self-consistent with `(6 + ncols*nrows) * bpc` at float32 or
-   * float64 — so a headerless/malformed DEM yields null. Aux rasters are headerless, so
-   * this is only meaningful for the DEM.
+   * float64 — so a headerless/malformed DEM yields null. Aux rasters carry a 2-value header
+   * rather than this 6-value one, so they never satisfy that shape: this is DEM-only by
+   * construction, not because the others are header-less.
    */
   binHeader(absPath: string): { ncols: number; nrows: number; bpc: number } | null;
   /**
@@ -299,8 +300,9 @@ const hydrographDelimiterCheck: Check = (cfg, cfgDir, probe) => {
 // Real TRITON BIN rasters carry a small (<~64 B observed) header/padding; a wrong grid
 // differs by at least one row (thousands of bytes), so this absorbs headers without masking
 // a genuine mismatch. Kept well below the float32/float64 gap of any real (large) grid.
-// Aux rasters are headerless matrices = exactly cells*bpc bytes; a real deck may carry a few
-// bytes of padding, so allow a small slack that still catches a whole-cell (grid) difference.
+// A same-grid aux raster is cells*bpc plus its own 2-value header (BIN_DEFAULT_HEADER_SIZE),
+// where the DEM's is 6-value, so identical grids still differ by 4*bpc; allow a slack that
+// absorbs either header and still catches a whole-cell (grid) difference.
 const GRID_HEADER_TOL = 64;
 
 /** Cell count from a raster's same-basename `.asc` sidecar (e.g. dem.bin → dem.asc), or null. */
@@ -436,12 +438,15 @@ const gridSizeCheck: Check = (cfg, cfgDir, probe) => {
     }
   } else if (fmt === 'BIN') {
     // Only the DEM is self-describing: it carries a 6-value header (ncols,nrows,...) exactly
-    // as TRITON reads it (load_header_from_dem_file_binary). Aux rasters (runoff map, n, h,
-    // qx, qy) are headerless matrices = cells*bpc bytes. So take the DEM grid from its binary
-    // header (preferred) or a same-basename .asc sidecar, then require each aux raster to fit
-    // that grid at float32/float64. Byte-for-byte equality is the WRONG invariant (a valid DEM
-    // is 6*bpc larger than a same-grid aux, and dtypes may differ); use it only as a last
-    // resort when the DEM grid is unknowable (no header AND no sidecar).
+    // as TRITON reads it (DEM_HEADER_SIZE=6, seeked past without validation). Aux rasters
+    // (runoff map, n, h, qx, qy) are NOT headerless -- they carry a 2-value [nrows,ncols]
+    // header that TRITON validates (BIN_DEFAULT_HEADER_SIZE=2, matrix_io.h:225) -- but their
+    // header is a different size from the DEM's, so their byte counts differ by 4*bpc even on
+    // an identical grid. So take the DEM grid from its binary header (preferred) or a
+    // same-basename .asc sidecar, then require each aux raster to fit that grid at
+    // float32/float64 within GRID_HEADER_TOL, which absorbs either header. Byte-for-byte
+    // equality is the WRONG invariant (headers differ in size, and dtypes may differ); use it
+    // only as a last resort when the DEM grid is unknowable (no header AND no sidecar).
     const demSize = probe.size(demAbs);
     const bh = probe.binHeader(demAbs);
     const demCells = bh ? bh.ncols * bh.nrows : companionGridCells(probe, demAbs);

@@ -46,6 +46,8 @@ node scripts/eval/tabulate-ablation.mjs eval/diagnose-corpus/runs/robustness/opu
 node scripts/eval/tabulate-ablation.mjs eval/diagnose-corpus/runs/robustness/codex
 ```
 
-The four `results-<client>-judged.csv` files here are committed (force-added past the `runs/.gitignore`
-`results-*.csv` rule) so the numbers above regenerate without re-running the judges. The per-cell
-`*.judge.txt` rationale sidecars are regenerable and not tracked.
+The per-judge `results-<client>-judged.csv` files are **not** tracked — they fall under the
+`runs/.gitignore` `results-*.csv` rule, like the primary judge's own graded CSVs. A clone carries
+this README and the tables above, but re-deriving them means re-running the two re-grades, which
+costs four judged passes over 248 saved answers. The per-cell `*.judge.txt` rationale sidecars are
+likewise regenerable and not tracked.

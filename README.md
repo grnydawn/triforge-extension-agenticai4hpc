@@ -38,7 +38,7 @@ Description appendix carries the full check-list.
 | 4 | the same as Layer 3, plus `python3` for `mcp-overhead.py` |
 
 The recorded environment is Ubuntu 24.04.4 LTS, Node 22.22.2, Python 3.12.3, `jq` 1.7,
-bubblewrap 0.9.0. Layers 1 and 2 ran on a 4-core Intel Core i5-4250U with 7 GB RAM.
+bubblewrap 0.9.0. Layers 1 and 2 ran on a dual-core (4-thread) Intel Core i5-4250U with 7 GB RAM.
 
 **Layer 1 — no AI service, finishes in seconds.**
 
