@@ -57,7 +57,7 @@ itself may not flag such a fault; instead it either rejects the files with a cry
 completes the simulation and silently corrupts the result. We ask whether a small,
 purpose-built tool, given to an AI coding assistant, measurably improves the assistant's ability
 to \emph{debug} such simulations. We present \textbf{\texttt{diagnose\_project}}, a static diagnosis
-tool for the TRITON flood-simulation solver, delivered through the Model Context Protocol (MCP)
+tool for the TRITON flood-inundation solver, delivered through the Model Context Protocol (MCP)
 and as an in-editor tool. The tool works from the setup files alone, reading exactly what the
 solver reads, and returns ranked, evidence-backed findings; the tool never runs the solver, so
 diagnosis is safe and fast. We evaluate the tool on a test set of 32 TRITON projects with
@@ -93,7 +93,7 @@ honest: the program stops, and the program usually says why. The more expensive 
 that stays quiet: the simulation that \emph{works but is wrong}. The solver launches, holds an
 expensive compute node for hours, and writes results that look normal but are silently
 incorrect. The cause is usually not a bug in the solver. The cause is a mistake in what the
-scientist handed to the solver: an input grid of the wrong size, a rainfall file that is accidentally
+scientist handed to the solver: an input grid of the wrong size, a runoff file that is accidentally
 all zeros, a fill-in-the-blank template that was never filled in, or a stated file count that
 does not match the files on disk. The bundle a solver reads, the plain-text
 configuration file plus the input data that file points to, is what we call the run's
@@ -120,7 +120,7 @@ the agent, does the agent's fault-finding measurably improve, and at what cost?}
 build, \texttt{diagnose\_project}, does exactly that: the tool reads a TRITON project's
 configuration file and input files and reports faults \emph{without ever running the solver}.
 
-We study this question with TRITON~\cite{triton,tritondocs}, an open-source flood-simulation
+We study this question with TRITON~\cite{triton,tritondocs}, an open-source flood-inundation
 solver developed at Oak Ridge National Laboratory. TRITON solves the full 2D Shallow Water
 Equations to model flood propagation across heterogeneous terrain and can run on one or many
 GPUs. A
@@ -183,8 +183,7 @@ that case study as a demonstration rather than as separately measured claims.
 
 The diagnosis tool is one instance of a broader idea we call \emph{agent-legible HPC}
 (Section~\ref{sec:pattern}): designing scientific workflows so that an AI agent can inspect and
-act on them safely. In this paper we evaluate only the diagnosis instance. We begin with the real
-failure that prompted the tool.
+act on them safely. We begin with the real failure that prompted the tool.
 
 \section{Motivating Example}
 \label{sec:motivation}
@@ -214,9 +213,9 @@ at a glance that the block was wrong. Finding out \emph{why} was far harder: eve
 scientists could not point to the root cause without cross-checking the configuration file, the
 contents of the input data files, and finally the solver's source code.
 
-The cause is an off-by-one indexing error, the kind no crash ever reveals. TRITON adds rainfall
+The cause is an off-by-one indexing error, the kind no crash ever reveals. TRITON adds
 runoff using two inputs: a \texttt{runoff\_map} that tags every grid cell with a zone number, and
-one runoff hydrograph per zone. To apply the rain, the solver takes a cell's zone number
+one runoff hydrograph per zone. To apply the runoff, the solver takes a cell's zone number
 and uses it directly to index the table of series. It never checks that the number is in range.
 That check mattered here. The upstream pipeline, not the solver, numbered the zones from $1$ to
 $28$, but the solver fills its table from $0$, so its valid slots run only $0$ to $27$. Zone $28$
@@ -242,8 +241,7 @@ The tool follows one design principle: a single, self-contained core of logic th
 calls directly. The core is a pure function of the parsed setup files, with no dependence on any
 editor or operating-system feature. The same code therefore runs three ways: inside an editor,
 inside an automated test job, or through an external agent such as Claude Code or Codex
-(Figure~\ref{fig:architecture}). This design is one instance of a broader pattern we call
-\emph{agent-legible HPC}, which Section~\ref{sec:pattern} describes.
+(Figure~\ref{fig:architecture}).
 
 \begin{figure*}[!t]
 \centering
@@ -402,11 +400,12 @@ deliberately clean (so we can check the tool does not raise false alarms). Toget
 projects cover the range of things that go wrong: an input grid of the wrong size (in three
 different file forms), the runoff-zone counting and out-of-range bugs of
 Section~\ref{sec:realworld} (in both their silent and crashing versions), miscounted water sources
-and boundaries, a landscape with zero friction everywhere, a rainfall file with the wrong
+and boundaries, a landscape with zero friction everywhere, a runoff file with the wrong
 separator that the solver rejects, an unfilled template placeholder, a missing input file, and
 out-of-range parameter values. They span both binary (\texttt{BIN}, $24$ projects) and text
 (\texttt{ASC}, $8$ projects) input formats, and together they exercise every major input type:
-terrain, rainfall runoff, water sources, friction, and starting water levels. A companion file
+terrain, runoff map and hydrograph, streamflow sources, surface roughness, and initial
+water levels. A companion file
 records the correct answer for every project: its format, its single injected fault (or
 \texttt{clean}), and any user-declared rules. Each faulty project carries \emph{exactly one}
 intended fault, so ``the right answer'' is unambiguous and naming a different problem counts as a
@@ -573,8 +572,8 @@ Doubtful          & finishes, output check unsure & 2 \\
 
 Checking against the real solver also improved the tool. The check exposed two formatting rules
 the solver silently requires: a numeric header on binary runoff maps, and a comma rather than a
-space between values in rainfall files. We turned each into a new check
-(Table~\ref{tab:checks}). The check also corrected a project we had mislabeled: a rainfall file
+space between values in runoff files. We turned each into a new check
+(Table~\ref{tab:checks}). The check also corrected a project we had mislabeled: a runoff file
 we had filed as clean is in fact rejected by the solver for using spaces instead of commas, so
 that project is really a fault, one that both tool-free agents had missed. The full per-project
 result is published for reviewers~\cite{artifact-oracle}: each project's tool finding, solver
@@ -647,7 +646,7 @@ but the agent does not always trust it. The ``don't cry wolf'' benefit is real, 
 the weaker client rather than on both.
 
 \noindent\textbf{User-rule projects.} These projects break a rule the user declared: a stated
-count of runoff zones or water sources, a run duration, a rainfall range. Codex is perfect
+count of runoff zones or water sources, a run duration, a forcing range. Codex is perfect
 here with and without the tool. Claude on its own misses two of five; the tool restores it to $5/5$. Once an
 agent is told the rule, checking a declared number against the actual files is something a
 capable agent does reliably, so we treat this group as a boundary of the effect rather than a
@@ -748,7 +747,7 @@ checked against the real solver, not by a model (Section~\ref{sec:oracle}).
 answer key could be wrong: an injected ``fault'' the real solver tolerates, or a ``clean''
 project it rejects. The solver-as-judge pass (Section~\ref{sec:oracle}) closes one direction
 outright: \emph{tool-missed}$=0$ confirms that no project the solver rejects is mislabeled clean,
-and the same pass caught a genuinely mislabeled project (a rainfall file the solver in fact
+and the same pass caught a genuinely mislabeled project (a runoff file the solver in fact
 rejects), on top of the test-data fix of Section~\ref{sec:fidelity}. The other direction, a
 fault the solver tolerates and runs to completion, the solver cannot settle by itself; those
 labels rest on the output-sanity scan and a human audit of the small residual. That the test
@@ -806,7 +805,7 @@ rules a configuration file ought to obey by reading many examples instead of ask
 write them down~\cite{confspec}. Ciri~\cite{ciri} hands the checking to a language model. Our
 checks belong to this family and differ in two ways. What a TRITON configuration points at is not
 more settings but large data files, so a check must open them (read a grid's header, count a
-rainfall table's columns, find the largest zone number in a map), not just read the
+runoff table's columns, find the largest zone number in a map), not just read the
 configuration. And that work asks whether the checker finds the mistake; we ask whether giving
 the checker to an AI agent changes what the \emph{agent} concludes.
 
@@ -867,10 +866,11 @@ Two lessons generalize past this solver. First, test fixtures must be \emph{vali
 the real program, not merely constructed: a missing header in our binary inputs broke no test,
 yet quietly made the tool look better than it was, and we caught it only by running every fixture
 through the solver. Second, these faults live exactly where a convention looks standard but is
-not. The upstream pipeline numbered runoff zones from $1$, as GIS tools do, while the solver
-indexes from $0$; and our tool-free agents repeatedly insisted that the runoff map needed the
-elevation file's six-number header, which the solver in fact rejects there. Both are setups that satisfy surface plausibility while violating the
-solver's own semantics, which is precisely what \texttt{diagnose\_project} encodes.
+not. The upstream pipeline numbered runoff zones from $1$, as geographic information system tools do,
+while the solver indexes from $0$; and our tool-free agents repeatedly insisted that the runoff
+map needed the elevation file's six-number header, which the solver in fact rejects there.
+Both are setups that satisfy surface plausibility while violating the solver's own semantics,
+which is precisely what \texttt{diagnose\_project} encodes.
 
 \section*{Acknowledgment}
 The research was supported by the US Air Force Numerical Weather Modeling
