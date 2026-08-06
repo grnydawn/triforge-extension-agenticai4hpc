@@ -73,7 +73,7 @@ already raises none. Third, the tool \emph{reduces} computational cost: \textbf{
 back-and-forth turns, \textbf{$\sim$2.3--4.4$\times$ fewer} output tokens, and $1.6$--$3.8\times$
 less wall-clock time, at under \textbf{1.5\%} overhead. Finally, we validate the tool on a
 \emph{real} project, where the tool statically catches, in about a second, an
-out-of-range runoff-indexing bug that silently corrupted a production GPU simulation. We generalize
+out-of-range runoff-indexing bug that silently corrupted a real multi-GPU simulation. We generalize
 that one fix into a family of count-and-reference checks and add fixtures from the real case.
 Along the way we find that test fixtures must be validated against the real solver: a subtle
 mismatch in our fixtures broke no test, yet quietly inflated the tool's measured advantage until
@@ -159,7 +159,7 @@ Finding the fault is only the first step of \emph{debugging} a broken run; the f
 detect, understand, fix, and verify. We package \texttt{diagnose\_project} inside the open-source
 Triforge Visual Studio Code Extension~\cite{triforge} (``the Triforge extension'' below), which
 supports this whole loop, and
-Section~\ref{sec:realworld} walks through the loop end-to-end on a real operational bug. This
+Section~\ref{sec:realworld} walks through the loop end-to-end on a real bug. This
 paper measures only the first step, detection, in a controlled way; the later steps appear in
 that case study as a demonstration rather than as separately measured claims.
 
@@ -174,8 +174,8 @@ that case study as a demonstration rather than as separately measured claims.
         (Section~\ref{sec:method}).
   \item A transparent, end-to-end evaluation, published for inspection. A $\pm$tool ablation
         isolates \emph{where} the tool helps (sharper fault localization, fewer false alarms, and
-        lower cost, not better raw detection), and a real operational run validates the tool end-to-end on
-        a bug that had silently corrupted a production GPU job (Section~\ref{sec:realworld},
+        lower cost, not better raw detection), and a real TRITON test case validates the tool
+        end-to-end on a bug that had silently corrupted a multi-GPU run (Section~\ref{sec:realworld},
         Figure~\ref{fig:beforeafter}). Every per-fixture verdict, transcript, and ground-truth label
         is browsable online as reviewer
         artifacts~\cite{artifact-tool,artifact-oracle,artifact-ablation,artifact-human}.
@@ -191,11 +191,12 @@ failure that prompted the tool.
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[width=0.60\textwidth]{figures/operational-anomaly.png}
-\caption{A real ``works-but-wrong'' failure in an operational TRITON run over the French
+\includegraphics[width=0.60\textwidth]{figures/testcase-anomaly.png}
+\caption{A real ``works-but-wrong'' failure in a TRITON forecast test case over the French
 Broad River basin, western North Carolina ($4458\times4802$ cells at $20$\,m). (a)~Final
-maximum water depth: a physical dendritic flood (shaded, $0$--$2$\,m) \emph{plus} a hard-edged
-$1.5\times10^{214}$\,m block in the southeast (hatched). (b)~The runoff zone map: the block
+maximum water depth (logarithmic, $0.01$--$35$\,m): a physical dendritic flood \emph{plus} a
+hard-edged $1.5\times10^{214}$\,m block in the southeast, hatched because no scale holds both.
+(b)~The runoff zone map: the block
 sits exactly on the hatched zone~28. With
 \texttt{num\_runoffs}=28 and 0-based indexing, that reads one entry past the runoff table, an unchecked out-of-bounds access in the solver
 kernel. Nothing crashed; the tool flags this from the setup files alone.}
@@ -667,7 +668,7 @@ time than the \emph{bare} arm. The saving is far larger than the cost.
 \label{sec:realworld}
 This is the silent-corruption case on a real project, the clearest example of the one fault
 class only the tool catches (Section~\ref{sec:oracle}). The $32$-project test set was built for
-this evaluation, so we also ran the tool on a real failure: the operational project behind
+this evaluation, so we also ran the tool on a real failure: the test-case project behind
 Section~\ref{sec:motivation} (Figure~\ref{fig:anomaly}), where the solver had \emph{run to
 completion} on a GPU cluster and returned output that looked plausible but was physically
 meaningless, a fault that never shows up as a crash. The mistake was not in
@@ -703,13 +704,14 @@ code would ever have revealed.
 % 0.59 not 0.60: this render is ~1% taller in aspect than the one it replaces, and at 0.60 the
 % extra 1.2pt pushes this float off its text page and cascades an extra page into the paper.
 \includegraphics[width=0.59\textwidth]{figures/mh-before-after.png}
-\caption{Real HPC output before and after the tool-diagnosed fix (maximum water depth,
-logarithmic colour scale, dry cells left blank). \textbf{Left:} the uncorrected run, where a runoff
-map numbered from $1$ causes an out-of-range table read that injects a constant
-$\sim$$1.5\times10^{214}$\,m block in the southeast (hatched), flattening the real flood
-network at the bottom of a scale spanning more than $200$ orders of magnitude. \textbf{Right:} the
-corrected run, numbered from $0$: realistic, terrain-following depths (maximum $34.0$\,m), and
-the block is gone. Re-checking both maps with the tool reports no fault on the corrected run.}
+\caption{Real HPC output before and after the tool-diagnosed fix (maximum water depth, one
+shared logarithmic colour scale, dry cells left blank). \textbf{Left:} the uncorrected run, where
+a runoff map numbered from $1$ causes an out-of-range table read that injects a constant
+$\sim$$1.5\times10^{214}$\,m block in the southeast, hatched because plotting it
+would compress every physical depth into the bottom of the scale. \textbf{Right:}
+the corrected run, numbered from $0$: realistic, terrain-following depths (maximum $34.0$\,m),
+and the block is gone. On the shared scale the corrected run visibly carries water through
+channels the uncorrected run left dry.}
 \label{fig:beforeafter}
 \end{figure*}
 
@@ -854,12 +856,10 @@ A small, static tool measurably improves an AI assistant's ability to catch ``wo
 wrong'' HPC faults before any compute is spent. It works from the project's own setup files and
 reaches the agent through standard interfaces. The tool does this while \emph{reducing} the
 agent's turns and cost. The result holds across two independent AI clients, and the tool's own
-overhead is negligible. The compute at stake dwarfs that overhead: the operational run of
+overhead is negligible. The compute at stake dwarfs that overhead: the test-case run of
 Section~\ref{sec:motivation} held eight A100 GPUs for $28$~minutes (about $3.7$ GPU-hours) and
 returned a product that had to be discarded, while the static check that catches the fault takes
-about a second on a laptop. A TRITON forecasting project consumes on the order of $200$
-GPU-hours a year, so a deployment that catches even two or three setup errors a quarter saves
-hundreds of GPU-hours.
+about a second on a laptop.
 
 Two lessons generalize past this solver. First, test fixtures must be \emph{validated} against
 the real program, not merely constructed: a missing header in our binary inputs broke no test,
@@ -904,7 +904,7 @@ verdict for every one of the 248 ablation runs.
 \emph{Run-time environment:} Ubuntu~24.04.4 LTS (kernel~7.0.0), Node~22.22.2,
 Python~3.12.3, \texttt{jq}~1.7, bubblewrap~0.9.0; no root access needed.
 \emph{Hardware:} Layers~1--2 need only a commodity x86-64 machine; ours was a dual-core
-(4-thread) Intel Core~i5-4250U with 7\,GB RAM. The two operational runs of
+(4-thread) Intel Core~i5-4250U with 7\,GB RAM. The two test-case runs of
 Figures~\ref{fig:anomaly} and~\ref{fig:beforeafter} each used 8 NVIDIA~A100 GPUs
 (2 nodes $\times$ 4) for $28$~minutes (about $3.7$ GPU-hours per run) over the French Broad
 River basin, western North Carolina, on a $4458\times4802$ grid at $20$\,m for $10$ simulated
