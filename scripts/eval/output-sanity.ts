@@ -3,7 +3,7 @@
 // impossibility. This is the automated step between "the solver rejected it" (Tier-1,
 // authoritative fault) and "a human confirms it" (Tier-3). It exists because a completed
 // run does NOT mean a clean deck: the operational out-of-bounds runoff-zone read on a small grid
-// COMPLETES while filling the domain with a ~6e213 m constant block. Tier-2 catches the
+// COMPLETES while filling the domain with a ~1e214 m constant block. Tier-2 catches the
 // obvious corruption automatically; anything borderline it escalates to a human ("review"),
 // never silently to "clean".
 //
@@ -18,7 +18,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // |value| above this is non-physical for any flood field on these test domains; it is the
-// signature of an out-of-bounds table read (the real operational block was ~6e213 m).
+// signature of an out-of-bounds table read (the real operational block was ~1.5e214 m; the
+// exact magnitude is heap-dependent and moved when the run was redone, so nothing keys on it).
 export const HARD_CEILING = 1e6;
 // Suspicious but not absurd depth/height/velocity; a human should look.
 export const SOFT_CEILING = 1e3;

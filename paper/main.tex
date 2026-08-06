@@ -36,17 +36,12 @@
 \title{Works but Wrong: Static Diagnosis of\\ HPC Simulation Setup Errors for AI Agents}
 
 \author{
-\IEEEauthorblockN{Youngsung Kim}
-\IEEEauthorblockA{Oak Ridge National Laboratory\\
-Oak Ridge, TN, USA}
-\and
-\IEEEauthorblockN{Sudershan Gangrade}
-\IEEEauthorblockA{Oak Ridge National Laboratory\\
-Oak Ridge, TN, USA}
-\and
-\IEEEauthorblockN{Mario Morales Hern\'{a}ndez}
-\IEEEauthorblockA{I3A-Universidad de Zaragoza\\
-Zaragoza, Spain}
+\IEEEauthorblockN{Youngsung Kim\textsuperscript{1},
+Sudershan Gangrade\textsuperscript{1},
+Mario Morales Hern\'{a}ndez\textsuperscript{2},
+Shih-Chieh Kao\textsuperscript{1}}
+\IEEEauthorblockA{\textsuperscript{1}Oak Ridge National Laboratory, Oak Ridge, TN, USA\\
+\textsuperscript{2}I3A-Universidad de Zaragoza, Zaragoza, Spain}
 }
 
 \maketitle
@@ -55,30 +50,30 @@ Zaragoza, Spain}
 \bstctlcite{IEEEtran:BSTcontrol}
 
 \begin{abstract}
-A scientific HPC run often ``works but is wrong'': the solver launches, runs for hours of
-compute time, and returns output that looks normal but is silently incorrect. The cause is not a
-crash but a fault in the run's \emph{setup files}---the configuration and input files the solver
-reads. The solver itself does not flag such a fault: the solver either rejects the files with a
-cryptic message, or runs on and silently corrupts the result. We ask whether a small,
+A scientific simulation performed on a high-performance computing (HPC) system may complete
+successfully yet still produce incorrect results. The cause is not a crash but a fault in the
+simulation's \emph{setup files}, the configuration and input files the solver reads. The solver
+itself may not flag such a fault; instead it either rejects the files with a cryptic message, or
+completes the simulation and silently corrupts the result. We ask whether a small,
 purpose-built tool, given to an AI coding assistant, measurably improves the assistant's ability
-to \emph{debug} such runs. We present \textbf{\texttt{diagnose\_project}}, a static diagnosis
+to \emph{debug} such simulations. We present \textbf{\texttt{diagnose\_project}}, a static diagnosis
 tool for the TRITON flood-simulation solver, delivered through the Model Context Protocol (MCP)
-and as an in-editor tool. The tool works from the setup files alone---reading exactly what the
-solver reads---and returns ranked, evidence-backed findings; the tool never runs the solver, so
+and as an in-editor tool. The tool works from the setup files alone, reading exactly what the
+solver reads, and returns ranked, evidence-backed findings; the tool never runs the solver, so
 diagnosis is safe and fast. We evaluate the tool on a test set of 32 TRITON projects with
 deliberately injected faults. The experiment compares the \emph{same} agent \emph{with} the tool
 (the \emph{+tool} arm) and \emph{without} the tool (the \emph{bare} arm), run in isolation on two
 AI clients: Claude (\texttt{claude-sonnet-5}) and Codex (\texttt{gpt-5.6-sol}). Without the tool,
 an agent already \emph{finds} most faults ($91$--$96\%$), so the tool is not a rescue. Instead,
-the tool has three sharper effects. First, the tool lifts detection to \textbf{100\%} and---more
-tellingly---raises how often the agent points at the \emph{right} fault, not merely a real one,
+the tool has three sharper effects. First, the tool lifts detection to \textbf{100\%} and, more
+importantly, raises how often the agent points at the \emph{right} fault, not merely a real one,
 from \textbf{$78$--$80\%$} to \textbf{$98\%$}. Second, the tool reduces false alarms on clean
 projects for the weaker client: Claude's false alarms fall from $3/12$ to $1/12$, while Codex
-already raises none. Third, the tool \emph{reduces} cost---\textbf{$\sim$1.3--1.6$\times$ fewer}
+already raises none. Third, the tool \emph{reduces} computational cost: \textbf{$\sim$1.3--1.6$\times$ fewer}
 back-and-forth turns, \textbf{$\sim$2.3--4.4$\times$ fewer} output tokens, and $1.6$--$3.8\times$
-less wall-clock time---at under \textbf{1.5\%} overhead. Finally, we validate the tool on a
-\emph{real} operational project, where the tool statically catches---in about a second---an
-out-of-range runoff-indexing bug that silently corrupted a production GPU run. We generalize
+less wall-clock time, at under \textbf{1.5\%} overhead. Finally, we validate the tool on a
+\emph{real} project, where the tool statically catches, in about a second, an
+out-of-range runoff-indexing bug that silently corrupted a production GPU simulation. We generalize
 that one fix into a family of count-and-reference checks and add fixtures from the real case.
 Along the way we find that test fixtures must be validated against the real solver: a subtle
 mismatch in our fixtures broke no test, yet quietly inflated the tool's measured advantage until
@@ -95,25 +90,26 @@ static analysis, human-in-the-loop
 
 When a high-performance computing (HPC) simulation \emph{crashes}, the failure is at least
 honest: the program stops, and the program usually says why. The more expensive failure is the one
-that stays quiet---the run that \emph{works but is wrong}. The solver launches, holds an
+that stays quiet: the simulation that \emph{works but is wrong}. The solver launches, holds an
 expensive compute node for hours, and writes results that look normal but are silently
 incorrect. The cause is usually not a bug in the solver. The cause is a mistake in what the
 scientist handed to the solver: an input grid of the wrong size, a rainfall file that is accidentally
 all zeros, a fill-in-the-blank template that was never filled in, or a stated file count that
-does not match the files on disk. We call the bundle a solver reads---the plain-text
-configuration file plus the input data that file points to---the run's \emph{setup files}.
+does not match the files on disk. The bundle a solver reads, the plain-text
+configuration file plus the input data that file points to, is what we call the run's
+\emph{setup files}.
 Experienced users learn to catch these setup-level mistakes by eye, but only slowly. Teaching
 that skill to an AI assistant is what this paper is about.
 
-AI coding assistants---agents that read a project's files and run commands on the project's
-behalf---are increasingly used to set up and run such
+AI coding assistants, agents that read a project's files and run commands on the project's
+behalf, are increasingly used to set up and run such
 simulations~\cite{lara,matclaw,mada,materials-aurora,mlipilot}. So it is natural to ask an
 assistant directly, ``is this project configured correctly?'' Without a tool built for the job,
-the agent answers by improvising: the agent reads whatever material is available---documentation,
-sample projects, the solver's own source---and reconstructs the file conventions from that
+the agent answers by improvising: the agent reads whatever material is available (documentation,
+sample projects, the solver's own source) and reconstructs the file conventions from that
 material. Prompting alone does not make this improvisation reliable. The reason is that the
-conventions---how a binary grid's header is laid out, or how the solver indexes the tables it
-reads---are often undocumented, or documented only in part. The solver's source code is then the
+conventions (how a binary grid's header is laid out, or how the solver indexes the tables it
+reads) are often undocumented, or documented only in part. The solver's source code is then the
 only authoritative reference, and the agent must re-derive the conventions from that code on
 every project~\cite{matclaw}. Working this way, the agent can often tell that \emph{something} is
 wrong, but not reliably \emph{which} thing: the agent misidentifies the exact
@@ -125,23 +121,24 @@ build, \texttt{diagnose\_project}, does exactly that: the tool reads a TRITON pr
 configuration file and input files and reports faults \emph{without ever running the solver}.
 
 We study this question with TRITON~\cite{triton,tritondocs}, an open-source flood-simulation
-solver developed at Oak Ridge National Laboratory. TRITON solves the full 2D shallow water
-equations to model flood propagation across heterogeneous terrain, and is routinely used for
-flood forecasting; TRITON can run on one or many GPUs. A
+solver developed at Oak Ridge National Laboratory. TRITON solves the full 2D Shallow Water
+Equations to model flood propagation across heterogeneous terrain and can run on one or many
+GPUs. A
 single TRITON run is described entirely by a plain-text \texttt{.cfg} configuration file together
 with the input files that configuration names: mostly \emph{rasters} (grids of values covering the
-terrain, such as ground elevation) and time series (runoff hydrographs, which tabulate discharge
-per zone). These files are
+terrain, such as ground elevation) and time series, specifically streamflow (tabular discharge
+per location) and runoff hydrographs (tabular discharge per zone). These files are
 exactly where the setup-level mistakes we study live. Our tool, \texttt{diagnose\_project},
 inspects these files, and has three defining properties:
 \begin{itemize}
   \item \textbf{It works from the project's own files.} It reads the solver's own \texttt{.cfg}
         configuration file and the input files it names, so it works on \emph{any} TRITON
-        project---even one a person assembled by hand, not only the ones our own interface produced.
+        project, even one a person assembled by hand, not only the ones our own interface produced.
         In other words, it reads \emph{exactly what the solver reads}: the setup files the solver
-        actually loads are its single source of truth.
+        actually loads are its single source of truth, determining the physics of the simulation
+        before a single grid cell is processed.
   \item \textbf{It never runs the solver.} Every check is computed from those setup files alone.
-        This makes diagnosis fast, and safe to run at any time---\emph{before} a run,
+        This makes diagnosis fast, and safe to run at any time: \emph{before} a run,
         to avoid wasting compute, and \emph{after} one, to explain a result the solver quietly got
         wrong. Because it inspects without executing, we call it a \emph{static} check.
   \item \textbf{One implementation, offered wherever the agent lives.} The same core logic is
@@ -151,17 +148,19 @@ inspects these files, and has three defining properties:
         project first ask the user for approval.
 \end{itemize}
 
-Static diagnosis suits this setting because a TRITON run is declared rather than assembled: the
-\texttt{.cfg} names its files and parameters, and each input is a self-contained raster or table.
-The faults are correspondingly declarative---counts that disagree with the files, zone ids past a
-declared range, headers that violate what the solver assumes---rather than emergent runtime state.
+TRITON's setup files are amenable to static diagnosis because they follow a rigid, explicit
+schema: the \texttt{.cfg} lists input filenames and parameters, and each input is a self-contained
+raster or table with fixed headers. Unlike runtime debugging, where errors emerge from complex
+state transitions, TRITON's faults are largely declarative mismatches: file counts that do not
+match declared parameters, zone IDs past a declared range, or binary headers that violate what the
+solver expects.
 
 Finding the fault is only the first step of \emph{debugging} a broken run; the full loop is to
 detect, understand, fix, and verify. We package \texttt{diagnose\_project} inside the open-source
 Triforge Visual Studio Code Extension~\cite{triforge} (``the Triforge extension'' below), which
 supports this whole loop, and
 Section~\ref{sec:realworld} walks through the loop end-to-end on a real operational bug. This
-paper measures only the first step---detection---in a controlled way; the later steps appear in
+paper measures only the first step, detection, in a controlled way; the later steps appear in
 that case study as a demonstration rather than as separately measured claims.
 
 \noindent\textbf{Contributions.}
@@ -170,12 +169,12 @@ that case study as a demonstration rather than as separately measured claims.
         reads, built so that a single piece of pure logic drives every surface and never launches a
         process, and delivered to agents in two forms (Section~\ref{sec:design}).
   \item A test set of 32 TRITON projects with known, labeled faults, and a controlled experiment
-        that compares the \emph{same} agent with and without the tool---a ``$\pm$tool
-        ablation''---across two independent AI clients, each run in its own isolated sandbox
+        that compares the \emph{same} agent with and without the tool (a ``$\pm$tool
+        ablation'') across two independent AI clients, each run in its own isolated sandbox
         (Section~\ref{sec:method}).
   \item A transparent, end-to-end evaluation, published for inspection. A $\pm$tool ablation
-        isolates \emph{where} the tool helps---sharper fault localization, fewer false alarms, and
-        lower cost, not better raw detection---and a real operational run validates the tool end-to-end on
+        isolates \emph{where} the tool helps (sharper fault localization, fewer false alarms, and
+        lower cost, not better raw detection), and a real operational run validates the tool end-to-end on
         a bug that had silently corrupted a production GPU job (Section~\ref{sec:realworld},
         Figure~\ref{fig:beforeafter}). Every per-fixture verdict, transcript, and ground-truth label
         is browsable online as reviewer
@@ -193,52 +192,54 @@ failure that prompted the tool.
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.60\textwidth]{figures/operational-anomaly.png}
-\caption{A real ``works-but-wrong'' failure in an operational TRITON run
-($4458\times4802$ cells). (a)~Final maximum water depth: a physical dendritic flood
-(blue, $0$--$2$\,m) \emph{plus} a hard-edged $6\times10^{213}$\,m block in the southeast
-(red). (b)~The runoff zone map: the block sits exactly on zone~28. With
-\texttt{num\_runoffs}=28 and 0-based indexing, that reads one entry past the runoff table.
-Nothing crashed; the tool flags this from the setup files alone.}
+\caption{A real ``works-but-wrong'' failure in an operational TRITON run over the French
+Broad River basin, western North Carolina ($4458\times4802$ cells at $20$\,m). (a)~Final
+maximum water depth: a physical dendritic flood (shaded, $0$--$2$\,m) \emph{plus} a hard-edged
+$1.5\times10^{214}$\,m block in the southeast (hatched). (b)~The runoff zone map: the block
+sits exactly on the hatched zone~28. With
+\texttt{num\_runoffs}=28 and 0-based indexing, that reads one entry past the runoff table, an unchecked out-of-bounds access in the solver
+kernel. Nothing crashed; the tool flags this from the setup files alone.}
 \label{fig:anomaly}
 \end{figure*}
 
-Figure~\ref{fig:anomaly} comes from a real, operational TRITON flood forecast---a daily forecast
-produced by a system still under active development. The solver ran
-on GPUs, finished in about $27$~minutes, and wrote a complete set of output maps, reporting success. Yet
+Figure~\ref{fig:anomaly} comes from a TRITON flood-forecast test case: a $10$-day run over the
+French Broad River basin in western North Carolina, produced by a system still under active
+development. The solver ran on eight NVIDIA~A100 GPUs, finished in about $28$~minutes,
+and wrote a complete set of output maps, reporting success. Yet
 the map of maximum water depth (panel~a) contains a sharp-edged rectangular block of water in
-the domain's southeast corner holding a physically impossible $6\times10^{213}$\,m, while the
-rest of the map is a believable branching flood (at most $21$\,m). A domain expert could see
+the domain's southeast corner holding a physically impossible $1.5\times10^{214}$\,m, while the
+rest of the map is a believable branching flood (at most $20$\,m). A domain expert could see
 at a glance that the block was wrong. Finding out \emph{why} was far harder: even domain
 scientists could not point to the root cause without cross-checking the configuration file, the
 contents of the input data files, and finally the solver's source code.
 
-The cause is an off-by-one indexing error---the kind no crash ever reveals. TRITON adds rainfall
+The cause is an off-by-one indexing error, the kind no crash ever reveals. TRITON adds rainfall
 runoff using two inputs: a \texttt{runoff\_map} that tags every grid cell with a zone number, and
 one runoff hydrograph per zone. To apply the rain, the solver takes a cell's zone number
 and uses it directly to index the table of series. It never checks that the number is in range.
-That check mattered here. The upstream pipeline---not the solver---numbered the zones from $1$ to
+That check mattered here. The upstream pipeline, not the solver, numbered the zones from $1$ to
 $28$, but the solver fills its table from $0$, so its valid slots run only $0$ to $27$. Zone $28$
-therefore fell one slot past the end. The solver read whatever sat in the next piece of memory and
-poured that raw bit pattern, read back as a float, into every cell of the zone. Because the zones
+therefore fell one slot past the end. The solver read whatever sat in the next piece of memory (a raw bit pattern
+interpreted as a float) and poured that physically impossible value into every cell of the zone. Because the zones
 run northwest to southeast,
-that zone is the block in the far southeast corner (panel~b)---a clean rectangle exactly where the
+that zone is the block in the far southeast corner (panel~b), a clean rectangle exactly where the
 numbering went past the end of the table.
 
-This is the ``works but is wrong'' failure in its purest form. A setup-level mistake---a map
-numbered from $1$ feeding a table indexed from $0$---never shows up in the run's success/failure
+This is the ``works but is wrong'' failure in its purest form. A setup-level mistake, a map
+numbered from $1$ feeding a table indexed from $0$, never shows up in the run's success/failure
 status, yet the mistake wastes the run and can corrupt a flood-forecast product. A \emph{static}
 check can catch this mistake: the largest zone number in the map and the declared number of
 zones both sit in the setup files, so no solver run is needed to notice that the two disagree.
-Section~\ref{sec:realworld} returns to this bug to show the tool catching it---and the fix.
+Section~\ref{sec:realworld} returns to this bug to show the tool catching it, and the fix.
 
 \section{\texttt{diagnose\_project}: Design}
 \label{sec:design}
 
-\texttt{diagnose\_project} reads a TRITON project's setup files---the configuration file and the
-inputs that file points to---and reports the faults it finds, without ever running the solver.
+\texttt{diagnose\_project} reads a TRITON project's setup files (the configuration file and the
+inputs that file points to) and reports the faults it finds, without ever running the solver.
 The tool follows one design principle: a single, self-contained core of logic that the agent
 calls directly. The core is a pure function of the parsed setup files, with no dependence on any
-editor or operating-system feature. The same code therefore runs three ways---inside an editor,
+editor or operating-system feature. The same code therefore runs three ways: inside an editor,
 inside an automated test job, or through an external agent such as Claude Code or Codex
 (Figure~\ref{fig:architecture}). This design is one instance of a broader pattern we call
 \emph{agent-legible HPC}, which Section~\ref{sec:pattern} describes.
@@ -256,15 +257,16 @@ findings plus an append-only log of every call.}
 \end{figure*}
 
 \subsection{What it checks}
-The tool reads the TRITON \texttt{.cfg} configuration file---a simple list of \texttt{key=value}
-settings---and the input files that file points to, and returns a ranked list of \emph{findings}. Each
+The tool reads the TRITON \texttt{.cfg} configuration file (a simple list of \texttt{key=value}
+settings) and the input files that file points to, and returns a ranked list of \emph{findings}. Each
 finding carries a severity, a short plain-language explanation of the evidence, and a pointer to the
 file or step to look at. Table~\ref{tab:checks} lists the full set of checks. Every check is static:
 computed from the setup files, with no solver run.
 
 \begin{table}[!t]
 \caption{Static check catalog. Every check works from the setup files the solver reads and requires
-no solver run; together they test the setup against the conventions the solver silently assumes.}
+no solver run; together they validate the hydraulic integrity of the setup against the conventions
+the solver silently requires.}
 \label{tab:checks}
 \centering
 \footnotesize
@@ -286,7 +288,7 @@ hydrograph-delimiter\textsuperscript{\S}  & a forcing row is whitespace- not com
 \multicolumn{2}{@{}l@{}}{\emph{count-and-reference integrity} family:} \\
 \quad runoff-column-mismatch    & \texttt{num\_runoffs} $\neq$ runoff hydrograph columns \\
 \quad source-count-mismatch     & \texttt{num\_sources} $\neq$ source rows/columns \\
-\quad runoff-map-zone-range$^\dagger$ & a \texttt{runoff\_map} zone id $\geq$ \texttt{num\_runoffs} \\
+\quad runoff-map-zone-range$^\dagger$ & a \texttt{runoff\_map} zone id $\geq$ \texttt{num\_runoffs} (a 1-based map on a 0-based table) \\
 \quad extbc-count-mismatch$^\dagger$  & \texttt{num\_extbc} $\neq$ external-boundary entries \\
 \midrule
 \multicolumn{2}{@{}l@{}}{\emph{physical-plausibility layer} (advisory; warn, never block):} \\
@@ -311,15 +313,15 @@ on the upgraded tool and so exercises all four.}
 \subsection{How it is built: one core, thin wrappers, no launching}
 The diagnosis logic is written as a \emph{pure} function: given the parsed configuration and a
 small file-access helper, the function always returns the same findings and changes nothing on
-disk. The helper reports whether a file exists, its size, its text, and---after the fidelity fix
-of Section~\ref{sec:method}---the header of a binary elevation grid. The helper is supplied from
+disk. The helper reports whether a file exists, its size, its text, and, after the fidelity fix
+of Section~\ref{sec:method}, the header of a binary elevation grid. The helper is supplied from
 the outside, so the core itself imports no editor or operating-system code and never launches
 another program. Each delivery form plugs in its own real file-access helper. The payoff is that
 a single body of logic can be tested entirely in memory, run without a graphical interface, and
 behave identically whether the logic is reached over MCP or from inside the editor.
 
 \subsection{Three ways to reach the same tool}
-The same core is reached three ways---two put it in front of an agent, and the third calls it directly:
+The same core is reached three ways: two put it in front of an agent, and the third calls it directly:
 \begin{itemize}
   \item \textbf{As an MCP server}~\cite{mcp}: external agents (Claude Code, Codex, Claude Desktop)
         start a small server process and call the tool over MCP.
@@ -328,7 +330,7 @@ The same core is reached three ways---two put it in front of an agent, and the t
         ranked findings return as text into the Copilot chat (the user can also invoke the tool
         explicitly as \texttt{\#diagnoseProject}).
   \item \textbf{As a direct call to the core}: a script, batch job, or automated test calls the pure
-        diagnosis function directly---no server, no editor, no agent in between. This is the generic,
+        diagnosis function directly: no server, no editor, no agent in between. This is the generic,
         raw path: the same core the two surfaces above wrap, and the way the test suite exercises it.
 \end{itemize}
 
@@ -366,8 +368,8 @@ generate\_dem$^\ddagger$     & fetch/build a DEM for the domain \\
 
 All of the Triforge extension's tools, including \texttt{diagnose\_project}, are built the same way: a self-contained
 core an agent can call directly (Table~\ref{tab:tools}). Our
-goal across all these tools is \emph{agent-legible HPC}: exposing an HPC workflow---its setup
-files, conventions, and state---in a form an agent can read and understand, so that the agent can
+goal across all these tools is \emph{agent-legible HPC}: exposing an HPC workflow (its setup
+files, conventions, and state) in a form an agent can read and understand, so that the agent can
 inspect the workflow and act on it safely.
 
 The Triforge extension reaches this legibility through four patterns that wrap the tools, each addressing one part
@@ -375,11 +377,11 @@ of that goal. The first makes the workflow \textbf{readable}: each project ships
 files, \texttt{AGENTS.md} and \texttt{CLAUDE.md}, that say what the project is and how it is laid out,
 so an agent understands the project just by reading these files. The second keeps action \textbf{safe}:
 a read-only tool such as diagnosis runs on its own, while the tools whose effects reach outside the
-project---starting a run, or unpacking material into one---first stop and ask the person to approve
+project (starting a run, or unpacking material into one) first stop and ask the person to approve
 them (marked $^\ddagger$ in Table~\ref{tab:tools}), so an agent cannot launch an expensive job or
 import foreign files without consent. The remaining tools write project-local artifacts the user
 asked for, and are not gated. The third keeps a project \textbf{portable}: the commands \texttt{export\_tfp} and
-\texttt{import\_tfp} bundle an entire project---its configuration, inputs, and outputs---into one file
+\texttt{import\_tfp} bundle an entire project (its configuration, inputs, and outputs) into one file
 that can move between a laptop and an HPC cluster; this is the path that later carried the corrected
 run of Section~\ref{sec:realworld} back from the cluster to be re-checked. The fourth keeps action
 \textbf{accountable}: every tool call is written to an append-only log, leaving a complete record of
@@ -393,8 +395,8 @@ This paper measures only the diagnosis core, not the four patterns around it.
 \subsection{The test set of faulty and clean projects}
 Our test set is \textbf{32} complete, self-contained TRITON projects
 (\texttt{eval/diagnose-corpus/}): \textbf{15} that each contain one known defect, \textbf{5}
-\emph{user-rule} projects---whose ``fault'' is that the setup files break a rule the user explicitly
-declared---and \textbf{12} that are
+\emph{user-rule} projects (whose ``fault'' is that the setup files break a rule the user
+explicitly declared), and \textbf{12} that are
 deliberately clean (so we can check the tool does not raise false alarms). Together, the faulty
 projects cover the range of things that go wrong: an input grid of the wrong size (in three
 different file forms), the runoff-zone counting and out-of-range bugs of
@@ -404,7 +406,7 @@ separator that the solver rejects, an unfilled template placeholder, a missing i
 out-of-range parameter values. They span both binary (\texttt{BIN}, $24$ projects) and text
 (\texttt{ASC}, $8$ projects) input formats, and together they exercise every major input type:
 terrain, rainfall runoff, water sources, friction, and starting water levels. A companion file
-records the correct answer for every project---its format, its single injected fault (or
+records the correct answer for every project: its format, its single injected fault (or
 \texttt{clean}), and any user-declared rules. Each faulty project carries \emph{exactly one}
 intended fault, so ``the right answer'' is unambiguous and naming a different problem counts as a
 miss. The tool-level accuracy of Section~\ref{sec:results} and the with-versus-without comparison
@@ -418,11 +420,11 @@ Making the test projects \emph{faithful} to the real solver turned out to matter
 Our binary elevation grids were at first stored without a header. The real solver, however,
 expects a six-number header (grid width and height, corner coordinates, cell size, and a no-data
 marker) at the start of a binary elevation file and skips past it to the data; every \emph{other}
-binary raster---runoff map, Manning field, initial depth---instead carries a two-value
+binary raster (runoff map, Manning field, initial depth) instead carries a two-value
 \texttt{[nrows,\,ncols]} header that the solver \emph{validates}, aborting on a mismatch. No
 binary input is header-less; the two kinds of raster simply carry different headers, read by
 different overloads (we confirmed all of this in the TRITON source). Those
-header-less---and often all-zero---placeholder elevation files handed the tool-less agent a
+header-less, and often all-zero, placeholder elevation files handed the tool-less agent a
 believable but wrong complaint (``the binary inputs are missing their headers''). That wrong
 complaint pushed aside the intended fault on the binary projects, and so \emph{overstated} the
 tool's advantage. We rebuilt every binary project with a proper header and real terrain, taught
@@ -431,18 +433,18 @@ Section~\ref{sec:results} reports the corrected numbers, and Section~\ref{sec:th
 lesson.
 
 \subsection{The comparison: with the tool versus without, on two AI clients}
-Our experiment compares two \emph{arms}---conditions that are identical except for one thing,
-whether the tool is available:
+Our experiment compares two \emph{arms}, which are identical except for one thing, whether the
+tool is available:
 \begin{itemize}
-  \item \textbf{\emph{+tool}} (the treatment arm): the agent---the AI client---\emph{with}
+  \item \textbf{\emph{+tool}} (the treatment arm): the agent (the AI client) \emph{with}
         \texttt{diagnose\_project} available to call.
   \item \textbf{\emph{bare}} (the control arm): the \emph{same} agent, model, and instructions, but
-        \emph{without} the tool---an ordinary language model that can still read files and run shell
+        \emph{without} the tool, an ordinary language model that can still read files and run shell
         commands.
 \end{itemize}
-We name the two arms by what sets them apart (\emph{+tool} vs.\ \emph{bare}). We run each arm on two separate AI command-line clients---\textbf{Claude}
+We run each arm on two separate AI command-line clients, \textbf{Claude}
 (\texttt{claude -p}, running the \texttt{claude-sonnet-5} model) and \textbf{Codex}
-(\texttt{codex exec}, running \texttt{gpt-5.6-sol})---starting a brand-new session for each test. Both arms get the same neutral instruction: review the project and report any fault. The
+(\texttt{codex exec}, running \texttt{gpt-5.6-sol}), starting a brand-new session for each test. Both arms get the same neutral instruction: review the project and report any fault. The
 \emph{+tool} arm gets one extra line noting that the tool is available.
 
 \paragraph{Keeping each test isolated} A command-line agent can open files by absolute path, and
@@ -462,7 +464,7 @@ or user-rule project once. We report four numbers. \emph{found\%}: did the agent
 fault (or, for a clean project, correctly report no fault)? \emph{stage\%}: on a faulty project,
 did the agent point at the \emph{right} file or step? This measure separates a genuine diagnosis
 from ``right symptom, wrong cause,'' which a plain yes/no detection score would miss.
-\emph{clean-precision}: \emph{found\%} on the clean projects only---in other words, how well the
+\emph{clean-precision}: \emph{found\%} on the clean projects only; in other words, how well the
 agent avoids false alarms (``crying wolf''). \emph{cost}: the number of back-and-forth turns, the
 wall-clock time, the tokens used, and the tool's own communication overhead
 (Table~\ref{tab:efficiency}). The cost numbers answer the worry that calling the tool costs more
@@ -496,17 +498,16 @@ scores as wrong. (ii)~The judge grades against a \emph{fixed} answer confirmed b
 (Section~\ref{sec:oracle}), not against the judge's own opinion, so a mislabeled project cannot
 corrupt the scores. (iii)~The judge asks clean projects and faulty projects separate questions,
 each phrased in its natural direction; this removes a double-negative that had once mis-scored
-valid projects. The verdict is a compact \emph{binary} label---\texttt{found\_fault} and, on
-faulty projects, \texttt{right\_stage}---matched on meaning, not wording, and saved with a
+valid projects. The verdict is a compact \emph{binary} label (\texttt{found\_fault} and, on
+faulty projects, \texttt{right\_stage}), matched on meaning, not wording, and saved with a
 one-line reason for human audit (Section~\ref{sec:threats}).
 
 \section{Results}
 \label{sec:results}
 
-We report the results in two parts. The first part asks how accurate the tool is on its own. That
-number only means something if the answer key we grade the tool against is correct, so we check
-the key too---and neither check uses any AI. The second part asks the central question: does
-handing the tool to an AI agent change what the agent finds?
+We report the results in two parts, neither of which uses any AI. The first asks how accurate the
+tool is on its own, and checks the answer key it is graded against. The second asks the central
+question: does handing the tool to an AI agent change what the agent finds?
 
 \subsection{Tool-level accuracy, checked against the real solver}
 \label{sec:oracle}
@@ -515,11 +516,11 @@ flags every faulty project (\textbf{100\% detection}), makes the real fault its 
 nothing else competing (\textbf{100\% isolation}), and raises no false alarm on any clean project
 (\textbf{100\% clean precision}). Re-running the shipped evaluation script reproduces these
 numbers exactly (the script writes them to \texttt{report.json}). But a perfect score only shows
-that the tool agrees with \emph{our own} answer key. A perfect score does not show that the key
-itself is right, and a skeptic could fairly suspect that we built the test set to suit the tool.
+that the tool agrees with \emph{our own} answer key, not that the key itself is right; a skeptic
+could fairly suspect we built the test set to suit the tool.
 To show that the key is right, we check the key against the program the key describes: we run
 every project through a real TRITON build (built as the appendix records; the harness is pointed at
-it with \texttt{TRITON\_EXE}) and watch what the solver does. Section~\ref{sec:realworld} adds a second, independent check---the tool on a
+it with \texttt{TRITON\_EXE}) and watch what the solver does. Section~\ref{sec:realworld} adds a second, independent check: the tool on a
 real project we did not build.
 
 The solver can do one of three things: stop while loading the setup files, run to the end, or
@@ -529,7 +530,7 @@ had flagged all \textbf{11}, so no broken project slips past the tool (Table~\re
 Finishing, though, does not prove a project is correct: a run can finish and still write wrong
 numbers, and that is the exact failure this tool is built to catch. So we never call a project
 clean just because the solver finished. Each finished run also goes through an automatic check of
-its output for obvious signs of trouble---values that are not real numbers, values far outside
+its output for obvious signs of trouble: values that are not real numbers, values far outside
 any physical range, or output that is all zeros or a single repeated number. This automatic check
 clears the clearly sound runs and flags the doubtful ones (Section~\ref{sec:reproducibility}).
 
@@ -542,13 +543,13 @@ use a physically implausible setting, and one, \texttt{fault-runoff-zone-oob}, f
 output that looks fine but is silently wrong. That last case shows best why finishing is not
 enough. The project contains the same out-of-range read as in Section~\ref{sec:motivation}, but
 on a small grid; instead of crashing (as the read does on the large grid), the bad read lands on
-harmless memory, and the run ends with quietly corrupted results---and the tool flags the project
+harmless memory, and the run ends with quietly corrupted results, and the tool flags the project
 anyway. So the real solver does not remove the need for human judgment; the solver shrinks that
 need, from all \textbf{32} project labels to about \textbf{10}.
 
 \begin{table}[!t]
 \caption{The \textbf{32} test projects, grouped by how each label was settled. The solver decides
-\textbf{22} cases on its own---\textbf{11} it rejects or crashes on, \textbf{11} it finishes with
+\textbf{22} cases on its own: \textbf{11} it rejects or crashes on, \textbf{11} it finishes with
 sound output. The other \textbf{10} need a person: \textbf{2} the output check flags as doubtful,
 and \textbf{8} that finish normally yet are faulty. The tool independently flags all \textbf{11}
 broken and all \textbf{8} faulty-but-tolerated projects, so none slip past it.}
@@ -572,7 +573,7 @@ the solver silently requires: a numeric header on binary runoff maps, and a comm
 space between values in rainfall files. We turned each into a new check
 (Table~\ref{tab:checks}). The check also corrected a project we had mislabeled: a rainfall file
 we had filed as clean is in fact rejected by the solver for using spaces instead of commas, so
-that project is really a fault---one that both tool-free agents had missed. The full per-project
+that project is really a fault, one that both tool-free agents had missed. The full per-project
 result is published for reviewers~\cite{artifact-oracle}: each project's tool finding, solver
 outcome, and decoded setup.
 
@@ -628,88 +629,86 @@ Codex  & bare    & 6.7  & 30 & 12{,}483 & 1{,}137 & 0   \\
 \end{table}
 
 \noindent\textbf{Faulty projects.} On its own, an agent already finds most faults ($91\%$ for
-Claude (\texttt{claude-sonnet-5}), $96\%$ for Codex (\texttt{gpt-5.6-sol})); the tool closes that
-last gap to $100\%$. The tool's clearer effect is on \emph{pinpointing} the fault: the rate of
+Claude, $96\%$ for Codex); the tool closes that last gap to $100\%$. The tool's clearer effect is on \emph{pinpointing} the fault: the rate of
 pointing at the right file or step rises from $78$--$80\%$ without the tool to $98\%$ with the
 tool. Without the tool, the agent often names a fault that is real but not the one that was
 actually injected. Of the three effects, this localization gain is the one that clearly survives
-the Wilson intervals in Table~\ref{tab:results}---the $n{=}45$ setup-fault columns are the
-tightest. That is why we treat the localization gain as the headline result and read the
-false-alarm and user-rule effects as directional rather than sharply separated.
+the Wilson intervals in Table~\ref{tab:results}, so we treat it as the headline result.
 
 \noindent\textbf{Clean projects (``don't cry wolf'').} Here the benefit depends on the client. On
-its own, Codex (\texttt{gpt-5.6-sol}) is already perfect on the clean projects ($12/12$) and stays perfect with the tool.
-Claude (\texttt{claude-sonnet-5}) on its own, by contrast, raises a false alarm on $3$ of the $12$; the tool fixes two of them
+its own, Codex is already perfect on the clean projects ($12/12$) and stays perfect with the
+tool. Claude on its own, by contrast, raises a false alarm on $3$ of the $12$; the tool fixes two of them
 (reaching $11/12$), leaving one where Claude overrides the tool's correct ``clean'' verdict after
 misreading an input file. That last case is an honest limitation: the tool gives the right answer,
-but the agent does not always trust the tool. So the ``don't cry wolf'' benefit is real, but the
-benefit lands on the weaker client rather than on both clients.
+but the agent does not always trust it. The ``don't cry wolf'' benefit is real, but it lands on
+the weaker client rather than on both.
 
 \noindent\textbf{User-rule projects.} These projects break a rule the user declared: a stated
-count of runoff zones or water sources, a run duration, a rainfall range. Codex
-(\texttt{gpt-5.6-sol}) is perfect here with and without the tool. Claude
-(\texttt{claude-sonnet-5}) on its own misses two of five; the tool restores it to $5/5$. Once an
+count of runoff zones or water sources, a run duration, a rainfall range. Codex is perfect
+here with and without the tool. Claude on its own misses two of five; the tool restores it to $5/5$. Once an
 agent is told the rule, checking a declared number against the actual files is something a
 capable agent does reliably, so we treat this group as a boundary of the effect rather than a
 headline result.
 
-\noindent\textbf{The tool's advantage survives correcting the test data.} We found and corrected
-a test-data flaw that had \emph{inflated} the tool's advantage: our binary elevation files at
-first lacked the header the real solver requires, which gave the \emph{bare} agent a wrong but
-plausible complaint (Section~\ref{sec:fidelity}). After we rebuilt every such file with a proper
-header and re-ran the experiment, the \emph{+tool} scores were essentially unchanged and a clear
-advantage over \emph{bare} remained---so the benefit is not an artifact of how the test set was
-built.
+\noindent\textbf{The tool's advantage survives correcting the test data.} After we rebuilt every
+binary project with the header the real solver requires (Section~\ref{sec:fidelity}) and re-ran
+the experiment, the \emph{+tool} scores were essentially unchanged and a clear advantage over
+\emph{bare} remained.
 
 \subsection{Does calling the tool cost more than it saves?}
 A natural worry is that the cost of \emph{calling} the tool cancels whatever the tool saves. It
-does not (Table~\ref{tab:efficiency}). Each call to the tool---the request sent plus the
-diagnosis text read back---costs only about \textbf{$90$--$110$ tokens}, under $1.5\%$ of
+does not (Table~\ref{tab:efficiency}). Each call to the tool (the request sent plus the
+diagnosis text read back) costs only about \textbf{$90$--$110$ tokens}, under $1.5\%$ of
 everything the \emph{+tool} arm spends. Meanwhile that arm uses about $1.3$--$1.6\times$ fewer
 back-and-forth turns, $2.3$--$4.4\times$ fewer output tokens, and $1.6$--$3.8\times$ less wall-clock
 time than the \emph{bare} arm. The saving is far larger than the cost.
 
 \subsection{Real-world validation: a fault the solver never noticed}
 \label{sec:realworld}
-This is the silent-corruption case on a real project---the clearest example of the one fault
-class only the tool catches (Section~\ref{sec:oracle}). The $32$-project test set of
-Section~\ref{sec:method} was created for this evaluation---AI-generated, with deliberately
-injected faults, and validated against the real solver (Section~\ref{sec:oracle})---so we also
-ran the tool on a real failure: the operational project behind Section~\ref{sec:motivation}
-(Figure~\ref{fig:anomaly}). There the
-solver had \emph{run to completion} on a GPU cluster and returned output that looked plausible
-but was physically meaningless---a fault that never shows up as a crash. The mistake was not in
+This is the silent-corruption case on a real project, the clearest example of the one fault
+class only the tool catches (Section~\ref{sec:oracle}). The $32$-project test set was built for
+this evaluation, so we also ran the tool on a real failure: the operational project behind
+Section~\ref{sec:motivation} (Figure~\ref{fig:anomaly}), where the solver had \emph{run to
+completion} on a GPU cluster and returned output that looked plausible but was physically
+meaningless, a fault that never shows up as a crash. The mistake was not in
 TRITON, the \texttt{.cfg}, or any hand edit: an upstream Python data-preparation pipeline had
 numbered the runoff map's zones from $1$ instead of $0$. The tool has no view into that pipeline,
 yet the tool catches the fault anyway, because the tool checks the input files the configuration
-names---reading \emph{exactly what the solver reads}, no matter what produced those files.
+names, reading \emph{exactly what the solver reads}, no matter what produced those files.
 
 Given only the configuration and its $21$-million-cell input grids, the tool returns \emph{one} finding
-in about a second---\texttt{runoff-map-zone-range}: ``runoff\_map max id$=28$, \texttt{num\_runoffs}$=28$
-(valid range $0$--$27$)''---with the fix (renumber the map from $0$). Working statically, from
+in about a second, \texttt{runoff-map-zone-range}: ``runoff\_map max id$=28$, \texttt{num\_runoffs}$=28$
+(valid range $0$--$27$)'', with the fix (renumber the map from $0$). Working statically, from
 the setup files alone, the tool reproduces a diagnosis that domain scientists had reached only by
 cross-checking the configuration, the input data, and the solver's source code. The one step left
 to the human was tracing the fix back to the pipeline. Rather than hand-tune a single check, we
 generalized this bug into a small \emph{count-and-reference} family (Table~\ref{tab:checks}),
-each check tied to a specific unchecked read in the TRITON source.
+each check tied to a specific unchecked read in the TRITON source. Counting rather than running
+is also what should let the family scale: a parallel-I/O layout can split one input across
+thousands of files, where comparing a declared count against what is on disk is the only practical
+check, and it would cost the tool no more than checking one.
 
 The fix belonged in the pipeline, not the setup files: a step that re-indexes the runoff map from
 $0$, aligned to the terrain with no gaps. The \emph{same} read-only tool then confirms that the
 corrected project reports \emph{no fault}, and the physics agrees
-(Figure~\ref{fig:beforeafter})---the out-of-range block that had filled the southeast corner is
-gone, replaced by realistic depths with a maximum of $20.7$\,m. The tool that opened the
-investigation also closes it---on a silent corruption that neither a crash nor a successful exit
+(Figure~\ref{fig:beforeafter}): the out-of-range block that had filled the southeast corner is
+gone, replaced by realistic depths with a maximum of $34.0$\,m. The corruption had not even
+been confined to that block: $1{,}800$ cells \emph{outside} zone~28 had overflowed to
+infinity in the uncorrected run, and none do now. The tool that opened the
+investigation also closes it, on a silent corruption that neither a crash nor a successful exit
 code would ever have revealed.
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[width=0.60\textwidth]{figures/mh-before-after.png}
+% 0.59 not 0.60: this render is ~1% taller in aspect than the one it replaces, and at 0.60 the
+% extra 1.2pt pushes this float off its text page and cascades an extra page into the paper.
+\includegraphics[width=0.59\textwidth]{figures/mh-before-after.png}
 \caption{Real HPC output before and after the tool-diagnosed fix (maximum water depth,
-logarithmic colour scale, dry cells left blank). \textbf{Left:} the uncorrected run---a runoff
+logarithmic colour scale, dry cells left blank). \textbf{Left:} the uncorrected run, where a runoff
 map numbered from $1$ causes an out-of-range table read that injects a constant
-$\sim$$6\times10^{213}$\,m block in the southeast (highlighted), flattening the real flood
+$\sim$$1.5\times10^{214}$\,m block in the southeast (hatched), flattening the real flood
 network at the bottom of a scale spanning more than $200$ orders of magnitude. \textbf{Right:} the
-corrected run, numbered from $0$---realistic, terrain-following depths (maximum $20.7$\,m), and
+corrected run, numbered from $0$: realistic, terrain-following depths (maximum $34.0$\,m), and
 the block is gone. Re-checking both maps with the tool reports no fault on the corrected run.}
 \label{fig:beforeafter}
 \end{figure*}
@@ -723,7 +722,7 @@ against bias (Section~\ref{sec:scoring}): it is blind to which arm it grades, so
 in the difference, and it grades the agent's own answer against a solver-confirmed correct
 answer using a direction-appropriate set of questions. What remains is the judge's plain error
 rate, which we measured directly. A domain expert re-graded \emph{all} $248$ ablation runs by
-hand, without seeing the judge's verdicts---a check of the judge, not of the project labels. The
+hand, without seeing the judge's verdicts, a check of the judge, not of the project labels. The
 human and the judge agree $98.8\%$ of the time ($245/248$), and $100\%$ ($48/48$) on the clean
 projects that carry the don't-cry-wolf claim; every re-graded run is published for
 inspection~\cite{artifact-human}. In all three disagreements, the human gave a \emph{bare}-arm
@@ -742,43 +741,42 @@ only widens the gap. This concern applies only to the with-versus-without compar
 checked against the real solver, not by a model (Section~\ref{sec:oracle}).
 
 \paragraph{Could the answer key itself be wrong?} A subtler concern than judge error is that our
-answer key could be wrong---an injected ``fault'' the real solver tolerates, or a ``clean''
+answer key could be wrong: an injected ``fault'' the real solver tolerates, or a ``clean''
 project it rejects. The solver-as-judge pass (Section~\ref{sec:oracle}) closes one direction
 outright: \emph{tool-missed}$=0$ confirms that no project the solver rejects is mislabeled clean,
 and the same pass caught a genuinely mislabeled project (a rainfall file the solver in fact
-rejects), on top of the test-data fix of Section~\ref{sec:fidelity}. The other direction---a
-fault the solver tolerates and runs to completion---the solver cannot settle by itself; those
+rejects), on top of the test-data fix of Section~\ref{sec:fidelity}. The other direction, a
+fault the solver tolerates and runs to completion, the solver cannot settle by itself; those
 labels rest on the output-sanity scan and a human audit of the small residual. That the test
 projects were AI-generated does not change this argument: the credibility of the labels rests on
 the solver and the human audit, not on who created the files.
 
 \paragraph{Faithfulness of the test data} As Section~\ref{sec:fidelity} shows, an input format
-that does not match the real solver can quietly distort the result. We traced the solver's
-source, rebuilt every binary project, and re-ran the experiment; the tool now reads the elevation
-header exactly as the solver does. We checked the opposite direction too: the agents kept
+that does not match the real solver can quietly distort the result. We checked the opposite
+direction too: the agents kept
 insisting the runoff \emph{map} needed the \emph{elevation} file's six-number header. It does
-not---the solver reads that map's first two values as \texttt{[nrows,\,ncols]}, so a six-number
+not: the solver reads that map's first two values as \texttt{[nrows,\,ncols]}, so a six-number
 header would be read as garbage dimensions and rejected. The map does carry a header, just a
 two-value one, and the tool encodes that distinction rather than the agents' guess
 (\texttt{bin-raster-header}). The \emph{bare} arm's remaining misses are therefore real agent
 errors, not leftovers from the test data.
 
 \paragraph{What the tool does not cover} The tool works from the setup files before a run, so
-failures that appear only while the program runs---a missing software library at launch,
-say---are out of scope by design; the tool complements runtime debugging rather than replacing
+failures that appear only while the program runs (a missing software library at launch,
+say) are out of scope by design; the tool complements runtime debugging rather than replacing
 it. Even before a run, the tool is a fixed set of checks for \emph{known} kinds of mistakes
 (Table~\ref{tab:checks}), not a general anomaly detector: a brand-new kind of fault with no
 matching check will pass. Two things soften this limit. The agent still reads the files itself
 and catches many faults without the tool (Section~\ref{sec:results}), so the tool's job is to
 make the \emph{recurring} problems reliable, not to catch everything. Adding a check is also
 cheap: each is a small, self-contained function tied to one place in the solver source, so the
-catalog grows as new cases appear. A self-serve way for non-programmers to add checks is left for
-future work.
+catalog grows as new cases appear. A self-serve way for non-programmers to add checks, and checks for
+parallel-I/O layouts that split one input across many files, are left for future work.
 
 \paragraph{How far the results generalize} Our results cover one solver, two AI clients, and one
 machine, with three repeats per faulty project and one per clean or user-rule project. We report
-Wilson $95\%$ intervals for the ablation proportions (Table~\ref{tab:results})---reliable at
-small samples and near $0$ or $100\%$, where the usual normal approximation is not. The
+Wilson $95\%$ intervals for the ablation proportions (Table~\ref{tab:results}); these stay reliable
+at small samples and near $0$ or $100\%$, where the usual normal approximation does not. The
 setup-fault columns ($n{=}45$) are tight enough that the localization gain
 ($78$--$80\%\!\to\!98\%$) clearly survives them, while the smaller Expect.\ and Clean groups
 ($n{=}5$, $12$) leave the false-alarm and user-rule effects directional rather than sharply
@@ -803,8 +801,8 @@ later~\cite{pcheck}. Some ties each setting to the tests that use it~\cite{ctest
 rules a configuration file ought to obey by reading many examples instead of asking a person to
 write them down~\cite{confspec}. Ciri~\cite{ciri} hands the checking to a language model. Our
 checks belong to this family and differ in two ways. What a TRITON configuration points at is not
-more settings but large data files, so a check must open them---read a grid's header, count a
-rainfall table's columns, find the largest zone number in a map---not just read the
+more settings but large data files, so a check must open them (read a grid's header, count a
+rainfall table's columns, find the largest zone number in a map), not just read the
 configuration. And that work asks whether the checker finds the mistake; we ask whether giving
 the checker to an AI agent changes what the \emph{agent} concludes.
 
@@ -818,17 +816,17 @@ These systems are \emph{generation- and orchestration-first}: the agent produces
 runs, then iterates. Closest to our aim is LARA-HPC~\cite{lara}, which argues for a
 ``validation-first'' approach and uses lightweight \emph{dry runs} of the simulation to catch errors
 cheaply. We share that spirit but push further on safety and cost: \texttt{diagnose\_project} is
-\emph{fully static}---it never runs the solver at all, not even a dry run---and the tool reads
+\emph{fully static}: it never runs the solver at all, not even a dry run, and the tool reads
 \emph{exactly what the solver reads}, so the tool works on any hand-built TRITON project, not
 only projects that a particular generation pipeline produced. Notably, MatClaw~\cite{matclaw}
-reports that agents ``struggle with tacit domain knowledge''---the setup routines and file
+reports that agents ``struggle with tacit domain knowledge'', the setup routines and file
 conventions that practitioners rarely write down. Our tool encodes exactly the setup conventions
 the agent would otherwise guess at, and we measure the effect that this encoding has.
 
 \paragraph{LLM agents for code and workflow debugging}
 SWE-bench~\cite{swebench} established real GitHub issues as a benchmark, and
 SWE-agent~\cite{sweagent} showed that a purpose-built interface between the agent and the computer
-markedly improves a model's software-engineering performance---the general version of our specific
+markedly improves a model's software-engineering performance, the general version of our specific
 claim that a purpose-built tool helps. Much of the follow-on work grounds its fixes in \emph{runtime}
 signals: diagnoses drawn from tests that reproduce the bug~\cite{swedoctor}, and tools for inspecting
 what the agent did step by step~\cite{agentstepper}. Our target is different in kind: configuration
@@ -840,13 +838,13 @@ ReAct~\cite{react} and Toolformer~\cite{toolformer} established how LLMs use too
 standardizes how tools are offered to agents. Several MCP servers now target HPC and quantum
 execution~\cite{mcp-quantum,materials-aurora}. These servers offer \emph{execution} tools (launch
 jobs, orchestrate campaigns); we contribute a \emph{read-only, static diagnosis} tool over the
-same standard---and rather than only showing that the tool works, we test whether the tool
+same standard, and rather than only showing that the tool works, we test whether the tool
 actually changes what the agent finds, through a controlled with-versus-without comparison.
 
 To our knowledge, no prior work measures whether such a checker changes what an \emph{agent}
 concludes. That is the gap we fill: a $\pm$tool ablation on a scientific solver, two independent
 clients, graded blind against solver-confirmed labels. The nearest work stops
-short---\cite{lara} validates inside a generation pipeline using dry runs, the
+short: \cite{lara} validates inside a generation pipeline using dry runs, the
 software-engineering line runs code repositories, and the configuration-checking line tests the
 checker, not the agent.
 
@@ -857,9 +855,11 @@ wrong'' HPC faults before any compute is spent. It works from the project's own 
 reaches the agent through standard interfaces. The tool does this while \emph{reducing} the
 agent's turns and cost. The result holds across two independent AI clients, and the tool's own
 overhead is negligible. The compute at stake dwarfs that overhead: the operational run of
-Section~\ref{sec:motivation} held $40$ A100 GPUs for some $27$~minutes---about $18$
-GPU-hours---and returned a product that had to be discarded, while the static check that catches
-the fault takes about a second on a laptop.
+Section~\ref{sec:motivation} held eight A100 GPUs for $28$~minutes (about $3.7$ GPU-hours) and
+returned a product that had to be discarded, while the static check that catches the fault takes
+about a second on a laptop. A TRITON forecasting project consumes on the order of $200$
+GPU-hours a year, so a deployment that catches even two or three setup errors a quarter saves
+hundreds of GPU-hours.
 
 Two lessons generalize past this solver. First, test fixtures must be \emph{validated} against
 the real program, not merely constructed: a missing header in our binary inputs broke no test,
@@ -868,13 +868,11 @@ through the solver. Second, these faults live exactly where a convention looks s
 not. The upstream pipeline numbered runoff zones from $1$, as GIS tools do, while the solver
 indexes from $0$; and our tool-free agents repeatedly insisted that the runoff map needed the
 elevation file's six-number header, which the solver in fact rejects there. Both are setups that satisfy surface plausibility while violating the
-solver's own semantics---which is precisely what \texttt{diagnose\_project} encodes.
+solver's own semantics, which is precisely what \texttt{diagnose\_project} encodes.
 
 \section*{Acknowledgment}
 The research was supported by the US Air Force Numerical Weather Modeling
-Program. The research used resources from the Oak Ridge Leadership Computing
-Facility at Oak Ridge National Laboratory (ORNL), which is a DOE Office of
-Science User Facility. The authors are employees of UT-Battelle, LLC, under
+Program. The authors are employees of UT-Battelle, LLC, under
 contract DE-AC05-00OR22725 with the US DOE. Accordingly, the publisher, by
 accepting the article for publication, acknowledges that the US government
 retains a nonexclusive, paid-up, irrevocable, worldwide license to publish or
@@ -899,22 +897,24 @@ solver, delivered as an MCP server and a VS~Code language-model tool.
 \emph{Build:} TypeScript via \texttt{npm ci}; the solver from TRITON upstream commit
 \texttt{d18ed5b7a} (tag \texttt{2.1.1}, clean tree) with CMake~3.28 and
 \texttt{mpic++}~13.3 (GCC), Kokkos \emph{Serial} backend (submodule pinned at
-\texttt{5.1.1}), CUDA disabled---the recorded environment ships with the bundle.
+\texttt{5.1.1}), CUDA disabled; the recorded environment ships with the bundle.
 \emph{Data set:} 32 TRITON projects (20 faulted, 12 clean), 828\,KB, plus the graded run
 records and the four reviewer artifact pages, which carry the answer, gold label, and
 verdict for every one of the 248 ablation runs.
 \emph{Run-time environment:} Ubuntu~24.04.4 LTS (kernel~7.0.0), Node~22.22.2,
 Python~3.12.3, \texttt{jq}~1.7, bubblewrap~0.9.0; no root access needed.
-\emph{Hardware:} Layers~1--2 need only a commodity x86-64 machine---ours was a dual-core
-(4-thread) Intel Core~i5-4250U with 7\,GB RAM. The operational run of Figures~\ref{fig:anomaly}
-and~\ref{fig:beforeafter} used 40 NVIDIA~A100 GPUs (10 nodes $\times$ 4) on a custom
-computing cluster.
+\emph{Hardware:} Layers~1--2 need only a commodity x86-64 machine; ours was a dual-core
+(4-thread) Intel Core~i5-4250U with 7\,GB RAM. The two operational runs of
+Figures~\ref{fig:anomaly} and~\ref{fig:beforeafter} each used 8 NVIDIA~A100 GPUs
+(2 nodes $\times$ 4) for $28$~minutes (about $3.7$ GPU-hours per run) over the French Broad
+River basin, western North Carolina, on a $4458\times4802$ grid at $20$\,m for $10$ simulated
+days. The two runs differ only in whether the runoff-zone map is numbered from $1$ or $0$.
 \emph{AI clients:} Claude Code~2.1.221 (\texttt{claude-sonnet-5}) and Codex CLI~0.144.5
 (\texttt{gpt-5.6-sol}); blind judge \texttt{claude-sonnet-5}.
 \emph{Metrics:} those of Tables~\ref{tab:results} and~\ref{tab:efficiency}, one layer each.
 \emph{Disk and time:} the bundle is 2.8\,MB compressed (191 checksummed files) and is built from
 the repository's tracked content alone, so a rebuild from a fresh clone reproduces every file
-byte-for-byte---verify against the enclosed \texttt{SHA256SUMS}, not the archive's own hash, which
+byte-for-byte; verify against the enclosed \texttt{SHA256SUMS}, not the archive's own hash, which
 carries build timestamps;
 Layer~1 finishes in seconds, Layer~2 is 32 short single-core solver runs, and Layer~3 is
 248 agent runs and the only layer that costs money.
@@ -922,7 +922,7 @@ Layer~1 finishes in seconds, Layer~2 is 32 short single-core solver runs, and La
 archived deposit\todo{Zenodo DOI once reserved}; code under MIT, data under
 CC~BY~4.0.
 
-\paragraph{Layer~1 --- fully automatic, no AI needed} The tool-level result of
+\paragraph{Layer~1: fully automatic, no AI needed} The tool-level result of
 Section~\ref{sec:results} reproduces with no access to any AI service. \texttt{npm ci} installs the
 pinned dependencies; \texttt{npm run test:unit} runs the unit tests (the pure diagnosis core, the
 file-access helpers, and the test-set scorer); and \texttt{npx tsx scripts/eval/diagnose-report.ts}
@@ -932,10 +932,10 @@ $\cdot$ clean~precision~$100\%$}; comparing the regenerated \texttt{report.json}
 committed copy confirms the numbers exactly. The regenerated report is also published as a
 browsable online artifact~\cite{artifact-tool}.
 
-\paragraph{Layer~2 --- checked against the real solver, still no AI} The claim that the answer key
+\paragraph{Layer~2: checked against the real solver, still no AI} The claim that the answer key
 itself is correct (Section~\ref{sec:oracle}) reproduces with a TRITON build but \emph{no} AI
-service. The compiled solver is deliberately not shipped---a machine-specific binary is not
-evidence---so the reviewer builds it from the recorded commit and pins it with
+service. The compiled solver is deliberately not shipped (a machine-specific binary is not
+evidence), so the reviewer builds it from the recorded commit and pins it with
 \texttt{export TRITON\_EXE=/path/to/triton.exe}; the scripts otherwise look for
 \texttt{eval/diagnose-corpus/build/triton.exe} and refuse to run without a solver, because a
 failed launch is indistinguishable from a deck the solver rejects at load time.
@@ -948,7 +948,7 @@ rejected by the solver; \texttt{build-verdict.ts} produces the per-project revie
 the reproducible evidence that \emph{tool-missed}$=0$ and that every label agrees with the solver;
 the resulting dataset is the online artifact of Section~\ref{sec:oracle}~\cite{artifact-oracle}.
 
-\paragraph{Layer~3 --- the with-versus-without comparison} The two-arm result needs both AI
+\paragraph{Layer~3: the with-versus-without comparison} The two-arm result needs both AI
 clients and network access to their services, so it is not self-contained.
 \texttt{scripts/eval/run-study.sh} drives each client for every project and arm inside the sandbox of
 Section~\ref{sec:method} (a hidden home directory with only the toolchain exposed);
@@ -958,7 +958,7 @@ inputs are the 32 projects and the two instructions (\emph{+tool} with the tool,
 without). The graded transcripts, metrics, and overhead measurements are published as a browsable
 online artifact~\cite{artifact-ablation}.
 
-\paragraph{Layer~4 --- the judge itself, audited} The agreement figures of
+\paragraph{Layer~4: the judge itself, audited} The agreement figures of
 Section~\ref{sec:threats} validate the \emph{grader} rather than reproduce the result, so they
 form a fourth layer. A domain expert re-graded all \textbf{248} ablation cells by hand without
 seeing the judge's verdicts; \texttt{runs/human-judge-evaluation.csv} records for each cell the
@@ -970,7 +970,7 @@ script, so re-running it means re-grading: the browsable artifact~\cite{artifact
 all 248 answers with their gold labels for exactly that. It opens by asking whether to show the
 recorded verdicts or to start blank, so a reviewer can repeat the pass unanchored and compare
 only afterwards. The multi-judge check \emph{is}
-re-runnable---\texttt{scripts/eval/judge-multi.sh} re-grades the same 248 saved answers under Opus
+re-runnable: \texttt{scripts/eval/judge-multi.sh} re-grades the same 248 saved answers under Opus
 and \texttt{gpt-5.6-sol}; \texttt{runs/robustness/README.md} carries the resulting per-judge
 tables, and the per-cell verdicts regenerate beneath it.
 
