@@ -425,9 +425,10 @@ binary raster (runoff map, Manning field, initial depth) instead carries a two-v
 \texttt{[nrows,\,ncols]} header that the solver \emph{validates}, aborting on a mismatch. No
 binary input is header-less; the two kinds of raster simply carry different headers, read by
 different overloads (we confirmed all of this in the TRITON source). Those
-header-less, and often all-zero, placeholder elevation files handed the tool-less agent a
-believable but wrong complaint (``the binary inputs are missing their headers''). That wrong
-complaint pushed aside the intended fault on the binary projects, and so \emph{overstated} the
+header-less, and often all-zero, placeholder elevation files handed the tool-less agent an easy
+complaint: ``the binary inputs are missing their headers.'' The elevation files really were
+missing theirs; the others were not, and none of it was the fault we had injected. That
+complaint pushed the intended fault aside on the binary projects, and so \emph{overstated} the
 tool's advantage. We rebuilt every binary project with a proper header and real terrain, taught
 the tool to read the grid from that header exactly as the solver does, and re-ran everything.
 Section~\ref{sec:results} reports the corrected numbers, and Section~\ref{sec:threats} draws the
