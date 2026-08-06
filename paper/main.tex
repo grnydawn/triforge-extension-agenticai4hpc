@@ -428,7 +428,8 @@ different overloads (we confirmed all of this in the TRITON source). Those
 header-less, and often all-zero, placeholder elevation files handed the tool-less agent an easy
 complaint: ``the binary inputs are missing their headers.'' The elevation files really were
 missing theirs; the others were not, and none of it was the fault we had injected. That
-complaint pushed the intended fault aside on the binary projects, and so \emph{overstated} the
+complaint pushed the intended fault aside on the binary projects. Because only the \emph{bare}
+arm was reading the files itself, the flaw cost that arm alone, and so \emph{overstated} the
 tool's advantage. We rebuilt every binary project with a proper header and real terrain, taught
 the tool to read the grid from that header exactly as the solver does, and re-ran everything.
 Section~\ref{sec:results} reports the corrected numbers, and Section~\ref{sec:threats} draws the
@@ -755,8 +756,8 @@ projects were AI-generated does not change this argument: the credibility of the
 the solver and the human audit, not on who created the files.
 
 \paragraph{Faithfulness of the test data} As Section~\ref{sec:fidelity} shows, an input format
-that does not match the real solver can quietly distort the result. We checked the opposite
-direction too: the agents kept
+that does not match the real solver can quietly distort the result. We also checked the reverse
+case, where the fixtures were right and the agent wrong: the agents kept
 insisting the runoff \emph{map} needed the \emph{elevation} file's six-number header. It does
 not: the solver reads that map's first two values as \texttt{[nrows,\,ncols]}, so a six-number
 header would be read as garbage dimensions and rejected. The map does carry a header, just a
@@ -777,14 +778,14 @@ catalog grows as new cases appear. A self-serve way for non-programmers to add c
 parallel-I/O layouts that split one input across many files, are left for future work.
 
 \paragraph{How far the results generalize} Our results cover one solver, two AI clients, and one
-machine, with three repeats per faulty project and one per clean or user-rule project. We report
-Wilson $95\%$ intervals for the ablation proportions (Table~\ref{tab:results}); these stay reliable
-at small samples and near $0$ or $100\%$, where the usual normal approximation does not. The
-setup-fault columns ($n{=}45$) are tight enough that the localization gain
-($78$--$80\%\!\to\!98\%$) clearly survives them, while the smaller Expect.\ and Clean groups
-($n{=}5$, $12$) leave the false-alarm and user-rule effects directional rather than sharply
-separated. The tool's own accuracy (Section~\ref{sec:oracle}) is deterministic and reproduces
-exactly, so that number is a measurement rather than a sample and carries no interval. Nothing in
+machine, with three repeats per faulty project and one per clean or user-rule project. Because
+some of the groups are small, Table~\ref{tab:results} gives a $95\%$ interval for every rate; we
+use Wilson intervals, since the usual formula breaks down at small samples and near $0$ or
+$100\%$. The setup-fault columns rest on $45$ runs, and their intervals are narrow enough that
+the localization gain ($78$--$80\%\!\to\!98\%$) is not in doubt. The clean and user-rule groups
+rest on $12$ and $5$ runs, so their intervals are wide: we can say which way those effects point,
+not how big they are. The tool's own accuracy (Section~\ref{sec:oracle}) is not a sample at all,
+since the same $32$ projects give the same answer every time, so it carries no interval. Nothing in
 the architecture is TRITON-specific: the shared core, the human-in-the-loop gating, and the two
 delivery surfaces carry over unchanged, and only the check catalog encodes solver-specific
 invariants. Porting to another solver driven by a text configuration and input files therefore
