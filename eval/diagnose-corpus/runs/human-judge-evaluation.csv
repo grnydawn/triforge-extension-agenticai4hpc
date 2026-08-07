@@ -111,7 +111,7 @@ claude,C,bare,clean-asc,1,clean,none,ran-to-completion,,Y,na,correct,yes,
 claude,C,bare,clean-frictionless,1,clean,none (frictionless const_mann=0),ran-to-completion,,Y,na,correct,yes,
 claude,C,bare,fault-whitespace-hyg,1,deck-fault,runoff hydrograph is whitespace-delimited (TRITON parses commas only),startup-reject,134,Y,Y,correct,yes,
 claude,C,bare,fault-whitespace-hyg,2,deck-fault,runoff hydrograph is whitespace-delimited (TRITON parses commas only),startup-reject,134,Y,Y,correct,yes,
-claude,C,bare,fault-whitespace-hyg,3,deck-fault,runoff hydrograph is whitespace-delimited (TRITON parses commas only),startup-reject,134,N,na,correct,no,
+claude,C,bare,fault-whitespace-hyg,3,deck-fault,runoff hydrograph is whitespace-delimited (TRITON parses commas only),startup-reject,134,N,na,incorrect,yes,re-graded: first pass credited this; the answer explicitly rules out the delimiter and prescribes renaming header columns, which leaves the file whitespace-delimited and still rejected. Judge was right.
 claude,C,bare,clean-bin-sidecar,1,clean,"none (dtype-mixed f64 DEM / int32 runoff, same 32x32 grid; .asc sidecars mirror the .bin)",ran-to-completion,,Y,na,correct,yes,
 claude,C,bare,clean-asc-single,1,clean,none (single runoff zone; num_runoffs=1),ran-to-completion,,N,na,incorrect,yes,
 claude,C,bare,clean-asc-coarse,1,clean,"none (coarse 30 m cells, 2 zones, 2 h sim)",ran-to-completion,,Y,na,correct,yes,
@@ -234,7 +234,7 @@ codex,C,bare,clean-runoff-zone,1,clean,none (valid 0-based 3-zone runoff map),ra
 codex,C,bare,clean-asc,1,clean,none,ran-to-completion,,Y,na,correct,yes,
 codex,C,bare,clean-frictionless,1,clean,none (frictionless const_mann=0),ran-to-completion,,Y,na,correct,yes,
 codex,C,bare,fault-whitespace-hyg,1,deck-fault,runoff hydrograph is whitespace-delimited (TRITON parses commas only),startup-reject,134,Y,Y,correct,yes,
-codex,C,bare,fault-whitespace-hyg,2,deck-fault,runoff hydrograph is whitespace-delimited (TRITON parses commas only),startup-reject,134,N,na,correct,no,
+codex,C,bare,fault-whitespace-hyg,2,deck-fault,runoff hydrograph is whitespace-delimited (TRITON parses commas only),startup-reject,134,N,na,incorrect,yes,re-graded: first pass credited this; the answer blames a space after the header marker, and its fix leaves the data rows whitespace-delimited and still rejected. Judge was right.
 codex,C,bare,fault-whitespace-hyg,3,deck-fault,runoff hydrograph is whitespace-delimited (TRITON parses commas only),startup-reject,134,Y,Y,correct,yes,
 codex,C,bare,clean-bin-sidecar,1,clean,"none (dtype-mixed f64 DEM / int32 runoff, same 32x32 grid; .asc sidecars mirror the .bin)",ran-to-completion,,Y,na,correct,yes,
 codex,C,bare,clean-asc-single,1,clean,none (single runoff zone; num_runoffs=1),ran-to-completion,,Y,na,correct,yes,

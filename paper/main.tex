@@ -144,8 +144,7 @@ inspects these files, and has three defining properties:
   \item \textbf{One implementation, offered wherever the agent lives.} The same core logic is
         offered to agents two ways: as a Model Context Protocol (MCP) server for external agents such as
         Claude Code or Codex, and as a built-in tool inside the VS~Code Copilot editor. Diagnosis
-        itself is read-only, and the tools that start a run or unpack files from outside the
-        project first ask the user for approval.
+        itself is read-only.
 \end{itemize}
 
 TRITON's setup files are amenable to static diagnosis because they follow a rigid, explicit
@@ -235,8 +234,8 @@ Section~\ref{sec:realworld} returns to this bug to show the tool catching it, an
 \section{\texttt{diagnose\_project}: Design}
 \label{sec:design}
 
-\texttt{diagnose\_project} reads a TRITON project's setup files (the configuration file and the
-inputs that file points to) and reports the faults it finds, without ever running the solver.
+\texttt{diagnose\_project} reads a TRITON project's setup files and reports the faults it finds,
+without ever running the solver.
 The tool follows one design principle: a single, self-contained core of logic that the agent
 calls directly. The core is a pure function of the parsed setup files, with no dependence on any
 editor or operating-system feature. The same code therefore runs three ways: inside an editor,
@@ -259,8 +258,7 @@ findings plus an append-only log of every call.}
 The tool reads the TRITON \texttt{.cfg} configuration file (a simple list of \texttt{key=value}
 settings) and the input files that file points to, and returns a ranked list of \emph{findings}. Each
 finding carries a severity, a short plain-language explanation of the evidence, and a pointer to the
-file or step to look at. Table~\ref{tab:checks} lists the full set of checks. Every check is static:
-computed from the setup files, with no solver run.
+file or step to look at. Table~\ref{tab:checks} lists the full set of checks.
 
 \begin{table}[!t]
 \caption{Static check catalog. Every check works from the setup files the solver reads and requires
@@ -313,9 +311,9 @@ on the upgraded tool and so exercises all four.}
 The diagnosis logic is written as a \emph{pure} function: given the parsed configuration and a
 small file-access helper, the function always returns the same findings and changes nothing on
 disk. The helper reports whether a file exists, its size, its text, and, after the fidelity fix
-of Section~\ref{sec:method}, the header of a binary elevation grid. The helper is supplied from
-the outside, so the core itself imports no editor or operating-system code and never launches
-another program. Each delivery form plugs in its own real file-access helper. The payoff is that
+of Section~\ref{sec:method}, the header of a binary elevation grid. The caller passes the helper
+in, so the core never touches the editor or the file system itself. Whatever calls the core, the
+MCP server, the editor, or a test, hands it the helper it needs. The payoff is that
 a single body of logic can be tested entirely in memory, run without a graphical interface, and
 behave identically whether the logic is reached over MCP or from inside the editor.
 
@@ -418,21 +416,22 @@ against the real TRITON solver.
 \label{sec:fidelity}
 Making the test projects \emph{faithful} to the real solver turned out to matter to the result.
 Our binary elevation grids were at first stored without a header. The real solver, however,
-expects a six-number header (grid width and height, corner coordinates, cell size, and a no-data
-marker) at the start of a binary elevation file and skips past it to the data; every \emph{other}
+expects a six-number header at the start of a binary elevation file and skips past it to the
+data; every \emph{other}
 binary raster (runoff map, Manning field, initial depth) instead carries a two-value
-\texttt{[nrows,\,ncols]} header that the solver \emph{validates}, aborting on a mismatch. No
-binary input is header-less; the two kinds of raster simply carry different headers, read by
-different overloads (we confirmed all of this in the TRITON source). Those
+\texttt{[nrows,\,ncols]} header that the solver \emph{validates}, aborting on a mismatch; we
+confirmed all of this in the TRITON source. Those
 header-less, and often all-zero, placeholder elevation files handed the tool-less agent an easy
 complaint: ``the binary inputs are missing their headers.'' The elevation files really were
 missing theirs; the others were not, and none of it was the fault we had injected. That
-complaint pushed the intended fault aside on the binary projects. Because only the \emph{bare}
-arm was reading the files itself, the flaw cost that arm alone, and so \emph{overstated} the
-tool's advantage. We rebuilt every binary project with a proper header and real terrain, taught
+complaint pushed the intended fault aside on the binary projects, and it did so for one arm only.
+The \emph{bare} agent had to open the binary files itself, so it met the missing header and
+stopped there. The \emph{+tool} agent did not: the tool handed it the injected fault, and the
+tool did not yet read the elevation header, so the missing header never came up. The flaw
+therefore cost the bare arm alone, and \emph{overstated} the tool's advantage. We
+rebuilt every binary project with a proper header and real terrain, taught
 the tool to read the grid from that header exactly as the solver does, and re-ran everything.
-Section~\ref{sec:results} reports the corrected numbers, and Section~\ref{sec:threats} draws the
-lesson.
+Section~\ref{sec:threats} draws the lesson.
 
 \subsection{The comparison: with the tool versus without, on two AI clients}
 Our experiment compares two \emph{arms}, which are identical except for one thing, whether the
@@ -479,9 +478,8 @@ than it saves.
 \emph{final answer}, never \texttt{diagnose\_project}'s reply, which merely feeds the agent
 (\textbf{i}); it grades against a \emph{fixed gold label} confirmed by the real TRITON solver,
 not its own opinion (\textbf{ii}); and it asks clean and faulty projects separate,
-natural-direction questions to avoid a double negative (\textbf{iii}). Blind to arm, client, and
-tool, its bias cancels in the \mbox{\emph{+tool}\,$-$\,\emph{bare}} difference. The verdict is
-binary and matched on meaning, not wording.}
+natural-direction questions to avoid a double negative (\textbf{iii}). It is blind to arm, client,
+and tool, and its verdict is binary.}
 \label{fig:fairness}
 \end{figure*}
 
@@ -652,10 +650,9 @@ agent is told the rule, checking a declared number against the actual files is s
 capable agent does reliably, so we treat this group as a boundary of the effect rather than a
 headline result.
 
-\noindent\textbf{The tool's advantage survives correcting the test data.} After we rebuilt every
-binary project with the header the real solver requires (Section~\ref{sec:fidelity}) and re-ran
-the experiment, the \emph{+tool} scores were essentially unchanged and a clear advantage over
-\emph{bare} remained.
+\noindent\textbf{Correcting the test data left the advantage intact.} Every number above is
+post-fix: rebuilding the binary projects to the solver's real format (Section~\ref{sec:fidelity})
+and re-running left the \emph{+tool} scores essentially unchanged.
 
 \subsection{Does calling the tool cost more than it saves?}
 A natural worry is that the cost of \emph{calling} the tool cancels whatever the tool saves. It
@@ -685,10 +682,7 @@ the setup files alone, the tool reproduces a diagnosis that domain scientists ha
 cross-checking the configuration, the input data, and the solver's source code. The one step left
 to the human was tracing the fix back to the pipeline. Rather than hand-tune a single check, we
 generalized this bug into a small \emph{count-and-reference} family (Table~\ref{tab:checks}),
-each check tied to a specific unchecked read in the TRITON source. Counting rather than running
-is also what should let the family scale: a parallel-I/O layout can split one input across
-thousands of files, where comparing a declared count against what is on disk is the only practical
-check, and it would cost the tool no more than checking one.
+each check tied to a specific unchecked read in the TRITON source.
 
 The fix belonged in the pipeline, not the setup files: a step that re-indexes the runoff map from
 $0$, aligned to the terrain with no gaps. The \emph{same} read-only tool then confirms that the
@@ -722,26 +716,25 @@ channels the uncorrected run left dry.}
 \paragraph{Can we trust the automatic judge?} The with-versus-without comparison is graded by a
 language-model judge, and no such judge is perfect. The judge's \emph{design} already guards
 against bias (Section~\ref{sec:scoring}): it is blind to which arm it grades, so any bias cancels
-in the difference, and it grades the agent's own answer against a solver-confirmed correct
-answer using a direction-appropriate set of questions. What remains is the judge's plain error
-rate, which we measured directly. A domain expert re-graded \emph{all} $248$ ablation runs by
-hand, without seeing the judge's verdicts, a check of the judge, not of the project labels. The
-human and the judge agree $98.8\%$ of the time ($245/248$), and $100\%$ ($48/48$) on the clean
-projects that carry the don't-cry-wolf claim; every re-graded run is published for
-inspection~\cite{artifact-human}. In all three disagreements, the human gave a \emph{bare}-arm
-answer credit the judge had scored as a miss; one of the three the judge had left ungraded. The
-judge therefore \emph{under}-rates the bare arm, if anything, and cannot inflate the tool's
-advantage.
+in the difference. What remains is the judge's plain error rate, which we measured directly. A domain expert re-graded \emph{all} $248$ ablation runs by
+hand, without seeing the judge's verdicts. The first pass disagreed with the judge on three cells, and two of those three re-grades were
+themselves wrong: both credited a \emph{bare}-arm answer whose prescribed fix, checked against
+the gold label, leaves the solver still rejecting the file. Against the
+corrected standard the human and the judge agree $99.6\%$ of the time ($247/248$), and $100\%$
+($48/48$) on the clean projects that carry the don't-cry-wolf claim; every re-graded run is
+published for inspection~\cite{artifact-human}. The single remaining disagreement is a cell the
+judge left ungraded rather than misjudged, and crediting it moves the localization gap from
+$+18/{+}20$ to $+16/{+}20$ points, bounding the judge's residual effect at about two points.
 
 Two stronger, independent judges confirm that this result is not an artifact
 of judge strength: re-grading every run with Opus (the primary judge's own family) and with
 \texttt{gpt-5.6-sol} (a different family, which cannot share the Claude agent's self-preference)
 leaves the localization advantage intact. Written as Claude/Codex points, the
-\emph{+tool}-minus-\emph{bare} gap is $+18/+20$ under the primary judge, $+22/+20$ under Opus,
-and $+33/+22$ under \texttt{gpt-5.6-sol}. The stronger judges agree with the primary on $95\%$
+\emph{+tool}-minus-\emph{bare} gap is $+18/{+}20$ under the primary judge, $+22/{+}20$ under Opus,
+and $+33/{+}22$ under \texttt{gpt-5.6-sol}. The stronger judges agree with the primary on $95\%$
 and $94\%$ of cells, and rate the \emph{bare} arm no higher. A stronger judge, in other words,
-only widens the gap. This concern applies only to the with-versus-without comparison: the tool's own accuracy is
-checked against the real solver, not by a model (Section~\ref{sec:oracle}).
+only widens the gap. This concern applies only to the with-versus-without comparison: the tool's
+own accuracy is checked against the solver, not by a model.
 
 \paragraph{Could the answer key itself be wrong?} A subtler concern than judge error is that our
 answer key could be wrong: an injected ``fault'' the real solver tolerates, or a ``clean''
@@ -750,9 +743,9 @@ outright: \emph{tool-missed}$=0$ confirms that no project the solver rejects is 
 and the same pass caught a genuinely mislabeled project (a runoff file the solver in fact
 rejects), on top of the test-data fix of Section~\ref{sec:fidelity}. The other direction, a
 fault the solver tolerates and runs to completion, the solver cannot settle by itself; those
-labels rest on the output-sanity scan and a human audit of the small residual. That the test
-projects were AI-generated does not change this argument: the credibility of the labels rests on
-the solver and the human audit, not on who created the files.
+labels rest on the output-sanity scan and a human audit of the small residual. AI-generated
+fixtures do not weaken this: the labels rest on the solver and the human audit, not on who wrote
+the files.
 
 \paragraph{Faithfulness of the test data} As Section~\ref{sec:fidelity} shows, an input format
 that does not match the real solver can quietly distort the result. We also checked the reverse
@@ -774,7 +767,10 @@ and catches many faults without the tool (Section~\ref{sec:results}), so the too
 make the \emph{recurring} problems reliable, not to catch everything. Adding a check is also
 cheap: each is a small, self-contained function tied to one place in the solver source, so the
 catalog grows as new cases appear. A self-serve way for non-programmers to add checks, and checks for
-parallel-I/O layouts that split one input across many files, are left for future work.
+parallel-I/O layouts that split one input across many files, are left for future work. The second
+should suit a counting check: when one input becomes thousands of files, comparing a declared
+count against what is on disk is the only practical test, and it would cost the tool no more than
+checking a single file.
 
 \paragraph{How far the results generalize} Our results cover one solver, two AI clients, and one
 machine, with three repeats per faulty project and one per clean or user-rule project. Because
@@ -803,11 +799,11 @@ program check its own settings at start-up so a bad one is reported at once inst
 later~\cite{pcheck}. Some ties each setting to the tests that use it~\cite{ctests}, or learns the
 rules a configuration file ought to obey by reading many examples instead of asking a person to
 write them down~\cite{confspec}. Ciri~\cite{ciri} hands the checking to a language model. Our
-checks belong to this family and differ in two ways. What a TRITON configuration points at is not
-more settings but large data files, so a check must open them (read a grid's header, count a
-runoff table's columns, find the largest zone number in a map), not just read the
-configuration. And that work asks whether the checker finds the mistake; we ask whether giving
-the checker to an AI agent changes what the \emph{agent} concludes.
+checks belong to this family and differ in two ways. First, what a TRITON configuration points at
+is not more settings but large data files, so a check must open them (read a grid's header, count
+a runoff table's columns, find the largest zone number in a map), not just read the
+configuration. Second, that literature asks whether the checker finds the mistake; we ask whether
+giving the checker to an AI agent changes what the \emph{agent} concludes.
 
 \paragraph{Agentic AI for HPC and scientific workflows}
 A fast-growing line of work puts LLM agents in charge of scientific campaigns on clusters:
@@ -819,9 +815,8 @@ These systems are \emph{generation- and orchestration-first}: the agent produces
 runs, then iterates. Closest to our aim is LARA-HPC~\cite{lara}, which argues for a
 ``validation-first'' approach and uses lightweight \emph{dry runs} of the simulation to catch errors
 cheaply. We share that spirit but push further on safety and cost: \texttt{diagnose\_project} is
-\emph{fully static}: it never runs the solver at all, not even a dry run, and the tool reads
-\emph{exactly what the solver reads}, so the tool works on any hand-built TRITON project, not
-only projects that a particular generation pipeline produced. Notably, MatClaw~\cite{matclaw}
+\emph{fully static}: it never runs the solver at all, not even a dry run, and it works on any
+hand-built TRITON project, not only projects a particular generation pipeline produced. Notably, MatClaw~\cite{matclaw}
 reports that agents ``struggle with tacit domain knowledge'', the setup routines and file
 conventions that practitioners rarely write down. Our tool encodes exactly the setup conventions
 the agent would otherwise guess at, and we measure the effect that this encoding has.
@@ -855,18 +850,23 @@ checker, not the agent.
 \label{sec:conclusion}
 A small, static tool measurably improves an AI assistant's ability to catch ``works but is
 wrong'' HPC faults before any compute is spent. It works from the project's own setup files and
-reaches the agent through standard interfaces. The tool does this while \emph{reducing} the
-agent's turns and cost. The result holds across two independent AI clients, and the tool's own
-overhead is negligible. The compute it saves is far larger than that overhead. The test-case run
+reaches the agent through standard interfaces. The result holds across two independent AI
+clients, and the tool \emph{reduces} the agent's turns and cost rather than adding to them. The test-case run
 of Section~\ref{sec:motivation} used eight A100 GPUs for $28$~minutes, about $3.7$ GPU-hours,
 and its output had to be thrown away. The check that catches the fault takes about a second on a
 laptop.
 
-Two lessons generalize past this solver. First, test fixtures must be \emph{validated} against
+Three lessons generalize past this solver. First, test fixtures must be \emph{validated} against
 the real program, not merely constructed: a missing header in our binary inputs broke no test,
 yet quietly made the tool look better than it was, and we caught it only by running every fixture
-through the solver. Second, these faults live exactly where a convention looks standard but is
-not. The upstream pipeline numbered runoff zones from $1$, as geographic information system tools do,
+through the solver. Second, when a language model grades a language model, the grading needs
+auditing as hard as the result. Our labels are settled by the real solver rather than by a model,
+a human re-graded all $248$ ablation runs, and two independent judges, one stronger and one from a
+different model family, reproduce the localization gap. Such checks earn their cost only if they
+can overturn the result: ours did, correcting a project we had mislabeled clean. A human grader
+is not the final oracle either, and two of our own re-grades were wrong; only the
+solver-confirmed label settled them. Third, these faults live exactly where a convention
+looks standard but is not. The upstream pipeline numbered runoff zones from $1$, as geographic information system tools do,
 while the solver indexes from $0$; and our tool-free agents repeatedly insisted that the runoff
 map needed the elevation file's six-number header, which the solver in fact rejects there.
 Both are setups that satisfy surface plausibility while violating the solver's own semantics,
@@ -964,12 +964,12 @@ online artifact~\cite{artifact-ablation}.
 Section~\ref{sec:threats} validate the \emph{grader} rather than reproduce the result, so they
 form a fourth layer. A human domain expert re-graded all \textbf{248} ablation cells by hand without
 seeing the judge's verdicts; \texttt{runs/human-judge-evaluation.csv} records for each cell the
-client, arm, fixture, trial, gold label, judge verdict, human verdict, and a one-line note, and
-tallies the $245/248$ agreement quoted in Section~\ref{sec:threats}. Two further sheets,
-\texttt{clean-cell-human-audit.csv} and its phase-2 companion ($32$ and $48$ rows), audit the
-clean-project cells that carry the don't-cry-wolf claim. The human pass is a record rather than a
-script, so re-running it means re-grading: the browsable artifact~\cite{artifact-human} presents
-all 248 answers with their gold labels for exactly that. It opens by asking whether to show the
+client, arm, fixture, trial, gold label, judge verdict, human verdict, and a one-line note; it
+tallies the $247/248$ agreement quoted in Section~\ref{sec:threats}, and two notes record why
+first-pass verdicts were reversed. \texttt{clean-cell-human-audit.csv} and its phase-2 companion
+($32$ and $48$ rows) audit the clean-project cells that carry the don't-cry-wolf claim. The human
+pass is a record rather than a script, so re-running it means re-grading: the browsable
+artifact~\cite{artifact-human} presents all 248 answers with their gold labels for exactly that. It opens by asking whether to show the
 recorded verdicts or to start blank, so a reviewer can repeat the pass unanchored and compare
 only afterwards. The multi-judge check needs no re-running: its four graded CSVs and all $496$
 per-cell rationales ship under \texttt{runs/robustness/}, so the judge-strength claim of
