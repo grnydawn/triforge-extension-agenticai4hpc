@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=It diagnosed roff.bin as missing the required binary grid header before the runoff data.

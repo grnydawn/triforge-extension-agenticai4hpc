@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=Agent diagnosed the runoff map having 90 values against the DEM's 10x10=100-cell grid and located it at the runoff_map raster-generation step.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-coverage
+why=It diagnosed that the hydrograph ends at 0.5 h while sim_duration is 3600 s and identified both artifacts.

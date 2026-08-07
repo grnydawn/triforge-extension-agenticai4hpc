@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-runoff-count
+why=It diagnosed the mismatch between the expected 5 runoff zones and num_runoffs set to 2.

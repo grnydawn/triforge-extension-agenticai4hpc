@@ -1,0 +1,2 @@
+found=N stage=na gold=clean
+why=The agent flagged a likely real issue that the runoff hyetograph never gets applied to any grid cell.

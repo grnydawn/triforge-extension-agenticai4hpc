@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=Agent diagnosed roff.bin as a headerless 400-byte 10x10 int32 grid needing a prepended grid-dimension header, though it specified a 48-byte 6-double header instead of a 2-value int32 one.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=It diagnosed the runoff map as having grid dimensions that do not match the DEM and said to regenerate it.

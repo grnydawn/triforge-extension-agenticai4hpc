@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=Agent concluded "The project is correctly set up — no faults found" with only non-fault caveats about an unused zone column.

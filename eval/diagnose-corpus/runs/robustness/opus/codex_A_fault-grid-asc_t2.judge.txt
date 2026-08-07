@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=Agent diagnosed roff.asc having 90 cells versus the DEM's required 10x10=100 grid cells.

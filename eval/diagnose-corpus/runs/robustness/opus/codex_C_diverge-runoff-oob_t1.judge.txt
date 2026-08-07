@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=Agent diagnosed the runoff map's out-of-bounds ID 100000000 against num_runoffs=2 as the fault.

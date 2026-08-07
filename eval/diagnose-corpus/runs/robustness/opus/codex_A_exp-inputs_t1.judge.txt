@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-inputs-present
+why=Agent diagnosed the missing user-declared required input file input/x.extbc as the sole fault.

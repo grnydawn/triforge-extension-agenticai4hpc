@@ -1,0 +1,2 @@
+found=Y stage=Y gold=degenerate-forcing
+why=It diagnosed the all-zero roff.hyg forcing and traced it to the hydrograph conversion step.

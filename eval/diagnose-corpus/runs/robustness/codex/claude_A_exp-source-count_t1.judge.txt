@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-source-count
+why=It diagnosed num_sources=0 despite expecting 3 sources and correctly located the fault at num_sources.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=Agent diagnosed roff.bin as 400 bytes of raw int32 zone data missing its dimension header and prescribed prepending a header to the BIN runoff map, though it guessed the wrong header format (6 doubles like the DEM rather than 2 int32).

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-sim-duration
+why=It diagnosed sim_duration as 3600 instead of the expected 7200.

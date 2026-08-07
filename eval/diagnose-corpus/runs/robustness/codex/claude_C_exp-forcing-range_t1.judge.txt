@@ -1,0 +1,2 @@
+found=N stage=na gold=expectation-forcing-range
+why=The agent diagnosed no fault and incorrectly claimed the forcing values were valid after unit conversion.

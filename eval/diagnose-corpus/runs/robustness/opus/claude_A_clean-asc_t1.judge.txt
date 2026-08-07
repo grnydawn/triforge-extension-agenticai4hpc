@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=Agent concluded "The project is correctly configured — no fault to report", with only a cosmetic non-fault note about the unused runoff zone value.

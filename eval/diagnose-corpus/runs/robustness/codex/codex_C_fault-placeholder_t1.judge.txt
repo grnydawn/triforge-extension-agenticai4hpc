@@ -1,0 +1,2 @@
+found=Y stage=N gold=unsubstituted-placeholder
+why=It diagnosed the unresolved placeholder in run.cfg but treated the generated cfg itself as the fix location, not the template-substitution step.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-delimiter
+why=The agent diagnosed roff.hyg rows being whitespace-separated instead of comma-delimited and prescribed re-delimiting with commas.

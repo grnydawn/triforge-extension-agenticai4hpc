@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=It diagnosed a DEM–runoff_map grid-size mismatch and said to regenerate runoff_map at the DEM grid size.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=Agent diagnosed a grid-size mismatch between the 10x10 DEM and the smaller runoff map roff.bin and prescribed regenerating that raster at the DEM grid.

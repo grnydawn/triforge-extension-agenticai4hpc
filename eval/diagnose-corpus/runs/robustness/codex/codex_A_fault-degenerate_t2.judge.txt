@@ -1,0 +1,2 @@
+found=Y stage=Y gold=degenerate-forcing
+why=It diagnosed entirely zero runoff forcing and correctly traced it to the runoff conversion step.

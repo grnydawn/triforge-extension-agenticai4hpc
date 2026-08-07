@@ -1,0 +1,2 @@
+found=Y stage=Y gold=value-range-sanity
+why=It diagnosed courant=1.9 as out of range in run.cfg.

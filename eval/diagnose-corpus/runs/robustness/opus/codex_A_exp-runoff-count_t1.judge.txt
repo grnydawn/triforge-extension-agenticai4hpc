@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-runoff-count
+why=Agent diagnosed num_runoffs=2 in run.cfg versus 5 expected runoff zones as the primary fault.

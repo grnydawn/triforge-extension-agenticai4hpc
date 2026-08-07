@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-inputs-present
+why=The agent diagnosed the declared/expected required input file input/x.extbc as missing from the project.

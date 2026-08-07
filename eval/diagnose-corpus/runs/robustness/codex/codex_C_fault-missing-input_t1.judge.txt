@@ -1,0 +1,2 @@
+found=Y stage=N gold=missing-input-file
+why=It diagnosed the missing input/dem.bin file but pointed to run.cfg and startup validation, not the input-staging stage.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-coverage
+why=It diagnosed that input/roff.hyg ends at 0.5 hours while sim_duration is 3600 seconds.

@@ -1,0 +1,2 @@
+found=Y stage=N gold=bin-raster-header
+why=It diagnosed the missing roff.bin header but prescribed the wrong six-double DEM header instead of a two-int32 nrows,ncols header.

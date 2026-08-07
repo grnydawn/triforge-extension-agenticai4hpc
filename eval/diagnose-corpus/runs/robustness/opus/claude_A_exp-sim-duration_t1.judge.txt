@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-sim-duration
+why=The agent corrected sim_duration in run.cfg from 3600 to 7200, matching the intended fault.

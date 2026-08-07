@@ -1,0 +1,2 @@
+found=Y stage=Y gold=degenerate-forcing
+why=It diagnosed the all-zero runoff hydrograph and traced it to the runoff conversion or generation step.

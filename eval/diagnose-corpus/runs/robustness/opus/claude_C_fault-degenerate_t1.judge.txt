@@ -1,0 +1,2 @@
+found=N stage=na gold=degenerate-forcing
+why=Agent diagnosed all-zero runoff hyetograph plus num_sources=0 as an intentional-looking zero-water setup but declared the fixture internally consistent and did not identify the conversion-step fault producing the degenerate forcing.

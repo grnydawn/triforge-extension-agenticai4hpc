@@ -1,0 +1,2 @@
+found=Y stage=N gold=expectation-forcing-range
+why=It diagnosed out-of-range runoff forcing values in the input file rather than the conversion or units step.

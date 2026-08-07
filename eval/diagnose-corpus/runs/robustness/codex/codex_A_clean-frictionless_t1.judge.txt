@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=The agent concluded the TRITON project is correctly configured and found no errors or warnings.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-delimiter
+why=It diagnosed whitespace-delimited roff.hyg rows and prescribed comma-delimiting them.

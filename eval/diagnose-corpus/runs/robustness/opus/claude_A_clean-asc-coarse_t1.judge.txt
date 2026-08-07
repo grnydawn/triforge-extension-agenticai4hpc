@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=The agent concluded "Everything checks out. The project is correctly set up" and "No fault to report".

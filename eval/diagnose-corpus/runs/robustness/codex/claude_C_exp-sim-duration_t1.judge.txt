@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-sim-duration
+why=It diagnosed sim_duration=3600 in run.cfg versus the expected 7200 seconds.

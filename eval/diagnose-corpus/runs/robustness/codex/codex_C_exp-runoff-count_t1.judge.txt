@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-runoff-count
+why=It diagnosed num_runoffs and the runoff zone mapping as defining 2 zones instead of the expected 5.

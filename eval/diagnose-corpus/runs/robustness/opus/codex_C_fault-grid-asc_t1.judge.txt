@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=The agent diagnosed the runoff map raster roff.asc as having only 9 rows instead of the DEM's 10x10 grid, i.e. a grid-size mismatch in the generated runoff raster.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=unsubstituted-placeholder
+why=It diagnosed the unsubstituted XXXhygXXX placeholder and correctly traced it to the template step generating the .cfg.

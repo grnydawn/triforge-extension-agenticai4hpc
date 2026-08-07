@@ -46,8 +46,16 @@ node scripts/eval/tabulate-ablation.mjs eval/diagnose-corpus/runs/robustness/opu
 node scripts/eval/tabulate-ablation.mjs eval/diagnose-corpus/runs/robustness/codex
 ```
 
-The per-judge `results-<client>-judged.csv` files are **not** tracked — they fall under the
-`runs/.gitignore` `results-*.csv` rule, like the primary judge's own graded CSVs. A clone carries
-this README and the tables above, but re-deriving them means re-running the two re-grades, which
-costs four judged passes over 248 saved answers. The per-cell `*.judge.txt` rationale sidecars are
-likewise regenerable and not tracked.
+Unlike the primary judge's own graded CSVs, the per-judge `results-<client>-judged.csv` files
+**are** tracked, together with all 496 per-cell `*.judge.txt` rationales — see the explicit
+exception in `runs/.gitignore`. Re-deriving them costs four judged passes over the 248 saved
+answers on two paid services, so they are not cheaply reproducible the way the rest of the harness
+output is; and because the artifact bundle copies from git's index, anything untracked here would
+be missing from the deposit as well. A clone therefore carries the evidence behind every number
+above (4 CSVs at ~18 KB each, 496 rationales totalling ~79 KB), and `tabulate-ablation.mjs`
+recomputes the tables from it.
+
+The `right_stage %` figures count `right_stage=Y` over **all 45** deck-fault runs in the arm, so a
+run the judge left `na` scores as a miss. Reading the gaps off the rounded percentages in the table
+above can therefore be off by one — the Codex-judge Claude gap is 33.3 points (97.8 − 64.4), quoted
+as +33, not the 98 − 64 = 34 the rounded values suggest.

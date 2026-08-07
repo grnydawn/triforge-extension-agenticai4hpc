@@ -1,0 +1,2 @@
+found=N stage=na gold=expectation-inputs-present
+why=The agent diagnosed no fault and explicitly rejected the required input/x.extbc as unnecessary.

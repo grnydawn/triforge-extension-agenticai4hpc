@@ -1,0 +1,2 @@
+found=N stage=na gold=grid-size-mismatch
+why=The agent diagnosed roff.asc as missing its ESRI ASCII header (a format/parse fault) as the primary problem, mentioning the 9-vs-10 row shortfall only as a secondary detail rather than identifying the grid-size mismatch as the fault.

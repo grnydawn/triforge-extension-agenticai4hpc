@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=Agent diagnosed runoff zone ID 2 in the runoff map exceeding num_runoffs=2 range 0..1 and prescribed re-indexing the map to 0-based or adjusting the runoff config.

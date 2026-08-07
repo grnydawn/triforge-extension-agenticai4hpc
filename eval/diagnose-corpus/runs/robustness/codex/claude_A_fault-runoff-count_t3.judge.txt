@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-column-mismatch
+why=It diagnosed the mismatch between num_runoffs=5 in run.cfg and the two runoff value columns in roff.hyg.

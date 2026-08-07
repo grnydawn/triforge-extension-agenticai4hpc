@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=Agent diagnosed the runoff-zone map cell id 100000000 exceeding num_runoffs=2 valid ids 0-1, fixing roff.asc or raising num_runoffs.

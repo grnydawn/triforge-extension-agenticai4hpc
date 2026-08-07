@@ -1,0 +1,2 @@
+found=Y stage=Y gold=degenerate-forcing
+why=It diagnosed an all-zero runoff hydrograph and traced it to the upstream conversion or ID-mapping step.

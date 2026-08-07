@@ -1,0 +1,2 @@
+found=Y stage=Y gold=missing-input-file
+why=It diagnosed the missing input/dem.bin file referenced by dem_filename.

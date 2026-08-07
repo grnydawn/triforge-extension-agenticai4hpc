@@ -1,0 +1,2 @@
+found=N stage=na gold=grid-size-mismatch
+why=The agent diagnosed a missing ASC six-line header plus 9 rows in roff.asc, framing it as a malformed-header/row-count file rather than the 90-vs-100 cell grid-size mismatch.

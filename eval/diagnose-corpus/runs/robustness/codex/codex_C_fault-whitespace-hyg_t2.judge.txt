@@ -1,0 +1,2 @@
+found=N stage=na gold=hydrograph-delimiter
+why=It diagnosed a space after the header marker instead of the missing comma in a hydrograph data row.

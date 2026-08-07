@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-runoff-count
+why=Agent diagnosed num_runoffs=2 in run.cfg versus the expected 5 runoff zones, with matching 2-zone roff.bin/roff.hyg.

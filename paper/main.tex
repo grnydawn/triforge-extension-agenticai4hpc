@@ -214,7 +214,7 @@ scientists could not point to the root cause without cross-checking the configur
 contents of the input data files, and finally the solver's source code.
 
 The cause is an off-by-one indexing error, the kind no crash ever reveals. TRITON adds
-runoff using two inputs: a \texttt{runoff\_map} that tags every grid cell with a zone number, and
+runoff using two inputs: a runoff map that tags every grid cell with a zone number, and
 one runoff hydrograph per zone. To apply the runoff, the solver takes a cell's zone number
 and uses it directly to index the table of series. It never checks that the number is in range.
 That check mattered here. The upstream pipeline, not the solver, numbered the zones from $1$ to
@@ -857,10 +857,10 @@ A small, static tool measurably improves an AI assistant's ability to catch ``wo
 wrong'' HPC faults before any compute is spent. It works from the project's own setup files and
 reaches the agent through standard interfaces. The tool does this while \emph{reducing} the
 agent's turns and cost. The result holds across two independent AI clients, and the tool's own
-overhead is negligible. The compute at stake dwarfs that overhead: the test-case run of
-Section~\ref{sec:motivation} held eight A100 GPUs for $28$~minutes (about $3.7$ GPU-hours) and
-returned a product that had to be discarded, while the static check that catches the fault takes
-about a second on a laptop.
+overhead is negligible. The compute it saves is far larger than that overhead. The test-case run
+of Section~\ref{sec:motivation} used eight A100 GPUs for $28$~minutes, about $3.7$ GPU-hours,
+and its output had to be thrown away. The check that catches the fault takes about a second on a
+laptop.
 
 Two lessons generalize past this solver. First, test fixtures must be \emph{validated} against
 the real program, not merely constructed: a missing header in our binary inputs broke no test,
@@ -962,7 +962,7 @@ online artifact~\cite{artifact-ablation}.
 
 \paragraph{Layer~4: the judge itself, audited} The agreement figures of
 Section~\ref{sec:threats} validate the \emph{grader} rather than reproduce the result, so they
-form a fourth layer. A domain expert re-graded all \textbf{248} ablation cells by hand without
+form a fourth layer. A human domain expert re-graded all \textbf{248} ablation cells by hand without
 seeing the judge's verdicts; \texttt{runs/human-judge-evaluation.csv} records for each cell the
 client, arm, fixture, trial, gold label, judge verdict, human verdict, and a one-line note, and
 tallies the $245/248$ agreement quoted in Section~\ref{sec:threats}. Two further sheets,
@@ -971,9 +971,10 @@ clean-project cells that carry the don't-cry-wolf claim. The human pass is a rec
 script, so re-running it means re-grading: the browsable artifact~\cite{artifact-human} presents
 all 248 answers with their gold labels for exactly that. It opens by asking whether to show the
 recorded verdicts or to start blank, so a reviewer can repeat the pass unanchored and compare
-only afterwards. The multi-judge check \emph{is}
-re-runnable: \texttt{scripts/eval/judge-multi.sh} re-grades the same 248 saved answers under Opus
-and \texttt{gpt-5.6-sol}; \texttt{runs/robustness/README.md} carries the resulting per-judge
-tables, and the per-cell verdicts regenerate beneath it.
+only afterwards. The multi-judge check needs no re-running: its four graded CSVs and all $496$
+per-cell rationales ship under \texttt{runs/robustness/}, so the judge-strength claim of
+Section~\ref{sec:threats} recomputes from the shipped files with
+\texttt{tabulate-ablation.mjs}. \texttt{judge-multi.sh} regenerates them under Opus and
+\texttt{gpt-5.6-sol} for anyone reproducing the grading itself.
 
 \end{document}

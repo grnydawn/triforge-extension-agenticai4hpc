@@ -1,0 +1,2 @@
+found=N stage=na gold=clean
+why=The agent asserted a concrete structural fault: "Fault: input/roff.asc (the runoff_map raster) is missing its ESRI ASCII grid header."

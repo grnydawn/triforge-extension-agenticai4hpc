@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=The agent diagnosed the missing two-value int32 nrows/ncols header on input/roff.bin and prescribed prepending 10, 10.

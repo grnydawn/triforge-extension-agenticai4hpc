@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=Agent concluded "The project is correctly set up" with 0 errors and 0 warnings, noting const_mann=0.0 only as informational.

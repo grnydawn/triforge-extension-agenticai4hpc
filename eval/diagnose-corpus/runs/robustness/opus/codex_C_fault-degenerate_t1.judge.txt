@@ -1,0 +1,2 @@
+found=Y stage=N gold=degenerate-forcing
+why=The agent correctly diagnosed the runoff hydrograph roff.hyg as all-zero degenerate forcing but attributed it to the input file itself rather than the upstream conversion step.

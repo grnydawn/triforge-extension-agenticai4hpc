@@ -1,0 +1,2 @@
+found=Y stage=Y gold=unsubstituted-placeholder
+why=Agent diagnosed runoff_filename holding the unsubstituted placeholder input/XXXhygXXX and pointed at the template-substitution step generating the .cfg.

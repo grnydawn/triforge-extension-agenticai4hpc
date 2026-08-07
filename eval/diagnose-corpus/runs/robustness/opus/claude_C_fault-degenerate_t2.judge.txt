@@ -1,0 +1,2 @@
+found=Y stage=N gold=degenerate-forcing
+why=The agent correctly diagnosed the all-zero degenerate runoff hydrograph in input/roff.hyg as the primary fault, but attributed it to the input data file itself rather than the conversion step.

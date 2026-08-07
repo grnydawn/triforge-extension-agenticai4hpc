@@ -6,4 +6,12 @@ transcripts/*.jsonl
 transcripts/*.jsonl.err
 transcripts/*.answer.txt
 transcripts/*.judge.txt
-robustness/**/*.judge.txt
+
+# EXCEPTION — the multi-judge robustness pass under robustness/ IS tracked. Re-deriving it
+# costs four judged passes over the 248 saved answers on two paid services, so unlike the
+# primary judge's output it is not cheaply reproducible; the paper's judge-strength claim
+# (Section VII-A) rests on these files, and the artifact bundle copies from git's index, so
+# anything untracked here would be missing from the Zenodo deposit as well. Both kinds are
+# small: 4 CSVs at ~18 KB each and 496 rationales totalling ~79 KB.
+!robustness/**/results-*.csv
+!robustness/**/*.judge.txt

@@ -1,0 +1,2 @@
+found=Y stage=N gold=degenerate-forcing
+why=Agent diagnosed degenerate forcing - all-zero runoff hydrograph plus num_sources=0 - but attributed it to the config/input files rather than the conversion step.

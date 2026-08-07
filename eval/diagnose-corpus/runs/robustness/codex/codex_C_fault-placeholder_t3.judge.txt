@@ -1,0 +1,2 @@
+found=Y stage=N gold=unsubstituted-placeholder
+why=It diagnosed the unresolved runoff_filename placeholder in run.cfg but did not identify the template-substitution step.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=degenerate-forcing
+why=Agent diagnosed all-zero runoff hydrograph roff.hyg as the fault and pointed to the upstream conversion step nodata/ID mismatch as the source.

@@ -1,0 +1,2 @@
+found=Y stage=N gold=bin-raster-header
+why=It diagnosed a missing header in roff.bin but incorrectly specified a 48-byte double header instead of two int32 dimensions.

@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=The agent concluded "The project checks out — it's correctly configured" and framed the unused zone 2 as "not a fault".

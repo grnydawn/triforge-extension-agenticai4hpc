@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=The agent concluded "The project is correctly set up. No faults found" with no structural fault asserted.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=extbc-count-mismatch
+why=The agent diagnosed num_extbc=4 in run.cfg conflicting with only 2 segments in input/dom.extbc.

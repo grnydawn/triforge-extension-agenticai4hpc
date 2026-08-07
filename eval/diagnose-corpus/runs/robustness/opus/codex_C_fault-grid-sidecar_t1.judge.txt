@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=The agent diagnosed the runoff map raster as having dimensions mismatched to the DEM grid, pointing at the runoff_map input file.

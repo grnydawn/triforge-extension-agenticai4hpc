@@ -1,0 +1,2 @@
+found=N stage=na gold=hydrograph-coverage
+why=The agent concluded the project was correctly configured and found no fault, missing that the hydrograph only covers 0.5 h of the 3600 s simulation.

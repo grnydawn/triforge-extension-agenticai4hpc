@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-coverage
+why=Agent diagnosed the hydrograph roff.hyg covering only to Time=0.5 hr while sim_duration=3600 s, pointing at both the hydrograph time range and sim_duration.

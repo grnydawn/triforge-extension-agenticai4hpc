@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=agent diagnosed roff.bin zone IDs 1-2 as out-of-bounds for num_runoffs=2 and prescribed re-indexing to 0-based

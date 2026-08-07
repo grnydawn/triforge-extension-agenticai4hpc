@@ -1,0 +1,2 @@
+found=N stage=na gold=hydrograph-delimiter
+why=Agent explicitly ruled out delimiter/whitespace issues and instead diagnosed a header column-label under-declaration mismatch versus num_runoffs=2, prescribing a header rename rather than comma delimiters.

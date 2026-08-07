@@ -1,0 +1,2 @@
+found=Y stage=Y gold=missing-input-file
+why=Agent diagnosed the missing input/dem.bin referenced by run.cfg and attributed it to the staging step that copied runoff inputs but missed the DEM.

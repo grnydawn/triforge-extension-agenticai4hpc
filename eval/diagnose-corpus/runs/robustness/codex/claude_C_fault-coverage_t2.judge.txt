@@ -1,0 +1,2 @@
+found=N stage=na gold=hydrograph-coverage
+why=The agent diagnosed no fault and missed that the hydrograph ends at 0.5 h while sim_duration is 3600 s.

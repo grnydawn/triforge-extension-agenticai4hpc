@@ -1,0 +1,2 @@
+found=Y stage=Y gold=source-count-mismatch
+why=It diagnosed num_sources=3 versus two src_loc rows and pointed to run.cfg or src.txt.

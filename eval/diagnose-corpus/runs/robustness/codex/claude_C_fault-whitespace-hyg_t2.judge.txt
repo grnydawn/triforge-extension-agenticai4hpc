@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-delimiter
+why=It diagnosed space-delimited roff.hyg runoff rows and prescribed replacing the spaces with commas.
