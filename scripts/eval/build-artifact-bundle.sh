@@ -309,7 +309,7 @@ clone rather than only on the machine that ran the study.
 ## Redaction
 
 Every file is passed through two redaction passes before the archive is written:
-site identifiers from the operational deployment that motivates Section II become
+site identifiers from an earlier operational deployment that this paper does not describe become
 \`[REDACTED-SITE]\`, and the operator's local account name becomes
 \`[REDACTED-USER]\` — in absolute paths and in the owner/group columns of any
 captured \`ls -l\` output. The build refuses rather than ship a survivor. Both are
