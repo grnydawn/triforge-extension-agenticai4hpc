@@ -136,7 +136,7 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
 <div class="wrap">
   <p class="lede">Every fixture in the injected-fault corpus, run through <span class="mono">diagnose_project</span>
   against its ground-truth manifest. Detection = the tool flags a real fault; isolation = it names the right
-  check; clean-precision = it stays silent on a clean deck. This layer is hermetic (filesystem only, no solver,
+  check; clean accuracy = it stays silent on a clean deck. This layer is hermetic (filesystem only, no solver,
   no model) and reproduces via <span class="mono">npx tsx scripts/eval/diagnose-report.ts</span>.</p>
 
   <div class="cards">
@@ -144,7 +144,7 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
       <div class="sub">20/20 faults flagged</div></div>
     <div class="card hero"><div class="k">Isolation</div><div class="v">100%</div>
       <div class="sub">right check named</div></div>
-    <div class="card hero"><div class="k">Clean-precision</div><div class="v">100%</div>
+    <div class="card hero"><div class="k">Clean accuracy</div><div class="v">100%</div>
       <div class="sub">12/12 clean, no false alarm</div></div>
     <div class="card"><div class="k">Corpus</div><div class="v">32</div>
       <div class="sub">20 faults · 12 clean</div></div>
@@ -415,7 +415,7 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
   </table></div>
 
   <footer class="foot">Generated from <code>eval/diagnose-corpus/report.json</code>.
-  Detection and isolation are computed over the 20 faulted decks; clean-precision over the
+  Detection and isolation are computed over the 20 faulted decks; clean accuracy over the
   12 clean controls. A rank of 1 means the correct check was the tool's top finding.
   <br><b>No AI model runs in this level</b> — it is filesystem-only, deterministic. The AI models used
   in the paper's Level-3 &plusmn;tool ablation are: Claude client = <code>claude-sonnet-5</code>,
