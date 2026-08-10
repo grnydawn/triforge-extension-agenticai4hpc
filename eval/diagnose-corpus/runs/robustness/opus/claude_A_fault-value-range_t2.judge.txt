@@ -1,0 +1,2 @@
+found=Y stage=Y gold=value-range-sanity
+why=Agent diagnosed courant=1.9 in run.cfg as out-of-range violating the CFL stability condition.

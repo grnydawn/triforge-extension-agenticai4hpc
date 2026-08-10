@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=It diagnosed the missing two-int32 10 by 10 header in the binary runoff map and said to prepend it.

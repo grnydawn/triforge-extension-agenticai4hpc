@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=Agent diagnosed roff.bin as missing the required two-integer nrows/ncols binary header, 400 vs expected 408 bytes.

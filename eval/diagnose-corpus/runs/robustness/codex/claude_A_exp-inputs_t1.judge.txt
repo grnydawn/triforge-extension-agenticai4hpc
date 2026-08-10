@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-inputs-present
+why=It diagnosed the user-expected required input input/x.extbc as missing.

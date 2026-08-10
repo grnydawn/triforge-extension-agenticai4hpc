@@ -1,0 +1,2 @@
+found=Y stage=Y gold=source-count-mismatch
+why=The agent diagnosed num_sources=3 in run.cfg versus only 2 source rows in the src location file.

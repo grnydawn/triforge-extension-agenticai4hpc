@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=It diagnosed the 90-value runoff map versus the DEM's required 100 cells and located it in runoff_map raster generation.

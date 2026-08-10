@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-source-count
+why=The agent diagnosed run.cfg num_sources=0 versus the expected 3 sources as the primary fault.

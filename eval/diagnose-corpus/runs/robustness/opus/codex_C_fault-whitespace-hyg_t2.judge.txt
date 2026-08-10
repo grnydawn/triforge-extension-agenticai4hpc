@@ -1,0 +1,2 @@
+found=N stage=na gold=hydrograph-delimiter
+why=The agent diagnosed a space after the % in the roff.hyg header comment rather than the missing comma delimiter in the data row.

@@ -1,0 +1,2 @@
+found=Y stage=N gold=degenerate-forcing
+why=Agent correctly identified all-zero runoff values in roff.hyg as degenerate forcing, but attributed the setup as otherwise consistent rather than pointing at the conversion step.

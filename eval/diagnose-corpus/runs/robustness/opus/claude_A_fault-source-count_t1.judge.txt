@@ -1,0 +1,2 @@
+found=Y stage=Y gold=source-count-mismatch
+why=Agent diagnosed num_sources=3 in run.cfg conflicting with the 2-row src_loc_file src.txt (and hydrograph columns).

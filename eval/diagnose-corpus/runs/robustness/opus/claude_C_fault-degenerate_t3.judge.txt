@@ -1,0 +1,2 @@
+found=Y stage=N gold=degenerate-forcing
+why=Agent correctly diagnosed the all-zero runoff hydrograph as a degenerate no-forcing input, but blamed the hydrograph file itself rather than the conversion step that produced the zeros.

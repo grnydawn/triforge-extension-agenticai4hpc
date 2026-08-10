@@ -1,0 +1,2 @@
+found=Y stage=Y gold=source-count-mismatch
+why=It diagnosed num_sources=3 conflicting with the two rows in src_loc_file and identified num_sources or the source file as the fix location.

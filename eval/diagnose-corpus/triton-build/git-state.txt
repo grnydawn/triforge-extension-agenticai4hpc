@@ -1,0 +1,14 @@
+triton=d18ed5b7a-CLEAN (tag 2.1.1)
+kokkos=267ebc25fc5c8b96bb321f34d78f97b1c30f8830 (5.1.1)
+yaml-cpp=a83cd31548b19d50f3f983b069dceb4f4d50756d (0.8.0-78-ga83cd31)
+
+Verified 2026-08-04: building triton=d18ed5b7a with the settings in cmake-settings.txt
+and the submodule pins above produces a binary byte-identical to the one this artifact's
+results were produced with (md5 8b38ab600438bf948d60ecd215457cdf, 2034240 bytes), and
+that build reproduces three-tier-report.json exactly.
+
+Earlier revisions of this file recorded 267ebc25f as the TRITON commit. It is not one --
+it is the Kokkos submodule pin, listed above, and it does not resolve in the TRITON
+repository. The commit the binary was originally built from lived on an unpushed local
+branch and is not retrievable; d18ed5b7a is on master, carries tag 2.1.1, and builds the
+same binary, so it is what a reviewer should use.

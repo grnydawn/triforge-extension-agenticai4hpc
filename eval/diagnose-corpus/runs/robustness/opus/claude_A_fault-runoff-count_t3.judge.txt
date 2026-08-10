@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-column-mismatch
+why=The agent diagnosed num_runoffs=5 in run.cfg conflicting with the 2 value-columns in input/roff.hyg.

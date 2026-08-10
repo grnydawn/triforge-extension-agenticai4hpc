@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Triforge commit-time fast gate.
+#
+# Runs the FAST tier (Tier-0 static + Tier-1 unit): typecheck, lint, unit tests.
+# Deliberately does NOT run the Tier-2 Full-UI E2E suite — that is too slow
+# (~25min) and needs a display. Run `make test-e2e` for that.
+#
+# Enable with:  make install-hooks   (sets git config core.hooksPath scripts/hooks)
+# Bypass once:  git commit --no-verify
+#
+set -euo pipefail
+
+echo "[triforge pre-commit] fast gate (skip with: git commit --no-verify)"
+
+echo "[triforge pre-commit] typecheck..."
+npm run typecheck
+
+echo "[triforge pre-commit] lint..."
+npm run lint
+
+echo "[triforge pre-commit] unit tests..."
+npm run test:unit
+
+echo "[triforge pre-commit] fast gate passed."

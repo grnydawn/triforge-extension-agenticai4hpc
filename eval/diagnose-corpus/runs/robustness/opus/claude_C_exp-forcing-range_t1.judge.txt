@@ -1,0 +1,2 @@
+found=N stage=na gold=expectation-forcing-range
+why=The agent concluded the setup was correct with no fault, explicitly dismissing the out-of-range forcing values by arguing unit conversion makes them tiny.

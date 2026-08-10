@@ -1,0 +1,2 @@
+found=N stage=na gold=clean
+why=The agent asserted a structural fault: "Fault: input/mann.asc is missing its ESRI ASCII grid header."

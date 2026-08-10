@@ -1,0 +1,2 @@
+found=Y stage=N gold=degenerate-forcing
+why=It diagnosed the all-zero runoff hydrograph but located the fault in roff.hyg and num_sources rather than the conversion step.

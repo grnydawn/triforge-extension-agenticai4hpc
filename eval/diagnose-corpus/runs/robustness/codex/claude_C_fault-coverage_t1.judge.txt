@@ -1,0 +1,2 @@
+found=N stage=na gold=hydrograph-coverage
+why=The agent diagnosed the project as correctly configured and missed that the hydrograph ends at 0.5 h while the simulation lasts 1 h.

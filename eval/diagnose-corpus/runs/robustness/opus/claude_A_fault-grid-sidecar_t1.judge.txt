@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=Agent diagnosed the runoff map raster as 32x16 versus the 32x32 DEM and pointed at the raster-generation step that produced roff.asc/roff.bin.

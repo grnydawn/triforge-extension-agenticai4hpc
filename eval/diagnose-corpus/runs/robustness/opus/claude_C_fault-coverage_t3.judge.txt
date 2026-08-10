@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-coverage
+why=The agent diagnosed that input/roff.hyg only covers 0.5 h while sim_duration=3600 s, leaving the back half of the run without runoff forcing, and proposed extending the hydrograph time range.

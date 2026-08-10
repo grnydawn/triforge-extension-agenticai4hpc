@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=The agent diagnosed the out-of-range runoff zone value 100000000 in the runoff-zone map input/roff.asc as an out-of-bounds index into the num_runoffs=2 series.

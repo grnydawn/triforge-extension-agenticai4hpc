@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-column-mismatch
+why=It diagnosed the mismatch between num_runoffs=5 and the two runoff columns and identified both valid correction points.

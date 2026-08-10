@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=Agent concluded "The TRITON project is correctly set up. No structural configuration or input faults were found" with only a non-structural physical-correctness caveat.

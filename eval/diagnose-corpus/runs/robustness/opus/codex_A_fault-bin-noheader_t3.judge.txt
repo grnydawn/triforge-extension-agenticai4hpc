@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=Agent diagnosed roff.bin missing the two-value int32 nrows-ncols header and prescribed prepending 10,10.

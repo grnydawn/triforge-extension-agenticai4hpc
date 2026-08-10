@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=Agent diagnosed input/roff.bin as missing the binary raster header, containing only the 400-byte 10x10 payload.

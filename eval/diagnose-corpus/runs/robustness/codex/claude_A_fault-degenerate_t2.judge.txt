@@ -1,0 +1,2 @@
+found=Y stage=Y gold=degenerate-forcing
+why=It diagnosed all-zero runoff forcing and pointed to the upstream conversion step as the likely source.

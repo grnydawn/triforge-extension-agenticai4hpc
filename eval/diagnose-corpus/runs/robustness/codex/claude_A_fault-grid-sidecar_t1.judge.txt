@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=It diagnosed the 1024-versus-512 cell grid mismatch and traced it to runoff-map raster generation.

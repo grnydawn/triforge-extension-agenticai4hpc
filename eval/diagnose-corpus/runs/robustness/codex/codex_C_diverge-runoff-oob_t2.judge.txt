@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=It diagnosed the out-of-range runoff ID 100000000 in the runoff-zone map with num_runoffs set to 2.

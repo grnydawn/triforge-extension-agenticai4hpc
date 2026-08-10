@@ -1,0 +1,2 @@
+found=N stage=na gold=clean
+why=The agent concluded, "I found the fault. It's in the input data," and claimed roff.asc was missing its header.

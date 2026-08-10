@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-column-mismatch
+why=The agent diagnosed the mismatch between num_runoffs=5 in the cfg and two runoff columns in roff.hyg, and located it at num_runoffs.

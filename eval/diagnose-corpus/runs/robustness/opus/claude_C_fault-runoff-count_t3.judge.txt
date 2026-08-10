@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-column-mismatch
+why=Agent diagnosed num_runoffs=5 in run.cfg mismatching the 2 runoff value-columns in roff.hyg and the 2-zone map, recommending num_runoffs=2 or extending the zone mapping.

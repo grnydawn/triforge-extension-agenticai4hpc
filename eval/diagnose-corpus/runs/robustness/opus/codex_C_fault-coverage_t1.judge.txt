@@ -1,0 +1,2 @@
+found=N stage=na gold=hydrograph-coverage
+why=The agent diagnosed missing output settings in run.cfg rather than the hydrograph time coverage versus sim_duration.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=It diagnosed the runoff_map raster as having 90 cells instead of the DEM's required 100, though it also alleged a missing header.

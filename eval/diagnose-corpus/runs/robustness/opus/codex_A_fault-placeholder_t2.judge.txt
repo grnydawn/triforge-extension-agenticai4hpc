@@ -1,0 +1,2 @@
+found=Y stage=Y gold=unsubstituted-placeholder
+why=Agent diagnosed runoff_filename in run.cfg as an unsubstituted template placeholder left by the config-generation/template-substitution step.

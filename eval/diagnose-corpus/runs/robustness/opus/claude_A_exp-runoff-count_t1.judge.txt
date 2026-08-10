@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-runoff-count
+why=The agent diagnosed num_runoffs=2 in the deck conflicting with the expected 5 runoff zones and pointed at the runoff zone mapping files.

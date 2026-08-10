@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-sim-duration
+why=Agent diagnosed run.cfg sim_duration=3600 conflicting with the expected 7200 as the primary fault.

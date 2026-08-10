@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=It diagnosed the missing two-int32 dimensions header in roff.bin and prescribed prepending 10,10.

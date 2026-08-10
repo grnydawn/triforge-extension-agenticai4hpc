@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=It diagnosed runoff map id 2 exceeding the valid 0..1 range and proposed re-indexing the map or increasing num_runoffs.

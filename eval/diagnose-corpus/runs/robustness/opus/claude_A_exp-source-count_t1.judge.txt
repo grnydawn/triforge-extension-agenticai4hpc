@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-source-count
+why=Agent diagnosed num_sources=0 in run.cfg conflicting with the expected 3 water sources.

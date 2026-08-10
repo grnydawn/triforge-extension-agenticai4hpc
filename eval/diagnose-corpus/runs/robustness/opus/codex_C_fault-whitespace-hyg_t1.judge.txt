@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-delimiter
+why=The agent diagnosed the runoff hydrograph roff.hyg rows as whitespace-separated instead of comma-separated and prescribed re-delimiting them with commas.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=degenerate-forcing
+why=Agent diagnosed all-zero runoff forcing in roff.hyg and pointed to the runoff conversion step nodata/grid/ID mismatch.

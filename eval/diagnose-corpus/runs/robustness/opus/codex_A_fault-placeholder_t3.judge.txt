@@ -1,0 +1,2 @@
+found=Y stage=Y gold=unsubstituted-placeholder
+why=The agent diagnosed the unsubstituted XXXhygXXX placeholder in runoff_filename and pointed at the config-generation/template-substitution step.

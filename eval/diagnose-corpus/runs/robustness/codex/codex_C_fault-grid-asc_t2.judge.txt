@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=It diagnosed the runoff map as having only 90 cells instead of the DEM-required 100 cells.

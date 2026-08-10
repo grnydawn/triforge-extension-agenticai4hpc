@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=Agent diagnosed the out-of-range runoff-zone id 100000000 in roff.asc versus num_runoffs=2 and prescribed fixing the map cell to a valid zone id or raising num_runoffs.

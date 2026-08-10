@@ -1,0 +1,217 @@
+%% References for the AgenticAI4HPC'26 paper.
+%% arXiv IDs and author lists verified against arxiv.org (2026-07-19). For the arXiv
+%% preprints, replace with the published venue if/when available before camera-ready.
+
+%% IEEEtran.bst control: print the author's name in full on every entry instead of
+%% replacing a repeated author with an em-dash. Activated by \bstctlcite in main.tex.
+@IEEEtranBSTCTL{IEEEtran:BSTcontrol,
+  CTLdash_repeated_names = "no"
+}
+
+% ---- Tool use & the MCP standard ----
+@misc{mcp,
+  author       = {{Anthropic}},
+  title        = {Model Context Protocol},
+  year         = {2024},
+  howpublished = {\url{https://modelcontextprotocol.io}},
+  note         = {Accessed: 2026-08-03}
+}
+
+@inproceedings{react,
+  author    = {Yao, Shunyu and Zhao, Jeffrey and Yu, Dian and Du, Nan and Shafran, Izhak and Narasimhan, Karthik and Cao, Yuan},
+  title     = {{ReAct}: Synergizing Reasoning and Acting in Language Models},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2023},
+  note      = {arXiv:2210.03629}
+}
+
+@inproceedings{toolformer,
+  author    = {Schick, Timo and Dwivedi-Yu, Jane and Dess{\`\i}, Roberto and Raileanu, Roberta and Lomeli, Maria and Hambro, Eric and Zettlemoyer, Luke and Cancedda, Nicola and Scialom, Thomas},
+  title     = {Toolformer: Language Models Can Teach Themselves to Use Tools},
+  booktitle = {Advances in Neural Information Processing Systems 36 (NeurIPS)},
+  year      = {2023},
+  note      = {arXiv:2302.04761}
+}
+
+% ---- Agentic AI for HPC / scientific workflows ----
+@misc{lara,
+  author       = {Dawson, William and Beal, Louis and Cur{\'e}, Yoann and Fisicaro, Giuseppe and Rolland, Dorian and Genovese, Luigi},
+  title        = {{LARA}: Validation-Driven Agentic Supercomputer Workflows for Atomistic Modeling},
+  year         = {2026},
+  howpublished = {arXiv:2604.22571}
+}
+
+@misc{matclaw,
+  author       = {Zhang, Chenmu and Yakobson, Boris I.},
+  title        = {{MatClaw}: An Autonomous Code-First {LLM} Agent for End-to-End Materials Exploration},
+  year         = {2026},
+  howpublished = {arXiv:2604.02688}
+}
+
+@misc{mada,
+  author       = {Menon, Harshitha and Jekel, Charles F. and Korner, Kevin and Gunnarson, Brian and Brown, Nathan K. and Stees, Michael and Fernandez-Godino, M. Giselle and Nissen, Walter and Shachar, Meir H. and Sterbentz, Dane M. and Schill, William J. and Hao, Yue and Rieben, Robert and Quadros, William and Owen, Steve and Mitchell, Scott and Boureima, Ismael D. and Belof, Jonathan L.},
+  title        = {Multi-Agent Collaboration for Automated Design Exploration on High Performance Computing Systems},
+  year         = {2026},
+  howpublished = {arXiv:2603.11515}
+}
+
+@misc{mlipilot,
+  author       = {Osaro, Etinosa and Adhikari, Santosh and Zavitsanou, Stamatia and Parker, Kelsey and Rocca, Dario},
+  title        = {{MLIPilot}: {LLM}-Driven Auto-Research for Machine-Learned Interatomic Potentials},
+  year         = {2026},
+  howpublished = {arXiv:2605.30889}
+}
+
+@misc{materials-aurora,
+  author       = {Pham, Thang Duc and Tummalapalli, Harikrishna and Bhuiyan, Fakhrul Hasan and V{\'a}zquez Mayagoitia, {\'A}lvaro and Simpson, Christine and Balin, Riccardo and Vishwanath, Venkatram and Ke{\c{c}}eli, Murat},
+  title        = {Multi-Agent Orchestration for High-Throughput Materials Screening on a Leadership-Class System},
+  year         = {2026},
+  howpublished = {arXiv:2604.07681}
+}
+
+@inproceedings{mcp-quantum,
+  author    = {Shiraishi, Masaki and Hamamura, Ikko and Ishigaki, Tatsuya and Kadowaki, Tadashi},
+  title     = {A Model Context Protocol Server for Quantum Execution in Hybrid Quantum-{HPC} Environments},
+  booktitle = {International Conference on Quantum Communications, Networking, and Computing (QCNC), QC4C3 Workshop},
+  year      = {2026},
+  doi       = {10.1109/QCNC69040.2026.00145},
+  note      = {arXiv:2604.08318}
+}
+
+% ---- LLM agents for code / SE debugging ----
+@misc{sast-llm-compare,
+  author       = {Zhou, Xin and Tran, Duc-Manh and Le-Cong, Thanh and Zhang, Ting and Irsan, Ivana Clairine and Sumarlin, Joshua and Le, Bach and Lo, David},
+  title        = {Comparison of Static Application Security Testing Tools and Large Language Models for Repo-level Vulnerability Detection},
+  year         = {2024},
+  howpublished = {arXiv:2407.16235}
+}
+
+@inproceedings{swebench,
+  author    = {Jimenez, Carlos E. and Yang, John and Wettig, Alexander and Yao, Shunyu and Pei, Kexin and Press, Ofir and Narasimhan, Karthik},
+  title     = {{SWE-bench}: Can Language Models Resolve Real-World {GitHub} Issues?},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2024},
+  note      = {arXiv:2310.06770}
+}
+
+@inproceedings{sweagent,
+  author    = {Yang, John and Jimenez, Carlos E. and Wettig, Alexander and Lieret, Kilian and Yao, Shunyu and Narasimhan, Karthik and Press, Ofir},
+  title     = {{SWE-agent}: Agent-Computer Interfaces Enable Automated Software Engineering},
+  booktitle = {Advances in Neural Information Processing Systems 37 (NeurIPS)},
+  year      = {2024},
+  doi       = {10.52202/079017-1601},
+  note      = {arXiv:2405.15793}
+}
+
+@misc{swedoctor,
+  author       = {Guo, Yaoqi and Liu, Yang and Zhang, Jie M. and Ma, Yun and Lou, Yiling and Chen, Zhenpeng},
+  title        = {{SWE-Doctor}: Guiding Software Engineering Agents with Runtime Diagnosis from Multi-Faceted Bug Reproduction Tests},
+  year         = {2026},
+  howpublished = {arXiv:2607.00990}
+}
+
+@misc{agentstepper,
+  author       = {Hutter, Robert and Pradel, Michael},
+  title        = {{AgentStepper}: Interactive Debugging of Software Development Agents},
+  year         = {2026},
+  howpublished = {arXiv:2602.06593}
+}
+
+% ---- Subject system: the TRITON solver and the Triforge extension ----
+@article{triton,
+  author  = {Morales-Hern{\'a}ndez, Mario and Sharif, Md Bulbul and Kalyanapu, Alfred and Ghafoor, Sheikh Khaled and Dullo, Tigstu T. and Gangrade, Sudershan and Kao, Shih-Chieh and Norman, Matthew R. and Evans, Katherine J.},
+  title   = {{TRITON}: A Multi-{GPU} open source {2D} hydrodynamic flood model},
+  journal = {Environmental Modelling \& Software},
+  volume  = {141},
+  pages   = {105034},
+  year    = {2021},
+  doi     = {10.1016/j.envsoft.2021.105034}
+}
+
+@misc{tritondocs,
+  author       = {{Oak Ridge National Laboratory}},
+  title        = {{TRITON} Documentation: Configuration Reference},
+  year         = {2024},
+  howpublished = {\url{https://triton-ornl.readthedocs.io}},
+  note         = {Accessed: 2026-08-03}
+}
+
+@misc{triforge,
+  author       = {Kim, Youngsung},
+  title        = {{Triforge Visual Studio Code Extension}: Agent-Legible Tooling for the {TRITON} Flood Solver},
+  year         = {2026},
+  howpublished = {\url{https://github.com/grnydawn/triforge-extension-agenticai4hpc}},
+  note         = {Accessed: 2026-08-03}
+}
+
+% ---- Online reviewer artifacts, served from the repository's GitHub Pages branch ----
+@misc{artifact-tool,
+  author       = {Kim, Youngsung},
+  title        = {Reviewer Artifact --- Level~1: Tool-Level Accuracy over the 32-Fixture Corpus},
+  year         = {2026},
+  howpublished = {\url{https://grnydawn.github.io/triforge-extension-agenticai4hpc/level1-tool-accuracy.html}},
+  note         = {Browsable per-fixture detection/isolation/clean-accuracy report. Accessed: 2026-08-04}
+}
+
+@misc{artifact-oracle,
+  author       = {Kim, Youngsung},
+  title        = {Reviewer Artifact --- Level~2: Solver-Oracle and Three-Tier Ground-Truth Verdict},
+  year         = {2026},
+  howpublished = {\url{https://grnydawn.github.io/triforge-extension-agenticai4hpc/level2-solver-oracle.html}},
+  note         = {Per-fixture tool findings, solver outcome, and decoded deck over the 32-fixture corpus. Accessed: 2026-08-04}
+}
+
+@misc{artifact-ablation,
+  author       = {Kim, Youngsung},
+  title        = {Reviewer Artifact --- Level~3: The $\pm$Tool Agent-Level Ablation},
+  year         = {2026},
+  howpublished = {\url{https://grnydawn.github.io/triforge-extension-agenticai4hpc/level3-ablation.html}},
+  note         = {Per-cell judged transcripts, metrics, and MCP-overhead measurements. Accessed: 2026-08-04}
+}
+
+@misc{artifact-human,
+  author       = {Kim, Youngsung},
+  title        = {Reviewer Artifact --- Human Re-Grading of the Automatic Judge},
+  year         = {2026},
+  howpublished = {\url{https://grnydawn.github.io/triforge-extension-agenticai4hpc/level4-human-judge-evaluation.html}},
+  note         = {Interactive re-grading of all 248 ablation runs by hand. Accessed: 2026-08-04}
+}
+
+@inproceedings{confdiagnoser,
+  author    = {Zhang, Sai and Ernst, Michael D.},
+  title     = {Automated Diagnosis of Software Configuration Errors},
+  booktitle = {35th International Conference on Software Engineering (ICSE)},
+  year      = {2013},
+  doi       = {10.1109/ICSE.2013.6606577}
+}
+
+@inproceedings{pcheck,
+  author    = {Xu, Tianyin and Jin, Xinxin and Huang, Peng and Zhou, Yuanyuan and Lu, Shan and Jin, Long and Pasupathy, Shankar},
+  title     = {Early Detection of Configuration Errors to Reduce Failure Damage},
+  booktitle = {12th {USENIX} Symposium on Operating Systems Design and Implementation (OSDI)},
+  year      = {2016}
+}
+
+@inproceedings{ctests,
+  author    = {Sun, Xudong and Cheng, Runxiang and Chen, Jianyan and Ang, Elaine and Legunsen, Owolabi and Xu, Tianyin},
+  title     = {Testing Configuration Changes in Context to Prevent Production Failures},
+  booktitle = {14th {USENIX} Symposium on Operating Systems Design and Implementation (OSDI)},
+  year      = {2020}
+}
+
+@article{confspec,
+  author  = {Santolucito, Mark and Zhai, Ennan and Dhodapkar, Rahul and Shim, Aaron and Piskac, Ru{\v{z}}ica},
+  title   = {Synthesizing Configuration File Specifications with Association Rule Learning},
+  journal = {Proceedings of the {ACM} on Programming Languages},
+  volume  = {1},
+  number  = {OOPSLA},
+  year    = {2017},
+  doi     = {10.1145/3133888}
+}
+
+@misc{ciri,
+  author       = {Lian, Xinyu and Chen, Yinfang and Cheng, Runxiang and Huang, Jie and Thakkar, Parth and Zhang, Minjia and Xu, Tianyin},
+  title        = {Configuration Validation with Large Language Models},
+  year         = {2023},
+  howpublished = {arXiv:2310.09690}
+}

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=Agent diagnosed roff.bin zone IDs 1/2 exceeding the valid 0..num_runoffs-1 range and proposed re-indexing the raster or raising num_runoffs.

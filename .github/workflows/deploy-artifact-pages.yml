@@ -1,0 +1,57 @@
+# Publishes the reviewer artifact pages to the gh-pages branch, which is what
+# references.bib cites. Without this the two drift: the copy on main feeds the
+# Zenodo bundle, the copy on gh-pages feeds the URLs in the paper, and updating
+# one silently leaves the other stale.
+#
+# The copy is deliberately additive. index.html and .nojekyll exist ONLY on
+# gh-pages, so a clean-then-copy deploy would delete them.
+name: Deploy artifact pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'eval/diagnose-corpus/artifacts/*.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Serialize: two deploys racing on the same branch would reject each other's push.
+concurrency:
+  group: deploy-artifact-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy the pages onto gh-pages
+        run: |
+          set -euo pipefail
+
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          # Stash the pages outside the tree: gh-pages serves them from the root,
+          # so the source path does not exist on that branch.
+          staged="$(mktemp -d)"
+          cp eval/diagnose-corpus/artifacts/*.html "$staged/"
+
+          git fetch --no-tags origin gh-pages
+          git checkout -B gh-pages origin/gh-pages
+
+          cp "$staged"/*.html .
+
+          if git diff --quiet; then
+            echo 'gh-pages already matches main; nothing to deploy'
+            exit 0
+          fi
+
+          git add -- '*.html'
+          git commit -m "Deploy artifact pages from ${GITHUB_SHA:0:8}"
+          git push origin gh-pages

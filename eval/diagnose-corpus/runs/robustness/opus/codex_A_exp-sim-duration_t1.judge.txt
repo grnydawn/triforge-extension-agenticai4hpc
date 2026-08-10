@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-sim-duration
+why=The agent diagnosed sim_duration in run.cfg set to 3600 instead of the expected 7200.

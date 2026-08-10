@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-column-mismatch
+why=Agent diagnosed the runoff column/zone count mismatch between num_runoffs=5 in run.cfg and the 2 value columns in roff.hyg, pointing at hydrograph generation or the cfg value.

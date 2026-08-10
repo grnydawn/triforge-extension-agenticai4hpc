@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=It diagnosed the missing binary raster header in input/roff.bin, which contains only the 10x10 payload.

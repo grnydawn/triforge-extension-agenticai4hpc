@@ -1,0 +1,2 @@
+found=N stage=na gold=clean
+why=The agent asserted a concrete input fault: "input/roff.asc is entirely zeros, which likely means the runoff hyetograph in roff.hyg never gets applied to any grid cell".

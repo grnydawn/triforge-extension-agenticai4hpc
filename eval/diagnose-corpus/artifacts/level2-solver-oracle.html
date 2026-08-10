@@ -1,0 +1,1600 @@
+<!doctype html><html><head><meta charset=utf8>
+<title>Reviewer Artifact — Level 2: Solver-Oracle &amp; Three-Tier Ground-Truth Verdict</title>
+<!--
+  ARCHIVAL COPY. Retrieved 2026-08-03 from
+  https://claude.ai/code/artifact/baf8e9a1-f67d-475a-bca9-6c528fa30fb4
+  (published 2026-07-23). The platform-injected frame-runtime script has
+  been removed; the authored page content is unmodified.
+-->
+<meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<style>
+:root{
+  --bg:#f6f8fb; --surface:#ffffff; --surface-2:#eef1f6; --border:#dde3ec;
+  --text:#1b2430; --muted:#5c6879; --accent:#4a63d8; --accent-soft:#e7ebfb;
+  --good:#1f9d63; --good-soft:#e2f4ea; --good-bd:#a9dcc2;
+  --info:#2b74c9; --info-soft:#e2eefb; --info-bd:#a9cdee;
+  --warn:#c07d16; --warn-soft:#faf0dc; --warn-bd:#e8cd93;
+  --bad:#d13b30; --bad-soft:#fbe6e4; --bad-bd:#eeb0aa;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0e1218; --surface:#161c26; --surface-2:#1d2531; --border:#2a3340;
+    --text:#e5ebf3; --muted:#94a2b6; --accent:#8098f6; --accent-soft:#20293c;
+    --good:#4cc78a; --good-soft:#152a20; --good-bd:#2c5540;
+    --info:#5fa0e8; --info-soft:#122436; --info-bd:#294f70;
+    --warn:#e0a94a; --warn-soft:#2e2612; --warn-bd:#5c491f;
+    --bad:#f0857c; --bad-soft:#301715; --bad-bd:#63302b;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f6f8fb; --surface:#ffffff; --surface-2:#eef1f6; --border:#dde3ec;
+  --text:#1b2430; --muted:#5c6879; --accent:#4a63d8; --accent-soft:#e7ebfb;
+  --good:#1f9d63; --good-soft:#e2f4ea; --good-bd:#a9dcc2;
+  --info:#2b74c9; --info-soft:#e2eefb; --info-bd:#a9cdee;
+  --warn:#c07d16; --warn-soft:#faf0dc; --warn-bd:#e8cd93;
+  --bad:#d13b30; --bad-soft:#fbe6e4; --bad-bd:#eeb0aa;
+}
+:root[data-theme="dark"]{
+  --bg:#0e1218; --surface:#161c26; --surface-2:#1d2531; --border:#2a3340;
+  --text:#e5ebf3; --muted:#94a2b6; --accent:#8098f6; --accent-soft:#20293c;
+  --good:#4cc78a; --good-soft:#152a20; --good-bd:#2c5540;
+  --info:#5fa0e8; --info-soft:#122436; --info-bd:#294f70;
+  --warn:#e0a94a; --warn-soft:#2e2612; --warn-bd:#5c491f;
+  --bad:#f0857c; --bad-soft:#301715; --bad-bd:#63302b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--ui);
+  line-height:1.5;-webkit-font-smoothing:antialiased;font-size:15px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px 72px}
+header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border);margin-bottom:28px}
+header.top .inner{max-width:1120px;margin:0 auto;padding:16px 20px;display:flex;
+  align-items:baseline;gap:14px;flex-wrap:wrap}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+  font-weight:700}
+h1{font-size:21px;margin:2px 0 0;font-weight:680;letter-spacing:-.01em;flex:1 1 auto;text-wrap:balance}
+.badge{font-family:var(--mono);font-size:12.5px;background:var(--surface-2);color:var(--muted);
+  border:1px solid var(--border);border-radius:999px;padding:4px 11px;white-space:nowrap}
+.lede{color:var(--muted);max-width:70ch;margin:0 0 26px;font-size:14.5px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 30px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.card .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.card .v{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin-top:5px}
+.card .sub{font-size:12.5px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums}
+.card.hero{background:linear-gradient(180deg,var(--good-soft),var(--surface));border-color:var(--good-bd)}
+.card.hero .v{color:var(--good)}
+.tally{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 30px}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;padding:5px 12px;border-radius:999px;
+  border:1px solid var(--border);background:var(--surface);font-weight:560}
+.chip .n{font-variant-numeric:tabular-nums;font-weight:730}
+.chip.good{background:var(--good-soft);border-color:var(--good-bd);color:var(--good)}
+.chip.info{background:var(--info-soft);border-color:var(--info-bd);color:var(--info)}
+.chip.bad{background:var(--bad-soft);border-color:var(--bad-bd);color:var(--bad)}
+.tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:650;
+  position:sticky;top:0;background:var(--surface-2)}
+tr:last-child td{border-bottom:none}
+td.mono,.mono{font-family:var(--mono);font-size:12.5px}
+.pill{display:inline-block;font-size:11.5px;font-weight:650;padding:2px 9px;border-radius:6px;
+  border:1px solid transparent;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill.good{background:var(--good-soft);color:var(--good);border-color:var(--good-bd)}
+.pill.info{background:var(--info-soft);color:var(--info);border-color:var(--info-bd)}
+.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:var(--warn-bd)}
+.pill.bad{background:var(--bad-soft);color:var(--bad);border-color:var(--bad-bd)}
+.pill.mute{background:var(--surface-2);color:var(--muted);border-color:var(--border)}
+.dim{color:var(--muted)}
+h2.sec{font-size:15px;margin:34px 0 12px;font-weight:660}
+/* Layer-2 fixture cards */
+.fx{border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:10px;overflow:hidden}
+.fx>summary{list-style:none;cursor:pointer;padding:13px 16px;display:grid;
+  grid-template-columns:1.4fr .5fr .8fr .9fr auto;gap:12px;align-items:center}
+.fx>summary::-webkit-details-marker{display:none}
+.fx>summary:hover{background:var(--surface-2)}
+.fx .name{font-family:var(--mono);font-size:13px;font-weight:600}
+.fx .fault{font-size:12.5px;color:var(--muted)}
+.fx .chev{color:var(--muted);font-size:12px;transition:transform .15s}
+.fx[open] .chev{transform:rotate(90deg)}
+.fx .body{padding:4px 16px 16px;border-top:1px solid var(--border);background:var(--surface-2)}
+.finding{border:1px solid var(--border);border-left-width:3px;border-radius:8px;background:var(--surface);
+  padding:10px 13px;margin:12px 0}
+.finding.error{border-left-color:var(--bad)}
+.finding.advisory{border-left-color:var(--warn)}
+.finding.warning{border-left-color:var(--warn)}
+.finding .ft{font-weight:650;font-size:13.5px}
+.finding .fd{font-size:13px;color:var(--muted);margin-top:3px}
+.finding .fe{font-family:var(--mono);font-size:12px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:6px;padding:6px 9px;margin-top:8px;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+.file{margin-top:12px}
+.file .fn{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px}
+pre.deck{font-family:var(--mono);font-size:12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:11px 13px;overflow-x:auto;margin:0;white-space:pre;color:var(--text)}
+.nofault{color:var(--good);font-size:13px;padding:12px 2px 4px;font-weight:560}
+footer.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);
+  font-size:12.5px;max-width:74ch}
+footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:4px;font-size:11.5px}
+@media (max-width:640px){
+  .fx>summary{grid-template-columns:1fr auto;gap:6px}
+  .fx>summary .col-hide{display:none}
+}
+</style>
+<header class="top"><div class="inner">
+  <div style="flex:1 1 auto">
+    <div class="eyebrow">Reviewer Artifact · Level 2</div>
+    <h1>Solver-Oracle &amp; Three-Tier Ground-Truth Verdict</h1>
+  </div>
+  <span class="badge">real TRITON build · double precision</span>
+</div></header>
+<div class="wrap">
+  <p class="lede">Every fixture run through the <em>real</em> TRITON solver, crossing the tool's verdict
+  (error vs. no&nbsp;error) with the solver's own outcome (startup-reject / ran-to-completion /
+  ran-but-diverged). The load-bearing cell is <b>tool-missed</b> — a deck the solver faults on but the tool
+  called clean. Expand any fixture for its findings and the decoded deck the solver actually read.</p>
+
+  <div class="cards">
+    <div class="card hero"><div class="k">Tool-missed</div><div class="v">0</div>
+      <div class="sub">solver-faults the tool called clean</div></div>
+    <div class="card"><div class="k">Corpus</div><div class="v">32</div>
+      <div class="sub">fixtures, solver-grounded</div></div>
+    <div class="card"><div class="k">Agree</div><div class="v">23</div>
+      <div class="sub">tool &amp; solver concur</div></div>
+    <div class="card"><div class="k">Tool-stricter</div><div class="v">9</div>
+      <div class="sub">tool catches what solver tolerates</div></div>
+  </div>
+
+  <div class="tally">
+    <span class="chip good"><span class="n">11</span>agree · fault</span>
+    <span class="chip good"><span class="n">12</span>agree · clean</span>
+    <span class="chip info"><span class="n">9</span>tool-stricter</span>
+    <span class="chip bad"><span class="n">0</span>tool-missed</span>
+  </div>
+
+  <h2 class="sec">Per-fixture verdict &nbsp;<span class="dim" style="font-weight:400;font-size:12.5px">(click to expand)</span></h2>
+  <details class="fx">
+    <summary>
+      <span class="name">diverge-runoff-oob</span>
+      <span class="col-hide"><span class="pill mute">ASC</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">ran-but-diverged</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">runoff map zone id far beyond num_runoffs (out-of-bounds table read)</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Runoff map references an out-of-range zone id</div>
+              <div class="fd">The runoff map&#x27;s maximum zone id is 100000000, but num_runoffs=2 defines a 0-based runoff table with valid ids 0..1. TRITON reads the map as int and indexes the runoff table by that id with no bounds check, so id 100000000 reads past the table (out of bounds) and injects a garbage runoff rate — a hallmark of a 1-based runoff map used against a 0-based table.</div><div class="fe">runoff_map max id=100000000, num_runoffs=2 (valid 0..1)</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=ASC
+dem_filename=&quot;input/dem.asc&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.asc&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols 10
+nrows 10
+xllcorner 0
+yllcorner 0
+cellsize 1
+NODATA_value -9999
+10.00 10.00 9.99 9.99 9.99 9.98 9.98 9.98 9.98 9.97
+9.99 9.99 9.98 9.98 9.98 9.97 9.97 9.97 9.97 9.96
+9.98 9.98 9.97 9.97 9.97 9.96 9.96 9.96 9.96 9.95
+9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95 9.94
+9.96 9.96 9.95 9.95 9.95 9.95 9.94 9.94 9.94 9.93
+9.95 9.95 9.94 9.94 9.94 9.94 9.93 9.93 9.93 9.92
+9.94 9.94 9.93 9.93 9.93 9.93 9.92 9.92 9.92 9.91
+9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.91 9.90
+9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.90 9.89
+9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.89 9.88</pre></div><div class="file"><div class="fn">input/roff.asc</div>
+              <pre class="deck">0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 100000000 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-bin-noheader</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">BIN runoff map written headerless (TRITON needs a 2-value [nrows,ncols] header)</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;BIN runoff map missing its 2-value header</div>
+              <div class="fd">TRITON validates a 2-value [nrows,ncols] int32 header on a BIN runoff map; this file is exactly 100 int32 (headerless) and TRITON rejects it at load with &quot;Invalid Matrix dimensions&quot;.</div><div class="fe">roff.bin 400 B = 100 int32 (no header); DEM grid 10x10</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 headerless, n=100 min=0 max=1 (400 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-extbc-count</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">num_extbc != extbc file entry count</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;External-boundary count does not match the extbc file</div>
+              <div class="fd">num_extbc declares 4 boundary segment(s) but the extbc file has 2 entries. TRITON loops num_extbc times over vectors sized by the file, so the extra iterations read out of bounds.</div><div class="fe">num_extbc=4, extbc entries=2 (dom.extbc)</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+num_extbc=4
+extbc_file=&quot;input/dom.extbc&quot;
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/dom.extbc</div>
+              <pre class="deck">% BC Type, X1, Y1, X2, Y2, BC
+2,0,0,10,0,0.0005
+2,10,0,10,10,0.0005</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-grid-asc</span>
+      <span class="col-hide"><span class="pill mute">ASC</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">runoff_map token count != DEM cells</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Grid mismatch: runoff map vs DEM</div>
+              <div class="fd">runoff map has 90 value(s) but the DEM grid is 10x10=100 cells.</div><div class="fe">DEM 10x10=100 cells, runoff map 90 tokens</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=ASC
+dem_filename=&quot;input/dem.asc&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.asc&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols 10
+nrows 10
+xllcorner 0
+yllcorner 0
+cellsize 1
+NODATA_value -9999
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1</pre></div><div class="file"><div class="fn">input/roff.asc</div>
+              <pre class="deck">1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-grid-bin</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">runoff_map byte-size != DEM</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Grid mismatch: runoff map vs DEM</div>
+              <div class="fd">runoff map is 264 bytes, not consistent with the DEM grid of 100 cells at float32 (400 B) or float64 (800 B).</div><div class="fe">DEM 100 cells, runoff map 264 B</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[8,8]; zones n=64 min=0 max=1 values={0,1} (264 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-grid-sidecar</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">runoff .asc sidecar grid differs from DEM</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Grid mismatch: runoff map vs DEM</div>
+              <div class="fd">runoff map grid is 512 cells but the DEM grid is 1024 cells (from .asc sidecars).</div><div class="fe">DEM 1024 cells, runoff map 512 cells</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols        32
+nrows        32
+xllcorner    0
+yllcorner    0
+cellsize     12
+NODATA_value -9999
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=32 nrows=32 cellsize=1 nodata=-9999; data n=1024 min=9.597 max=10 (8240 bytes)</pre></div><div class="file"><div class="fn">input/roff.asc</div>
+              <pre class="deck">ncols        32
+nrows        16
+xllcorner    0
+yllcorner    0
+cellsize     12
+NODATA_value -9999
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[16,32]; zones n=512 min=0 max=1 values={0,1} (2056 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0
+2,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-missing-input</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">referenced DEM absent</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Missing input file: dem_filename</div>
+              <div class="fd">The deck references a file that does not exist.</div><div class="fe">dem_filename=&quot;input/dem.bin&quot; -&gt; eval/diagnose-corpus/fixtures/fault-missing-input/input/dem.bin</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-placeholder</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">unsubstituted placeholder in runoff_filename</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Unsubstituted template placeholder in runoff_filename</div>
+              <div class="fd">The value still contains a template token, so the deck was not fully rendered.</div><div class="fe">runoff_filename=input/XXXhygXXX</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/XXXhygXXX&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-runoff-count</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">num_runoffs != runoff hydrograph columns</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Runoff zone count does not match the runoff hydrograph</div>
+              <div class="fd">num_runoffs declares 5 zones but the runoff hydrograph has 2 value column(s).</div><div class="fe">num_runoffs=5, runoff .hyg value-columns=2 (roff.hyg)</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=5
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-source-count</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">num_sources != src rows / point columns</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Source count does not match the source-location file</div>
+              <div class="fd">num_sources declares 3 but src_loc_file has 2 row(s).</div><div class="fe">num_sources=3, src_loc rows=2</div>
+            </div><div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Source count does not match the point hydrograph</div>
+              <div class="fd">num_sources declares 3 but the point hydrograph has 2 value column(s).</div><div class="fe">num_sources=3, point .hyg value-columns=2</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=3
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900
+src_loc_file=&quot;input/src.txt&quot;
+hydrograph_filename=&quot;input/pt.hyg&quot;</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/pt.hyg</div>
+              <pre class="deck">% Time(hr) Q
+0,5.0,5.0
+1,5.0,5.0
+2,5.0,5.0</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0
+2,2.0,2.0</pre></div><div class="file"><div class="fn">input/src.txt</div>
+              <pre class="deck">500010 4000010
+500020 4000020</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-whitespace-hyg</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill bad">startup-reject</span></span>
+      <span><span class="pill good">agree · fault</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">runoff hydrograph is whitespace-delimited (TRITON parses commas only)</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Whitespace-delimited runoff hydrograph</div>
+              <div class="fd">TRITON parses forcing rows by splitting on commas only; this runoff hydrograph uses whitespace, so every row collapses to one column and TRITON aborts at load.</div><div class="fe">roff.hyg row &quot;0 1.0 1.0&quot; has no comma</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0 1.0 1.0
+1 2.0 2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">exp-inputs</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">a user-expected input is absent</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Expected input missing: input/x.extbc</div>
+              <div class="fd">A file the user declared as required is not present.</div><div class="fe">expected &quot;input/x.extbc&quot; -&gt; eval/diagnose-corpus/fixtures/exp-inputs/input/x.extbc</div>
+            </div>
+      <div class="fd" style="margin-top:10px"><b>User expectation:</b> {&#x27;inputs&#x27;: [&#x27;input/x.extbc&#x27;]}</div>
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">exp-runoff-count</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">num_runoffs != expected</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Runoff count differs from expected</div>
+              <div class="fd">The user expected 5 runoff zones.</div><div class="fe">expected 5, deck num_runoffs=2</div>
+            </div>
+      <div class="fd" style="margin-top:10px"><b>User expectation:</b> {&#x27;numRunoffs&#x27;: 5}</div>
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">exp-source-count</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">num_sources != expected</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Source count differs from expected</div>
+              <div class="fd">The user expected 3 sources.</div><div class="fe">expected 3, deck num_sources=0</div>
+            </div>
+      <div class="fd" style="margin-top:10px"><b>User expectation:</b> {&#x27;numSources&#x27;: 3}</div>
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-runoff-zone-oob</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">1-based runoff map, max zone id == num_runoffs (index OOB)</div>
+      <div class="finding error">
+              <div class="ft"><span class="pill bad">error</span> &nbsp;Runoff map references an out-of-range zone id</div>
+              <div class="fd">The runoff map&#x27;s maximum zone id is 2, but num_runoffs=2 defines a 0-based runoff table with valid ids 0..1. TRITON reads the map as int and indexes the runoff table by that id with no bounds check, so id 2 reads past the table (out of bounds) and injects a garbage runoff rate — a hallmark of a 1-based runoff map used against a 0-based table.</div><div class="fe">runoff_map max id=2, num_runoffs=2 (valid 0..1)</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=1 max=2 values={1,2} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-asc</span>
+      <span class="col-hide"><span class="pill mute">ASC</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=ASC
+dem_filename=&quot;input/dem.asc&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.asc&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols 10
+nrows 10
+xllcorner 0
+yllcorner 0
+cellsize 1
+NODATA_value -9999
+10.00 10.00 9.99 9.99 9.99 9.98 9.98 9.98 9.98 9.97
+9.99 9.99 9.98 9.98 9.98 9.97 9.97 9.97 9.97 9.96
+9.98 9.98 9.97 9.97 9.97 9.96 9.96 9.96 9.96 9.95
+9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95 9.94
+9.96 9.96 9.95 9.95 9.95 9.95 9.94 9.94 9.94 9.93
+9.95 9.95 9.94 9.94 9.94 9.94 9.93 9.93 9.93 9.92
+9.94 9.94 9.93 9.93 9.93 9.93 9.92 9.92 9.92 9.91
+9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.91 9.90
+9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.90 9.89
+9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.89 9.88</pre></div><div class="file"><div class="fn">input/roff.asc</div>
+              <pre class="deck">0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-asc-coarse</span>
+      <span class="col-hide"><span class="pill mute">ASC</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (coarse 30 m cells, 2 zones, 2 h sim)</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=ASC
+dem_filename=&quot;input/dem.asc&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.asc&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=7200
+time_step=0.02
+courant=0.4
+const_mann=0.04
+print_interval=1800</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols 8
+nrows 8
+xllcorner 0
+yllcorner 0
+cellsize 30
+NODATA_value -9999
+10.00 9.91 9.82 9.73 9.64 9.55 9.46 9.37
+9.70 9.61 9.52 9.43 9.34 9.25 9.16 9.07
+9.40 9.31 9.22 9.13 9.04 8.95 8.86 8.77
+9.10 9.01 8.92 8.83 8.74 8.65 8.56 8.47
+8.80 8.71 8.62 8.53 8.44 8.35 8.26 8.17
+8.50 8.41 8.32 8.23 8.14 8.05 7.96 7.87
+8.20 8.11 8.02 7.93 7.84 7.75 7.66 7.57
+7.90 7.81 7.72 7.63 7.54 7.45 7.36 7.27</pre></div><div class="file"><div class="fn">input/roff.asc</div>
+              <pre class="deck">0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0
+2,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-asc-single</span>
+      <span class="col-hide"><span class="pill mute">ASC</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (single runoff zone; num_runoffs=1)</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=ASC
+dem_filename=&quot;input/dem.asc&quot;
+num_runoffs=1
+runoff_map=&quot;input/roff.asc&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols 10
+nrows 10
+xllcorner 0
+yllcorner 0
+cellsize 1
+NODATA_value -9999
+10.00 10.00 9.99 9.99 9.99 9.98 9.98 9.98 9.98 9.97
+9.99 9.99 9.98 9.98 9.98 9.97 9.97 9.97 9.97 9.96
+9.98 9.98 9.97 9.97 9.97 9.96 9.96 9.96 9.96 9.95
+9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95 9.94
+9.96 9.96 9.95 9.95 9.95 9.95 9.94 9.94 9.94 9.93
+9.95 9.95 9.94 9.94 9.94 9.94 9.93 9.93 9.93 9.92
+9.94 9.94 9.93 9.93 9.93 9.93 9.92 9.92 9.92 9.91
+9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.91 9.90
+9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.90 9.89
+9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.89 9.88</pre></div><div class="file"><div class="fn">input/roff.asc</div>
+              <pre class="deck">0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0
+1,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-asc-wide</span>
+      <span class="col-hide"><span class="pill mute">ASC</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (non-square 12x8 grid, 2 zones — valid; a benign shape a trigger-happy agent may cry wolf on)</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=ASC
+dem_filename=&quot;input/dem.asc&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.asc&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols 12
+nrows 8
+xllcorner 0
+yllcorner 0
+cellsize 1
+NODATA_value -9999
+10.00 10.00 9.99 9.99 9.99 9.98 9.98 9.98 9.98 9.97 9.97 9.97
+9.99 9.99 9.98 9.98 9.98 9.97 9.97 9.97 9.97 9.96 9.96 9.96
+9.98 9.98 9.97 9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95
+9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95 9.94 9.94 9.94
+9.96 9.96 9.95 9.95 9.95 9.95 9.94 9.94 9.94 9.93 9.93 9.93
+9.95 9.95 9.94 9.94 9.94 9.94 9.93 9.93 9.93 9.92 9.92 9.92
+9.94 9.94 9.93 9.93 9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91
+9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.91 9.90 9.90 9.90</pre></div><div class="file"><div class="fn">input/roff.asc</div>
+              <pre class="deck">0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-bin</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-bin-sidecar</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (dtype-mixed f64 DEM / int32 runoff, same 32x32 grid; .asc sidecars mirror the .bin)</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols 32
+nrows 32
+xllcorner 0
+yllcorner 0
+cellsize 1
+NODATA_value -9999
+10.00 10.00 9.99 9.99 9.99 9.98 9.98 9.98 9.98 9.97 9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95 9.94 9.94 9.94 9.93 9.93 9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91
+9.99 9.99 9.98 9.98 9.98 9.97 9.97 9.97 9.97 9.96 9.96 9.96 9.95 9.95 9.95 9.95 9.94 9.94 9.94 9.93 9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.91 9.90 9.90 9.90
+9.98 9.98 9.97 9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95 9.94 9.94 9.94 9.94 9.93 9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.90 9.89 9.89 9.89
+9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95 9.94 9.94 9.94 9.93 9.93 9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.89 9.88 9.88 9.88
+9.96 9.96 9.95 9.95 9.95 9.95 9.94 9.94 9.94 9.93 9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.88 9.88 9.88 9.88 9.87 9.87 9.87
+9.95 9.95 9.94 9.94 9.94 9.94 9.93 9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.90 9.89 9.89 9.89 9.88 9.88 9.88 9.88 9.87 9.87 9.87 9.86 9.86 9.86
+9.94 9.94 9.93 9.93 9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.89 9.88 9.88 9.88 9.87 9.87 9.87 9.87 9.86 9.86 9.86 9.85 9.85 9.85
+9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.88 9.88 9.88 9.88 9.87 9.87 9.87 9.86 9.86 9.86 9.86 9.85 9.85 9.85 9.84 9.84 9.84
+9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.90 9.89 9.89 9.89 9.88 9.88 9.88 9.88 9.87 9.87 9.87 9.86 9.86 9.86 9.85 9.85 9.85 9.85 9.84 9.84 9.84 9.83 9.83 9.83
+9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.89 9.88 9.88 9.88 9.87 9.87 9.87 9.87 9.86 9.86 9.86 9.85 9.85 9.85 9.84 9.84 9.84 9.84 9.83 9.83 9.83 9.82 9.82 9.82
+9.90 9.90 9.89 9.89 9.89 9.88 9.88 9.88 9.88 9.87 9.87 9.87 9.86 9.86 9.86 9.86 9.85 9.85 9.85 9.84 9.84 9.84 9.83 9.83 9.83 9.82 9.82 9.82 9.82 9.81 9.81 9.81
+9.89 9.89 9.88 9.88 9.88 9.88 9.87 9.87 9.87 9.86 9.86 9.86 9.85 9.85 9.85 9.85 9.84 9.84 9.84 9.83 9.83 9.83 9.82 9.82 9.82 9.81 9.81 9.81 9.81 9.80 9.80 9.80
+9.88 9.88 9.87 9.87 9.87 9.87 9.86 9.86 9.86 9.85 9.85 9.85 9.84 9.84 9.84 9.84 9.83 9.83 9.83 9.82 9.82 9.82 9.81 9.81 9.81 9.80 9.80 9.80 9.80 9.79 9.79 9.79
+9.87 9.87 9.86 9.86 9.86 9.86 9.85 9.85 9.85 9.84 9.84 9.84 9.83 9.83 9.83 9.82 9.82 9.82 9.82 9.81 9.81 9.81 9.80 9.80 9.80 9.79 9.79 9.79 9.79 9.78 9.78 9.78
+9.86 9.86 9.85 9.85 9.85 9.85 9.84 9.84 9.84 9.83 9.83 9.83 9.82 9.82 9.82 9.81 9.81 9.81 9.81 9.80 9.80 9.80 9.79 9.79 9.79 9.79 9.78 9.78 9.78 9.77 9.77 9.77
+9.85 9.85 9.84 9.84 9.84 9.84 9.83 9.83 9.83 9.82 9.82 9.82 9.81 9.81 9.81 9.80 9.80 9.80 9.80 9.79 9.79 9.79 9.78 9.78 9.78 9.78 9.77 9.77 9.77 9.76 9.76 9.76
+9.84 9.84 9.83 9.83 9.83 9.82 9.82 9.82 9.82 9.81 9.81 9.81 9.80 9.80 9.80 9.79 9.79 9.79 9.79 9.78 9.78 9.78 9.77 9.77 9.77 9.77 9.76 9.76 9.76 9.75 9.75 9.75
+9.83 9.83 9.82 9.82 9.82 9.81 9.81 9.81 9.81 9.80 9.80 9.80 9.79 9.79 9.79 9.79 9.78 9.78 9.78 9.77 9.77 9.77 9.76 9.76 9.76 9.76 9.75 9.75 9.75 9.74 9.74 9.74
+9.82 9.82 9.81 9.81 9.81 9.80 9.80 9.80 9.80 9.79 9.79 9.79 9.78 9.78 9.78 9.78 9.77 9.77 9.77 9.76 9.76 9.76 9.75 9.75 9.75 9.74 9.74 9.74 9.74 9.73 9.73 9.73
+9.81 9.81 9.80 9.80 9.80 9.79 9.79 9.79 9.79 9.78 9.78 9.78 9.77 9.77 9.77 9.77 9.76 9.76 9.76 9.75 9.75 9.75 9.74 9.74 9.74 9.73 9.73 9.73 9.73 9.72 9.72 9.72
+9.80 9.80 9.79 9.79 9.79 9.79 9.78 9.78 9.78 9.77 9.77 9.77 9.76 9.76 9.76 9.76 9.75 9.75 9.75 9.74 9.74 9.74 9.73 9.73 9.73 9.72 9.72 9.72 9.72 9.71 9.71 9.71
+9.79 9.79 9.78 9.78 9.78 9.78 9.77 9.77 9.77 9.76 9.76 9.76 9.75 9.75 9.75 9.74 9.74 9.74 9.74 9.73 9.73 9.73 9.72 9.72 9.72 9.71 9.71 9.71 9.71 9.70 9.70 9.70
+9.78 9.78 9.77 9.77 9.77 9.77 9.76 9.76 9.76 9.75 9.75 9.75 9.74 9.74 9.74 9.73 9.73 9.73 9.73 9.72 9.72 9.72 9.71 9.71 9.71 9.71 9.70 9.70 9.70 9.69 9.69 9.69
+9.77 9.77 9.76 9.76 9.76 9.76 9.75 9.75 9.75 9.74 9.74 9.74 9.73 9.73 9.73 9.72 9.72 9.72 9.72 9.71 9.71 9.71 9.70 9.70 9.70 9.70 9.69 9.69 9.69 9.68 9.68 9.68
+9.76 9.76 9.75 9.75 9.75 9.74 9.74 9.74 9.74 9.73 9.73 9.73 9.72 9.72 9.72 9.71 9.71 9.71 9.71 9.70 9.70 9.70 9.69 9.69 9.69 9.69 9.68 9.68 9.68 9.67 9.67 9.67
+9.75 9.75 9.74 9.74 9.74 9.73 9.73 9.73 9.73 9.72 9.72 9.72 9.71 9.71 9.71 9.71 9.70 9.70 9.70 9.69 9.69 9.69 9.68 9.68 9.68 9.68 9.67 9.67 9.67 9.66 9.66 9.66
+9.74 9.74 9.73 9.73 9.73 9.72 9.72 9.72 9.72 9.71 9.71 9.71 9.70 9.70 9.70 9.70 9.69 9.69 9.69 9.68 9.68 9.68 9.67 9.67 9.67 9.66 9.66 9.66 9.66 9.65 9.65 9.65
+9.73 9.73 9.72 9.72 9.72 9.71 9.71 9.71 9.71 9.70 9.70 9.70 9.69 9.69 9.69 9.69 9.68 9.68 9.68 9.67 9.67 9.67 9.66 9.66 9.66 9.65 9.65 9.65 9.65 9.64 9.64 9.64
+9.72 9.72 9.71 9.71 9.71 9.71 9.70 9.70 9.70 9.69 9.69 9.69 9.68 9.68 9.68 9.68 9.67 9.67 9.67 9.66 9.66 9.66 9.65 9.65 9.65 9.64 9.64 9.64 9.64 9.63 9.63 9.63
+9.71 9.71 9.70 9.70 9.70 9.70 9.69 9.69 9.69 9.68 9.68 9.68 9.67 9.67 9.67 9.66 9.66 9.66 9.66 9.65 9.65 9.65 9.64 9.64 9.64 9.63 9.63 9.63 9.63 9.62 9.62 9.62
+9.70 9.70 9.69 9.69 9.69 9.69 9.68 9.68 9.68 9.67 9.67 9.67 9.66 9.66 9.66 9.65 9.65 9.65 9.65 9.64 9.64 9.64 9.63 9.63 9.63 9.63 9.62 9.62 9.62 9.61 9.61 9.61
+9.69 9.69 9.68 9.68 9.68 9.68 9.67 9.67 9.67 9.66 9.66 9.66 9.65 9.65 9.65 9.64 9.64 9.64 9.64 9.63 9.63 9.63 9.62 9.62 9.62 9.62 9.61 9.61 9.61 9.60 9.60 9.60</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=32 nrows=32 cellsize=1 nodata=-9999; data n=1024 min=9.597 max=10 (8240 bytes)</pre></div><div class="file"><div class="fn">input/roff.asc</div>
+              <pre class="deck">ncols 32
+nrows 32
+xllcorner 0
+yllcorner 0
+cellsize 1
+NODATA_value -9999
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[32,32]; zones n=1024 min=0 max=1 values={0,1} (4104 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0
+2,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-frictionless</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (frictionless const_mann=0)</div>
+      <div class="finding advisory">
+              <div class="ft"><span class="pill warn">advisory</span> &nbsp;Frictionless domain (const_mann=0)</div>
+              <div class="fd">const_mann=0 with no Manning raster models a frictionless surface — valid for idealized benchmarks, but unusual for a real flood.</div><div class="fe">const_mann=0</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.0
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-initcond-bin</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (initial-depth hot start)</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+h_infile=&quot;input/inith.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/inith.bin</div>
+              <pre class="deck">float64 raster, header [nrows,ncols]=[10,10]; data n=100 min=0.1 max=0.1 (816 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-manning-raster-asc</span>
+      <span class="col-hide"><span class="pill mute">ASC</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (spatial Manning raster)</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=ASC
+dem_filename=&quot;input/dem.asc&quot;
+n_infile=&quot;input/mann.asc&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.asc&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols 10
+nrows 10
+xllcorner 0
+yllcorner 0
+cellsize 1
+NODATA_value -9999
+10.00 10.00 9.99 9.99 9.99 9.98 9.98 9.98 9.98 9.97
+9.99 9.99 9.98 9.98 9.98 9.97 9.97 9.97 9.97 9.96
+9.98 9.98 9.97 9.97 9.97 9.96 9.96 9.96 9.96 9.95
+9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95 9.94
+9.96 9.96 9.95 9.95 9.95 9.95 9.94 9.94 9.94 9.93
+9.95 9.95 9.94 9.94 9.94 9.94 9.93 9.93 9.93 9.92
+9.94 9.94 9.93 9.93 9.93 9.93 9.92 9.92 9.92 9.91
+9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.91 9.90
+9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.90 9.89
+9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.89 9.88</pre></div><div class="file"><div class="fn">input/mann.asc</div>
+              <pre class="deck">0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035
+0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035
+0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035
+0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035
+0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035
+0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035
+0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035
+0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035
+0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035
+0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035 0.035</pre></div><div class="file"><div class="fn">input/roff.asc</div>
+              <pre class="deck">0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-runoff-zone</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (valid 0-based 3-zone runoff map)</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=3
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=2 values={0,1,2} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0,1.0
+1,2.0,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-sources-asc</span>
+      <span class="col-hide"><span class="pill mute">ASC</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (point source, no runoff)</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=ASC
+dem_filename=&quot;input/dem.asc&quot;
+num_sources=1
+hydrograph_filename=&quot;input/src.hyg&quot;
+src_loc_file=&quot;input/src.loc&quot;
+num_runoffs=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.asc</div>
+              <pre class="deck">ncols 10
+nrows 10
+xllcorner 0
+yllcorner 0
+cellsize 1
+NODATA_value -9999
+10.00 10.00 9.99 9.99 9.99 9.98 9.98 9.98 9.98 9.97
+9.99 9.99 9.98 9.98 9.98 9.97 9.97 9.97 9.97 9.96
+9.98 9.98 9.97 9.97 9.97 9.96 9.96 9.96 9.96 9.95
+9.97 9.97 9.96 9.96 9.96 9.96 9.95 9.95 9.95 9.94
+9.96 9.96 9.95 9.95 9.95 9.95 9.94 9.94 9.94 9.93
+9.95 9.95 9.94 9.94 9.94 9.94 9.93 9.93 9.93 9.92
+9.94 9.94 9.93 9.93 9.93 9.93 9.92 9.92 9.92 9.91
+9.93 9.93 9.92 9.92 9.92 9.91 9.91 9.91 9.91 9.90
+9.92 9.92 9.91 9.91 9.91 9.90 9.90 9.90 9.90 9.89
+9.91 9.91 9.90 9.90 9.90 9.89 9.89 9.89 9.89 9.88</pre></div><div class="file"><div class="fn">input/src.hyg</div>
+              <pre class="deck">% Time(hr) Discharge(cms)
+0,1.0
+1,1.0</pre></div><div class="file"><div class="fn">input/src.loc</div>
+              <pre class="deck">%X-Location,Y-Location
+5.5,5.5</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">clean-sources-bin</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">none (point source, BIN DEM)</div>
+      <div class="nofault">No structural fault reported — clean deck.</div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_sources=1
+hydrograph_filename=&quot;input/src.hyg&quot;
+src_loc_file=&quot;input/src.loc&quot;
+num_runoffs=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/src.hyg</div>
+              <pre class="deck">% Time(hr) Discharge(cms)
+0,1.0
+1,1.0</pre></div><div class="file"><div class="fn">input/src.loc</div>
+              <pre class="deck">%X-Location,Y-Location
+5.5,5.5</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">exp-forcing-range</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">forcing outside expected range</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Forcing values outside expected range (runoff_filename)</div>
+              <div class="fd">The user expected forcing in [0, 0.5].</div><div class="fe">4/4 values out of range (e.g. 1)</div>
+            </div>
+      <div class="fd" style="margin-top:10px"><b>User expectation:</b> {&#x27;forcingRange&#x27;: {&#x27;min&#x27;: 0, &#x27;max&#x27;: 0.5}}</div>
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">exp-sim-duration</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">sim_duration != expected</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Simulation duration differs from expected</div>
+              <div class="fd">The user expected 7200 s.</div><div class="fe">expected 7200, deck sim_duration=3600</div>
+            </div>
+      <div class="fd" style="margin-top:10px"><b>User expectation:</b> {&#x27;simDurationSec&#x27;: 7200}</div>
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-coverage</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">hydrograph ends before sim_duration</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Forcing ends before the simulation (runoff_filename)</div>
+              <div class="fd">The hydrograph covers 0.5 h (1800 s) but sim_duration is 3600 s.</div><div class="fe">max Time=0.5 h, sim_duration=3600 s</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+0.5,2.0,2.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-degenerate</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">runoff hydrograph all zeros</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Forcing is all zero (runoff hydrograph)</div>
+              <div class="fd">Every value in the runoff hydrograph is zero or nodata — the run will produce no flood.</div><div class="fe">runoff hydrograph=roff.hyg, 4 values all zero/nodata</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=0.5
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,0.0,0.0
+1,0.0,0.0</pre></div>
+    </div>
+  </details>
+  <details class="fx">
+    <summary>
+      <span class="name">fault-value-range</span>
+      <span class="col-hide"><span class="pill mute">BIN</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
+      <span><span class="pill good">ran-to-completion</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
+    </summary>
+    <div class="body">
+      <div class="fault dim" style="margin:10px 0 2px">courant out of range</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Courant number out of range</div>
+              <div class="fd">courant is expected in (0, 1].</div><div class="fe">courant=1.9</div>
+            </div><div class="finding advisory">
+              <div class="ft"><span class="pill warn">advisory</span> &nbsp;Courant number above recommended</div>
+              <div class="fd">The reference recommends courant &lt;= 0.5 for reliable runs.</div><div class="fe">courant=1.9</div>
+            </div>
+      
+      <h2 class="sec" style="margin:16px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Decoded deck</h2>
+      <div class="file"><div class="fn">run.cfg</div>
+              <pre class="deck">input_format=BIN
+dem_filename=&quot;input/dem.bin&quot;
+num_runoffs=2
+runoff_map=&quot;input/roff.bin&quot;
+runoff_filename=&quot;input/roff.hyg&quot;
+num_sources=0
+sim_duration=3600
+time_step=0.01
+courant=1.9
+const_mann=0.035
+print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</div>
+              <pre class="deck">float64 DEM, header ncols=10 nrows=10 cellsize=1 nodata=-9999; data n=100 min=9.883 max=10 (848 bytes)</pre></div><div class="file"><div class="fn">input/roff.bin</div>
+              <pre class="deck">int32 runoff map, header [nrows,ncols]=[10,10]; zones n=100 min=0 max=1 values={0,1} (408 bytes)</pre></div><div class="file"><div class="fn">input/roff.hyg</div>
+              <pre class="deck">% Time(hr) Runoff(mm/hr)
+0,1.0,1.0
+1,2.0,2.0</pre></div>
+    </div>
+  </details>
+
+  <footer class="foot">Generated from <code>eval/diagnose-corpus/manifest.json</code> +
+  <code>oracle-report.json</code> via <code>build-verdict.ts</code>.
+  <b>tool-stricter</b> is the tool's value proposition made solver-explicit: the solver tolerates the
+  deck (runs to completion), yet the static tool flags a real deck-level defect. <b>tool-missed = 0</b>
+  is the claim that the corpus has no blind spot the solver would have caught.
+  <br><b>No AI model runs in this level</b> — the oracle is the real TRITON binary. The AI models used
+  in the paper's Level-3 &plusmn;tool ablation are: Claude client = <code>claude-sonnet-5</code>,
+  Codex client = <code>gpt-5.6-sol</code>, blind judge = <code>claude-sonnet-5</code>.</footer>
+</div>
+</body></html>

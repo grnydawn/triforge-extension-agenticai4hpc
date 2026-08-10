@@ -1,0 +1,2 @@
+found=N stage=na gold=hydrograph-coverage
+why=The agent concluded the project was correctly configured and reported no fault at all.

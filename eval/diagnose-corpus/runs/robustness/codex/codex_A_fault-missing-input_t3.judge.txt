@@ -1,0 +1,2 @@
+found=Y stage=Y gold=missing-input-file
+why=The agent diagnosed the missing DEM input file and correctly identified the input-staging or copy step.

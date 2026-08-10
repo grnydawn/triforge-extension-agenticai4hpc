@@ -1,0 +1,194 @@
+[
+  {
+    "fixture": "fault-placeholder",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "fault-missing-input",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "fault-runoff-count",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "fault-source-count",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "fault-runoff-zone-oob",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "fault-extbc-count",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "fault-grid-bin",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "fault-bin-noheader",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "fault-grid-asc",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "fault-grid-sidecar",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "fault-degenerate",
+    "tier1": "ran-to-completion",
+    "tier2": "review",
+    "ground": "REVIEW"
+  },
+  {
+    "fixture": "fault-coverage",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "fault-value-range",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "exp-inputs",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "exp-runoff-count",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "exp-source-count",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "exp-sim-duration",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "exp-forcing-range",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-bin",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-runoff-zone",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-asc",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-frictionless",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "fault-whitespace-hyg",
+    "tier1": "startup-reject",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "clean-bin-sidecar",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-asc-single",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-asc-coarse",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-asc-wide",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-sources-asc",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-sources-bin",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "diverge-runoff-oob",
+    "tier1": "ran-but-diverged",
+    "tier2": "n/a",
+    "ground": "FAULT"
+  },
+  {
+    "fixture": "clean-manning-raster-asc",
+    "tier1": "ran-to-completion",
+    "tier2": "sane",
+    "ground": "CANDIDATE-CLEAN"
+  },
+  {
+    "fixture": "clean-initcond-bin",
+    "tier1": "ran-to-completion",
+    "tier2": "review",
+    "ground": "REVIEW"
+  }
+]

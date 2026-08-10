@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-sim-duration
+why=The agent diagnosed sim_duration as incorrect and changed it to the expected 7200.

@@ -1,0 +1,2 @@
+found=Y stage=N gold=unsubstituted-placeholder
+why=Agent correctly identified the unsubstituted placeholder runoff_filename=input/XXXhygXXX but framed it as a wrong path in run.cfg to edit, not as a failure of the template-substitution step generating the .cfg

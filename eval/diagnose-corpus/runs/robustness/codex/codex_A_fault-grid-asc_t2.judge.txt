@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=It diagnosed the 90-cell runoff raster as incompatible with the DEM's required 100-cell grid.

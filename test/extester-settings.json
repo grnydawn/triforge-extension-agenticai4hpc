@@ -1,0 +1,7 @@
+{
+  "workbench.startupEditor": "none",
+  "telemetry.telemetryLevel": "off",
+  "update.mode": "none",
+  "extensions.autoUpdate": false,
+  "files.simpleDialog.enable": true
+}

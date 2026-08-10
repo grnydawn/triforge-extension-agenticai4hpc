@@ -1,0 +1,2 @@
+found=Y stage=Y gold=value-range-sanity
+why=The agent diagnosed the out-of-range courant=1.9 value in run.cfg.

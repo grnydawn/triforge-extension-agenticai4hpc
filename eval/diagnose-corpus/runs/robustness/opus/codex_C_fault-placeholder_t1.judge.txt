@@ -1,0 +1,2 @@
+found=Y stage=N gold=unsubstituted-placeholder
+why=It correctly identified the unsubstituted XXXhygXXX placeholder in runoff_filename but framed it as a hand-edit of run.cfg line 5 rather than the template-substitution step that generates the .cfg

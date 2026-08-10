@@ -1,0 +1,2 @@
+found=Y stage=Y gold=extbc-count-mismatch
+why=It diagnosed num_extbc=4 conflicting with only two records in dom.extbc and identified both valid correction locations.

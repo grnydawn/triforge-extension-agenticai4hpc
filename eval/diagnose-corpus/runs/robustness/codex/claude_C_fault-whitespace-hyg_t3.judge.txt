@@ -1,0 +1,2 @@
+found=N stage=na gold=hydrograph-delimiter
+why=It diagnosed an under-declared header column and proposed changing the header, not the missing comma delimiters in the hydrograph rows.

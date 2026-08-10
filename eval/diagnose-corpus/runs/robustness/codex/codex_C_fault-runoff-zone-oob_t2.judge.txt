@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=It diagnosed runoff-zone ID 2 in roff.bin as out of range for num_runoffs=2.

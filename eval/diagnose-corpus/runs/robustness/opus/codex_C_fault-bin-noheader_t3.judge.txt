@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=The agent diagnosed input/roff.bin as missing its required binary grid header before the 400 bytes of map data.

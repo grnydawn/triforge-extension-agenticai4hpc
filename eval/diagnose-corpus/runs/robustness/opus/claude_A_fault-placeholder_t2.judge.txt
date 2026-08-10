@@ -1,0 +1,2 @@
+found=Y stage=Y gold=unsubstituted-placeholder
+why=Agent diagnosed the unsubstituted template placeholder runoff_filename=input/XXXhygXXX in run.cfg and pointed at the templating step that generates the .cfg.

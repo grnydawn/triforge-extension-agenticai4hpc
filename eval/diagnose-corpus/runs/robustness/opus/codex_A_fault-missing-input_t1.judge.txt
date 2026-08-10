@@ -1,0 +1,2 @@
+found=Y stage=Y gold=missing-input-file
+why=Agent diagnosed the missing DEM input file dem.bin at the configured path and pointed at the input staging/copy step.

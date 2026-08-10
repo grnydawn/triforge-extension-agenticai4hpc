@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=Agent diagnosed the runoff-map value 100000000 in roff.asc as an out-of-bounds runoff index versus num_runoffs=2 and said to replace it with a valid index.

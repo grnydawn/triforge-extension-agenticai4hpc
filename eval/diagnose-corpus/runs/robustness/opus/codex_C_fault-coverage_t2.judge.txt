@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-coverage
+why=Agent diagnosed the runoff hydrograph roff.hyg ending at 0.5 h while sim_duration=3600 s, and pointed at extending the hydrograph time range.

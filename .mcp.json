@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "triforge": {
+      "command": "node",
+      "args": ["dist/mcp/server.cjs"],
+      "env": {
+        "TRIFORGE_MCP_TRANSCRIPT": "dist/mcp/claude-transcript.jsonl"
+      }
+    }
+  }
+}

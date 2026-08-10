@@ -1,0 +1,2 @@
+found=Y stage=Y gold=missing-input-file
+why=Agent diagnosed the missing DEM input file referenced by dem_filename in run.cfg and said it must be staged at input/dem.bin.

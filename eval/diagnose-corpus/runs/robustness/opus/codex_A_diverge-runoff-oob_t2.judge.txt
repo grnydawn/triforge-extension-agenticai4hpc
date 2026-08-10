@@ -1,0 +1,2 @@
+found=Y stage=Y gold=runoff-map-zone-range
+why=Agent diagnosed the roff.asc runoff-zone map containing out-of-range zone id 100000000 against num_runoffs=2 and prescribed re-indexing to a valid 0-based zone.

@@ -1,0 +1,2 @@
+found=Y stage=N gold=missing-input-file
+why=It diagnosed the missing DEM input file but pointed to run.cfg and DEM generation rather than the input staging/copy stage.

@@ -1,0 +1,2 @@
+found=Y stage=Y gold=grid-size-mismatch
+why=It diagnosed the runoff raster as 8 × 8 instead of the DEM's 10 × 10 and said to regenerate it.

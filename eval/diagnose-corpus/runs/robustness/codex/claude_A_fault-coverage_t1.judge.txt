@@ -1,0 +1,2 @@
+found=Y stage=Y gold=hydrograph-coverage
+why=It diagnosed the hydrograph ending at 0.5 h while sim_duration runs for 3600 s and identified both valid correction points.

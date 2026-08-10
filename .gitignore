@@ -1,0 +1,113 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Linker files
+*.ilk
+
+# Debugger Files
+*.pdb
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# debug information files
+*.dwo
+
+# Node.js and VS Code Extension
+node_modules/
+out/
+dist/
+*.vsix
+.vscode-test/
+
+# ExTester
+.test-extensions/
+test-resources/
+
+# VS Code
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# Editor swap files
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.Trashes
+Thumbs.db
+
+# Golden E2E fixtures — keep the real Triton .out depth frames despite the *.out rule above
+!test/e2e/fixtures/golden/**/*.out
+
+# super-board per-machine state (config files stay committed; these differ per machine/OS)
+.claude/super-board/active
+docs/super-board/pre-flight.md
+.claude/settings.local.json
+.claude/super-board/inflight/
+
+# Python bytecode (scripts/hpc tests)
+__pycache__/
+*.pyc
+
+# Local docs build (make docs)
+docs/_build/
+.venv-docs/
+
+# MCP server default transcript (when run without TRIFORGE_MCP_TRANSCRIPT)
+triforge-mcp-transcript.jsonl
+.gstack/
+
+# Overleaf upload artifact (transient; rebuilt from paper/ sources)
+paper/paper.zip
+
+# Per-fixture oracle results (transient; the aggregate oracle-report.json is durable)
+eval/diagnose-corpus/fixtures/*/oracle.json
+
+# Compiled TRITON solver used for oracle/three-tier validation (20 MB of binaries;
+# reviewers build it themselves per the Artifact Description appendix)
+eval/diagnose-corpus/build/
+
+# Where scripts/eval/resolve-triton.sh remembers a solver built outside this tree
+eval/diagnose-corpus/.triton-exe
+
+# Transient run backups (raw run outputs are already ignored)
+eval/diagnose-corpus/runs/.backup-*/
+
+# SC26 reviewer artifact bundle (built by scripts/eval/build-artifact-bundle.sh)
+sc26-artifact-bundle.zip
+
+# Internal agent tooling and local working instructions. These are development
+# aids, not part of the published artifact, and must never enter the public
+# history. `.vscodeignore` separately keeps .claude/ out of the packaged VSIX.
+.claude/
+CLAUDE.md

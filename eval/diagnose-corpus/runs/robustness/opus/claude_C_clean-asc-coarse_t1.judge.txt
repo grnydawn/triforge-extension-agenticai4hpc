@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=The agent concluded "this TRITON setup is correctly configured — no fault found", treating the omitted output block as cosmetic rather than a fault.

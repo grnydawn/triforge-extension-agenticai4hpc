@@ -1,0 +1,2 @@
+found=Y stage=Y gold=bin-raster-header
+why=It diagnosed roff.bin as missing the required 10x10 int32 dimensions header and prescribed prepending it.

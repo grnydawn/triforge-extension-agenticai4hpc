@@ -1,0 +1,2 @@
+found=Y stage=Y gold=expectation-forcing-range
+why=Agent diagnosed all 4 runoff forcing values in roff.hyg as out of the expected range due to a units/scale conversion error and pointed at the conversion step.

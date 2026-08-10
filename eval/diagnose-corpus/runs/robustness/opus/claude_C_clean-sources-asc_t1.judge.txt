@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=The agent concluded "This project is correctly configured — I found no fault."

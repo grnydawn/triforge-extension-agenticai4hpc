@@ -1,0 +1,2 @@
+found=N stage=na gold=clean
+why=Agent asserted a concrete input fault: "input/roff.asc is missing its ESRI ASCII grid header" and proposed prepending a 6-line header.

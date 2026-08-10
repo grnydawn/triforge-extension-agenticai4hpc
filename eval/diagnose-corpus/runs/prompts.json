@@ -1,0 +1,290 @@
+[
+  {
+    "dir": "fault-placeholder",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-placeholder` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "unsubstituted-placeholder",
+    "goldEvidence": "runoff_filename=input/XXXhygXXX",
+    "goldStage": "the template-substitution step that generates the .cfg"
+  },
+  {
+    "dir": "fault-missing-input",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-missing-input` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "missing-input-file",
+    "goldEvidence": "dem_filename=\"input/dem.bin\" -> eval/diagnose-corpus/fixtures/fault-missing-input/input/dem.bin",
+    "goldStage": "the stage that stages/copies the input files"
+  },
+  {
+    "dir": "fault-runoff-count",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-runoff-count` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "runoff-column-mismatch",
+    "goldEvidence": "num_runoffs=5, runoff .hyg value-columns=2 (roff.hyg)",
+    "goldStage": "the hydrograph-generation step (zone mapping) or num_runoffs in the cfg"
+  },
+  {
+    "dir": "fault-source-count",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-source-count` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "source-count-mismatch",
+    "goldEvidence": "num_sources=3, src_loc rows=2",
+    "goldStage": "src_loc_file or num_sources"
+  },
+  {
+    "dir": "fault-runoff-zone-oob",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-runoff-zone-oob` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "runoff-map-zone-range",
+    "goldEvidence": "runoff_map max id=2, num_runoffs=2 (valid 0..1)",
+    "goldStage": "the runoff-zone map: re-index to 0-based (0..num_runoffs-1), or increase num_runoffs"
+  },
+  {
+    "dir": "fault-extbc-count",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-extbc-count` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "extbc-count-mismatch",
+    "goldEvidence": "num_extbc=4, extbc entries=2 (dom.extbc)",
+    "goldStage": "the extbc file or num_extbc in the cfg"
+  },
+  {
+    "dir": "fault-grid-bin",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-grid-bin` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "grid-size-mismatch",
+    "goldEvidence": "DEM 100 cells, runoff map 264 B",
+    "goldStage": "the raster-generation step for runoff_map"
+  },
+  {
+    "dir": "fault-bin-noheader",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-bin-noheader` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "bin-raster-header",
+    "goldEvidence": "roff.bin 400 B = 100 int32 (no header); DEM grid 10x10",
+    "goldStage": "prepend a 2-value [nrows,ncols] int32 header to the BIN runoff map"
+  },
+  {
+    "dir": "fault-grid-asc",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-grid-asc` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "grid-size-mismatch",
+    "goldEvidence": "DEM 10x10=100 cells, runoff map 90 tokens",
+    "goldStage": "the raster-generation step for runoff_map"
+  },
+  {
+    "dir": "fault-grid-sidecar",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-grid-sidecar` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "grid-size-mismatch",
+    "goldEvidence": "DEM 1024 cells, runoff map 512 cells",
+    "goldStage": "the raster-generation step for runoff_map"
+  },
+  {
+    "dir": "fault-degenerate",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-degenerate` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "degenerate-forcing",
+    "goldEvidence": "runoff hydrograph=roff.hyg, 4 values all zero/nodata",
+    "goldStage": "the conversion step (nodata mismatch, grid mismatch, or IDs not in grid)"
+  },
+  {
+    "dir": "fault-coverage",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-coverage` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "hydrograph-coverage",
+    "goldEvidence": "max Time=0.5 h, sim_duration=3600 s",
+    "goldStage": "the time range of the hydrograph-generation step, or sim_duration"
+  },
+  {
+    "dir": "fault-value-range",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-value-range` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "value-range-sanity",
+    "goldEvidence": "courant=1.9",
+    "goldStage": "courant in the cfg"
+  },
+  {
+    "dir": "exp-inputs",
+    "category": "expectation",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/exp-inputs` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is. I also expect that these inputs should be present: input/x.extbc.",
+    "expectationText": " I also expect that these inputs should be present: input/x.extbc.",
+    "goldFinding": "expectation-inputs-present",
+    "goldEvidence": "expected \"input/x.extbc\" -> eval/diagnose-corpus/fixtures/exp-inputs/input/x.extbc",
+    "goldStage": "user-declared required inputs"
+  },
+  {
+    "dir": "exp-runoff-count",
+    "category": "expectation",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/exp-runoff-count` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is. I also expect that it should have 5 runoff zones.",
+    "expectationText": " I also expect that it should have 5 runoff zones.",
+    "goldFinding": "expectation-runoff-count",
+    "goldEvidence": "expected 5, deck num_runoffs=2",
+    "goldStage": "num_runoffs / zone mapping"
+  },
+  {
+    "dir": "exp-source-count",
+    "category": "expectation",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/exp-source-count` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is. I also expect that it should have 3 water sources.",
+    "expectationText": " I also expect that it should have 3 water sources.",
+    "goldFinding": "expectation-source-count",
+    "goldEvidence": "expected 3, deck num_sources=0",
+    "goldStage": "num_sources"
+  },
+  {
+    "dir": "exp-sim-duration",
+    "category": "expectation",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/exp-sim-duration` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is. I also expect that the simulation should run for 7200 seconds.",
+    "expectationText": " I also expect that the simulation should run for 7200 seconds.",
+    "goldFinding": "expectation-sim-duration",
+    "goldEvidence": "expected 7200, deck sim_duration=3600",
+    "goldStage": "sim_duration"
+  },
+  {
+    "dir": "exp-forcing-range",
+    "category": "expectation",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/exp-forcing-range` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is. I also expect that the forcing should stay within 0..0.5.",
+    "expectationText": " I also expect that the forcing should stay within 0..0.5.",
+    "goldFinding": "expectation-forcing-range",
+    "goldEvidence": "4/4 values out of range (e.g. 1)",
+    "goldStage": "the conversion / units step"
+  },
+  {
+    "dir": "clean-bin",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-bin` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "clean-runoff-zone",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-runoff-zone` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "clean-asc",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-asc` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "clean-frictionless",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-frictionless` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "fault-whitespace-hyg",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/fault-whitespace-hyg` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "hydrograph-delimiter",
+    "goldEvidence": "roff.hyg row \"0 1.0 1.0\" has no comma",
+    "goldStage": "re-delimit the runoff hydrograph rows with commas"
+  },
+  {
+    "dir": "clean-bin-sidecar",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-bin-sidecar` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "clean-asc-single",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-asc-single` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "clean-asc-coarse",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-asc-coarse` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "clean-asc-wide",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-asc-wide` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "clean-sources-asc",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-sources-asc` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "clean-sources-bin",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-sources-bin` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "diverge-runoff-oob",
+    "category": "deck-fault",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/diverge-runoff-oob` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "runoff-map-zone-range",
+    "goldEvidence": "runoff_map max id=100000000, num_runoffs=2 (valid 0..1)",
+    "goldStage": "the runoff-zone map: re-index to 0-based (0..num_runoffs-1), or increase num_runoffs"
+  },
+  {
+    "dir": "clean-manning-raster-asc",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-manning-raster-asc` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  },
+  {
+    "dir": "clean-initcond-bin",
+    "category": "clean",
+    "prompt": "Review the TRITON project at `eval/diagnose-corpus/fixtures/clean-initcond-bin` (relative to the repo root) for configuration or input problems. If it is correctly set up, say so; otherwise name the fault and tell me where it is.",
+    "expectationText": "",
+    "goldFinding": "clean",
+    "goldEvidence": "",
+    "goldStage": "none — deck is coherent; the agent must NOT invent a fault"
+  }
+]

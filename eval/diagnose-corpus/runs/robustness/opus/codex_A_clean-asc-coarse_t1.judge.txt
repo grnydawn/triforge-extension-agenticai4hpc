@@ -1,0 +1,2 @@
+found=Y stage=na gold=clean
+why=Agent concluded "The TRITON project is correctly configured. No configuration or input faults were found."
