@@ -156,7 +156,7 @@ h2.sec{font-size:15px;margin:30px 0 10px;font-weight:660}
     <div class="card"><div class="k">Detection (+tool)</div><div class="v">100%</div><div class="sub">bare 91–96%</div></div>
     <div class="card hero"><div class="k">Localization (+tool)</div><div class="v">98%</div><div class="sub">bare 78–80%</div></div>
     <div class="card"><div class="k">Turns saved</div><div class="v">1.3–1.6×</div><div class="sub">fewer than bare</div></div>
-    <div class="card"><div class="k">Output tokens</div><div class="v">2–4×</div><div class="sub">less than bare</div></div>
+    <div class="card"><div class="k">Output tokens</div><div class="v">2.3–4.4×</div><div class="sub">less than bare</div></div>
   </div>
 
   <div class="two">
@@ -164,12 +164,12 @@ h2.sec{font-size:15px;margin:30px 0 10px;font-weight:660}
       <h2 class="sec">Effectiveness</h2>
       <div class="tablewrap"><table>
         <thead><tr><th>Client</th><th>Arm</th><th class="num">found</th><th class="num">stage</th>
-          <th class="num">exp.</th><th class="num">clean&nbsp;prec.</th><th class="num">overall</th></tr></thead>
+          <th class="num">exp.</th><th class="num">clean&nbsp;acc.</th><th class="num">overall</th></tr></thead>
         <tbody>
         <tr><td>Claude<br><span class="mdl">claude-sonnet-5</span></td><td><span class="pill info">+tool</span></td><td class="num"><b>100%</b></td><td class="num">98%</td><td class="num">100%</td><td class="num"><b>92%</b></td><td class="num"><b>98%</b></td></tr><tr><td>Claude<br><span class="mdl">claude-sonnet-5</span></td><td><span class="pill mute">bare</span></td><td class="num">91%</td><td class="num">80%</td><td class="num">60%</td><td class="num">75%</td><td class="num">85%</td></tr><tr><td>Codex<br><span class="mdl">gpt-5.6-sol</span></td><td><span class="pill info">+tool</span></td><td class="num"><b>100%</b></td><td class="num">98%</td><td class="num">100%</td><td class="num"><b>100%</b></td><td class="num"><b>100%</b></td></tr><tr><td>Codex<br><span class="mdl">gpt-5.6-sol</span></td><td><span class="pill mute">bare</span></td><td class="num">96%</td><td class="num">78%</td><td class="num">100%</td><td class="num">100%</td><td class="num">97%</td></tr>
         </tbody></table></div>
       <p class="lede" style="font-size:12.5px;margin-top:8px">found % = blind-judged identification;
-      stage % = correct localization on faulted decks; clean&nbsp;prec. = fraction of the 12 clean
+      stage % = correct localization on faulted decks; clean&nbsp;accuracy = fraction of the 12 clean
       controls correctly reported fault-free.</p>
     </div>
     <div>
@@ -187,11 +187,13 @@ h2.sec{font-size:15px;margin:30px 0 10px;font-weight:660}
 
   <h2 class="sec">Judge validation (human audit)</h2>
   <div class="valid">
-    <span class="v">98.8%</span> agreement between a human audit and the automated blind judge
-    (<span class="mono">claude-sonnet-5</span>) over all 248 cells (245/248), and
-    <b>100% (48/48)</b> on the clean controls. All three disagreements are bare-arm cells the human
-    credited but the automated judge marked a miss — the judge <em>under</em>-states the bare arm, so
-    it does not inflate the tool's measured advantage.
+    <span class="v">99.6%</span> agreement between a human audit and the automated blind judge
+    (<span class="mono">claude-sonnet-5</span>) over all 248 cells (247/248), and
+    <b>100% (48/48)</b> on the clean controls. The first pass disagreed on three cells, but two of
+    those three human re-grades were themselves wrong and were corrected against the solver's
+    behaviour. The one remaining disagreement is a bare-arm cell the human credited and the judge
+    left unscored; crediting it moves the localization gap from +18/+20 to +16/+20 points, which
+    bounds the judge's residual effect at about two points.
   </div>
 
   <h2 class="sec">Per-cell metrics &nbsp;<span class="dim" style="font-weight:400;font-size:12.5px">(click a fixture)</span></h2>

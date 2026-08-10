@@ -103,6 +103,7 @@ h2.sec{font-size:15px;margin:34px 0 12px;font-weight:660}
   padding:10px 13px;margin:12px 0}
 .finding.error{border-left-color:var(--bad)}
 .finding.advisory{border-left-color:var(--warn)}
+.finding.warning{border-left-color:var(--warn)}
 .finding .ft{font-weight:650;font-size:13.5px}
 .finding .fd{font-size:13px;color:var(--muted);margin-top:3px}
 .finding .fe{font-family:var(--mono);font-size:12px;background:var(--surface-2);border:1px solid var(--border);
@@ -138,16 +139,16 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
       <div class="sub">solver-faults the tool called clean</div></div>
     <div class="card"><div class="k">Corpus</div><div class="v">32</div>
       <div class="sub">fixtures, solver-grounded</div></div>
-    <div class="card"><div class="k">Agree</div><div class="v">28</div>
+    <div class="card"><div class="k">Agree</div><div class="v">23</div>
       <div class="sub">tool &amp; solver concur</div></div>
-    <div class="card"><div class="k">Tool-stricter</div><div class="v">4</div>
+    <div class="card"><div class="k">Tool-stricter</div><div class="v">9</div>
       <div class="sub">tool catches what solver tolerates</div></div>
   </div>
 
   <div class="tally">
     <span class="chip good"><span class="n">11</span>agree · fault</span>
-    <span class="chip good"><span class="n">17</span>agree · clean</span>
-    <span class="chip info"><span class="n">4</span>tool-stricter</span>
+    <span class="chip good"><span class="n">12</span>agree · clean</span>
+    <span class="chip info"><span class="n">9</span>tool-stricter</span>
     <span class="chip bad"><span class="n">0</span>tool-missed</span>
   </div>
 
@@ -1412,14 +1413,14 @@ print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</d
     <summary>
       <span class="name">exp-forcing-range</span>
       <span class="col-hide"><span class="pill mute">BIN</span></span>
-      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
       <span><span class="pill good">ran-to-completion</span></span>
-      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
     </summary>
     <div class="body">
       <div class="fault dim" style="margin:10px 0 2px">forcing outside expected range</div>
-      <div class="finding advisory">
-              <div class="ft"><span class="pill bad">error</span> &nbsp;Forcing values outside expected range (runoff_filename)</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Forcing values outside expected range (runoff_filename)</div>
               <div class="fd">The user expected forcing in [0, 0.5].</div><div class="fe">4/4 values out of range (e.g. 1)</div>
             </div>
       <div class="fd" style="margin-top:10px"><b>User expectation:</b> {&#x27;forcingRange&#x27;: {&#x27;min&#x27;: 0, &#x27;max&#x27;: 0.5}}</div>
@@ -1447,14 +1448,14 @@ print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</d
     <summary>
       <span class="name">exp-sim-duration</span>
       <span class="col-hide"><span class="pill mute">BIN</span></span>
-      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
       <span><span class="pill good">ran-to-completion</span></span>
-      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
     </summary>
     <div class="body">
       <div class="fault dim" style="margin:10px 0 2px">sim_duration != expected</div>
-      <div class="finding advisory">
-              <div class="ft"><span class="pill bad">error</span> &nbsp;Simulation duration differs from expected</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Simulation duration differs from expected</div>
               <div class="fd">The user expected 7200 s.</div><div class="fe">expected 7200, deck sim_duration=3600</div>
             </div>
       <div class="fd" style="margin-top:10px"><b>User expectation:</b> {&#x27;simDurationSec&#x27;: 7200}</div>
@@ -1482,14 +1483,14 @@ print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</d
     <summary>
       <span class="name">fault-coverage</span>
       <span class="col-hide"><span class="pill mute">BIN</span></span>
-      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
       <span><span class="pill good">ran-to-completion</span></span>
-      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
     </summary>
     <div class="body">
       <div class="fault dim" style="margin:10px 0 2px">hydrograph ends before sim_duration</div>
-      <div class="finding advisory">
-              <div class="ft"><span class="pill bad">error</span> &nbsp;Forcing ends before the simulation (runoff_filename)</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Forcing ends before the simulation (runoff_filename)</div>
               <div class="fd">The hydrograph covers 0.5 h (1800 s) but sim_duration is 3600 s.</div><div class="fe">max Time=0.5 h, sim_duration=3600 s</div>
             </div>
       
@@ -1517,14 +1518,14 @@ print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</d
     <summary>
       <span class="name">fault-degenerate</span>
       <span class="col-hide"><span class="pill mute">BIN</span></span>
-      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
       <span><span class="pill good">ran-to-completion</span></span>
-      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
     </summary>
     <div class="body">
       <div class="fault dim" style="margin:10px 0 2px">runoff hydrograph all zeros</div>
-      <div class="finding advisory">
-              <div class="ft"><span class="pill bad">error</span> &nbsp;Forcing is all zero (runoff hydrograph)</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Forcing is all zero (runoff hydrograph)</div>
               <div class="fd">Every value in the runoff hydrograph is zero or nodata — the run will produce no flood.</div><div class="fe">runoff hydrograph=roff.hyg, 4 values all zero/nodata</div>
             </div>
       
@@ -1552,14 +1553,14 @@ print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</d
     <summary>
       <span class="name">fault-value-range</span>
       <span class="col-hide"><span class="pill mute">BIN</span></span>
-      <span class="col-hide"><span class="pill mute">no error</span></span>
+      <span class="col-hide"><span class="pill warn">warning</span></span>
       <span><span class="pill good">ran-to-completion</span></span>
-      <span><span class="pill good">agree · clean</span> <span class="chev">▶</span></span>
+      <span><span class="pill info">tool-stricter</span> <span class="chev">▶</span></span>
     </summary>
     <div class="body">
       <div class="fault dim" style="margin:10px 0 2px">courant out of range</div>
-      <div class="finding advisory">
-              <div class="ft"><span class="pill bad">error</span> &nbsp;Courant number out of range</div>
+      <div class="finding warning">
+              <div class="ft"><span class="pill warn">warning</span> &nbsp;Courant number out of range</div>
               <div class="fd">courant is expected in (0, 1].</div><div class="fe">courant=1.9</div>
             </div><div class="finding advisory">
               <div class="ft"><span class="pill warn">advisory</span> &nbsp;Courant number above recommended</div>
@@ -1587,7 +1588,7 @@ print_interval=900</pre></div><div class="file"><div class="fn">input/dem.bin</d
     </div>
   </details>
 
-  <footer class="foot">Generated from <code>eval/diagnose-corpus/three-tier-report.json</code> +
+  <footer class="foot">Generated from <code>eval/diagnose-corpus/manifest.json</code> +
   <code>oracle-report.json</code> via <code>build-verdict.ts</code>.
   <b>tool-stricter</b> is the tool's value proposition made solver-explicit: the solver tolerates the
   deck (runs to completion), yet the static tool flags a real deck-level defect. <b>tool-missed = 0</b>

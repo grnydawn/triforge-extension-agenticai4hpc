@@ -8,7 +8,8 @@
   ARCHIVAL COPY. Retrieved 2026-08-03 from
   https://claude.ai/code/artifact/6c00ea66-b383-4c08-9af9-edb608b92452
   (published 2026-07-23). The platform-injected frame runtime script has been
-  removed; the authored page content below is unmodified.
+  removed. The authored content has since been corrected: 2026-08-09, the metric
+  formerly called "clean precision" was renamed "clean accuracy", matching the paper.
 -->
 <style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style>
 </head>
@@ -136,7 +137,7 @@ footer.foot code{font-family:var(--mono);background:var(--surface-2);padding:1px
 <div class="wrap">
   <p class="lede">Every fixture in the injected-fault corpus, run through <span class="mono">diagnose_project</span>
   against its ground-truth manifest. Detection = the tool flags a real fault; isolation = it names the right
-  check; clean accuracy = it stays silent on a clean deck. This layer is hermetic (filesystem only, no solver,
+  check; clean accuracy = it reports a clean deck fault-free (advisory physical heuristics excluded). This layer is hermetic (filesystem only, no solver,
   no model) and reproduces via <span class="mono">npx tsx scripts/eval/diagnose-report.ts</span>.</p>
 
   <div class="cards">
